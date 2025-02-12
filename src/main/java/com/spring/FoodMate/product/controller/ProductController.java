@@ -10,11 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.FoodMate.common.Util;
@@ -33,7 +35,7 @@ public class ProductController {
 	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 	
 	@RequestMapping(value="/product/pdtlist", method=RequestMethod.GET)
-	private ModelAndView list(
+	public ModelAndView pdtist(
 	    @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, //keyword=검색어, 없으면 빈문자열로 바꿔줌
 	    HttpServletRequest request, HttpServletResponse response
 	) throws Exception {
@@ -50,7 +52,7 @@ public class ProductController {
 	}
 
 	@RequestMapping(value="/product/pdtdetail", method=RequestMethod.GET)
-	private ModelAndView detail(
+	public ModelAndView pdtdetail(
 			@RequestParam(value = "pdt_id", required = true) String pdt_id,
 			HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String viewName = Util.getViewName(request);
@@ -70,7 +72,7 @@ public class ProductController {
 	}
 
 	@RequestMapping(value="/product/pdtaddform", method=RequestMethod.GET)
-	private ModelAndView addForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView pdtaddForm(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String viewName = Util.getViewName(request);
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("common/layout");
@@ -84,6 +86,40 @@ public class ProductController {
 		return mav;
 	}
 	
+	@RequestMapping(value="/product/pdtadd", method=RequestMethod.POST)
+	public ModelAndView pdtadd(@ModelAttribute ProductDTO newPdt,
+	        @RequestParam("lastCategoryId") int lastCategoryId,
+	        @RequestParam("pdt_Img") MultipartFile pdtImg,
+	        HttpServletRequest request, HttpServletResponse response) throws Exception {
+	    
+	    String imagePath = Util.savePdtImage(request, pdtImg);
+	    newPdt.setImg_path(imagePath);
+	    newPdt.setCategory_id(lastCategoryId);
+	    
+	    // newPdt 객체의 필드 출력
+	    System.out.println("pdt_id: " + newPdt.getPdt_id());
+	    System.out.println("slr_id: " + newPdt.getSlr_id());
+	    System.out.println("name: " + newPdt.getName());
+	    System.out.println("img_path: " + newPdt.getImg_path());
+	    System.out.println("price: " + newPdt.getPrice());
+	    System.out.println("qty: " + newPdt.getQty());
+	    System.out.println("unit: " + newPdt.getUnit());
+	    System.out.println("category_id: " + newPdt.getCategory_id());
+	    System.out.println("stock: " + newPdt.getStock());
+	    System.out.println("status: " + newPdt.getStatus());
+	    System.out.println("slr_nickname: " + newPdt.getSlr_nickname());
+	    System.out.println("description: " + newPdt.getDescription());
+	    
+	    // ModelAndView 설정
+	    ModelAndView mav = new ModelAndView();
+	    mav.setViewName("common/layout");
+	    mav.addObject("showNavbar", true);
+	    mav.addObject("title", "푸메");
+	    mav.addObject("body", "/WEB-INF/views/main/main.jsp");
+	    return mav;
+	}
+
+	
 	@RequestMapping(value="/getSubCategories/{category_id}", method=RequestMethod.GET)
 	@ResponseBody
 	public List<CategoryDTO> getSubCategories(@PathVariable("category_id") int category_id) throws Exception {
@@ -92,10 +128,8 @@ public class ProductController {
 	    return subCategories;
 	}
 
-	
-	
 	@RequestMapping(value="/product/compare", method=RequestMethod.GET)
-	private ModelAndView compare(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public ModelAndView compare(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String viewName = Util.getViewName(request);
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("common/layout");

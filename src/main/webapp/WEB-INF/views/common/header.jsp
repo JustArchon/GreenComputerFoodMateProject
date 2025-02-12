@@ -165,7 +165,6 @@
 	if(${sessionScope.isSellerLogOn ? 'true' : 'false'} == true){
 		document.getElementById('recipeLink').href = "${contextPath}/product/pdtaddform";
 		document.getElementById('recipeLink').title = "상품 등록"; //이거 추가함
-		document.getElementById('cartLink').href = "${contextPath}/cart/cartlist";
 	}
 </script>
 </body>
