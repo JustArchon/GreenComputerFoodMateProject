@@ -109,7 +109,7 @@ $(document).ready(function() {
 <main class="bodywrapper">
 <article class="form-container">
 	<form action="${contextPath}/product/pdtadd" method="POST" enctype="multipart/form-data">
-	<div id="task_Name">새로운 상품 등록</div>
+	<div id="task_Name">상품 수정</div>
 	    <div class="form-Box">
 			<div class="form-Leftbox">
 				<div class="row">

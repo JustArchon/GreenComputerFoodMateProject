@@ -52,7 +52,9 @@ public class Util {
 	    // 저장할 디렉토리 경로 설정
 	    String uploadDirReal = request.getServletContext().getRealPath("/resources/images/pdt");
 	    System.out.println("실제론"+uploadDirReal+"에 저장되야함.");
-	    String uploadDir = "C:/Users/Administrator/git/GreenComputerFoodMateProject/src/main/webapp/resources/images/pdt";
+	    String uploadDirGreen = "C:/Users/Administrator/git/GreenComputerFoodMateProject/src/main/webapp/resources/images/pdt";
+	    System.out.println("학원에선"+uploadDirGreen+"에 저장되야함.");
+	    String uploadDir = "C:/Users/confl/git/GreenComputerFoodMateProject/src/main/webapp/resources/images/pdt";
 
 	    File dir = new File(uploadDir);
 
@@ -82,7 +84,7 @@ public class Util {
 	    file.transferTo(dest);
 
 	    // 저장된 파일 경로 반환 (웹에서 접근할 수 있는 경로)
-	    return "/resources/images/pdt/" + dest.getName();
+	    return "pdt/" + dest.getName();
 	}
 
 }
