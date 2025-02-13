@@ -50,11 +50,12 @@ public class Util {
 	
 	public static String savePdtImage(HttpServletRequest request, MultipartFile file) throws Exception {
 	    // 저장할 디렉토리 경로 설정
-	    String uploadDirReal = request.getServletContext().getRealPath("/resources/images/pdt");
-	    System.out.println("실제론"+uploadDirReal+"에 저장되야함.");
-	    String uploadDirGreen = "C:/Users/Administrator/git/GreenComputerFoodMateProject/src/main/webapp/resources/images/pdt";
-	    System.out.println("학원에선"+uploadDirGreen+"에 저장되야함.");
-	    String uploadDir = "C:/Users/confl/git/GreenComputerFoodMateProject/src/main/webapp/resources/images/pdt";
+//	    String uploadDirReal = request.getServletContext().getRealPath("/resources/images/pdt");
+//	    System.out.println("실제론"+uploadDirReal+"에 저장돼야함.");
+	    String uploadDir = "C:/Users/Administrator/git/GreenComputerFoodMateProject/src/main/webapp/resources/images/pdt";
+//	    System.out.println("학원에선"+uploadDir+"에 저장돼야함.");
+//	    String uploadDirSTHHome = "C:/Users/confl/git/GreenComputerFoodMateProject/src/main/webapp/resources/images/pdt";
+//	    System.out.println("송태호자택에선"+uploadDirSTHHome+"에 저장돼야함.");
 
 	    File dir = new File(uploadDir);
 

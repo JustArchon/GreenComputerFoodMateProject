@@ -1,5 +1,6 @@
 package com.spring.FoodMate.product.controller;
 
+import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,38 +37,42 @@ public class ProductController {
 	private ProductService productService;
 	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
 	
+	// nav 의 "식료품" 눌렀을 때나 식재료 검색했을 때 
 	@RequestMapping(value="/product/pdtlist", method=RequestMethod.GET)
 	public ModelAndView pdtist(
-	    @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, //keyword=검색어, 없으면 빈문자열로 바꿔줌
-	    HttpServletRequest request, HttpServletResponse response
+	    @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+	    //keyword=검색어, 없으면 빈문자열로 바꿔줌
+	    HttpServletRequest request
 	) throws Exception {
 	    String viewName = Util.getViewName(request);
 	    ModelAndView mav = new ModelAndView();
 	    List<ProductDTO> searchList = productService.pdtList(keyword);
-	    // Service 에 keyword(검색어)를 주고 해당하는 상품VO의 List를 받아옴.
+	    mav.addObject("list", searchList);
+	    // Service 에 keyword(검색어)를 주고 해당하는 상품VO들의 List를 받아옴.
+	    // 검색어 없을땐 전체 상품리스트 갖고옴.
 	    mav.setViewName("common/layout");
 	    mav.addObject("showNavbar", true);
 	    mav.addObject("title", "FoodMate-상품 검색창");
 	    mav.addObject("body", "/WEB-INF/views" + viewName + ".jsp");
-	    mav.addObject("list", searchList);
+	    
 	    return mav;
 	}
 	
 	@RequestMapping(value="/mypage_seller/ms_pdtlist", method=RequestMethod.GET)
 	public ModelAndView ms_pdtist(HttpServletRequest request, HttpSession session) throws Exception {
 		    String viewName = Util.getViewName(request);
-		    // 필터 나중에 해
+		    ModelAndView mav = new ModelAndView();
+		    // 판매자 아니면 못들어오게하는 필터 나중에 만들어
 		    SessionDTO sellerInfo = (SessionDTO)session.getAttribute("sessionDTO");
 		    String slr_id = sellerInfo.getUserId();
-		    
-		    ModelAndView mav = new ModelAndView();
 		    List<ProductDTO> searchList = productService.ms_pdtList(slr_id);
-		    // Service 에 keyword(검색어)를 주고 해당하는 상품VO의 List를 받아옴.
+		    mav.addObject("list", searchList);
+		    // Service 에 판매자 ID를 주고 해당하는 상품VO들의 List를 받아옴.
 		    mav.setViewName("common/layout");
 		    mav.addObject("showNavbar", true);
 		    mav.addObject("title", "FoodMate-상품 검색창");
 		    mav.addObject("body", "/WEB-INF/views" + viewName + ".jsp");
-		    mav.addObject("list", searchList);
+		    
 		    return mav;
 		}
 
@@ -107,24 +112,46 @@ public class ProductController {
 	}
 	
 	@RequestMapping(value="/product/pdteditform", method=RequestMethod.GET)
-	public ModelAndView pdteditForm(@RequestParam(value = "pdt_id", required = true) int pdt_id,
-			HttpServletRequest request, HttpSession session) throws Exception {
-		//pdt_id값이 안들어왔을 때 오류처리를 해야함
+	public ModelAndView pdteditForm(@RequestParam(value = "pdt_id", required = false, defaultValue = "0") int pdt_id,
+			HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
 		String viewName = Util.getViewName(request);
+		//pdt_id값이 안들어왔을 때 오류처리를 해야함
+		System.out.println("이런 pdt값 들어왔다"+pdt_id);
+		
+		if(pdt_id==0) {
+			PrintWriter out = response.getWriter();
+			response.setContentType("text/html; charset=UTF-8");
+		    response.setCharacterEncoding("UTF-8");
+		    out.println("<script>");
+		    out.println("alert('수정 권한이 없습니다.');");
+		    out.println("history.back();");
+		    out.println("</script>");
+		    out.flush();
+		    out.close();
+		    return null; // 이후 코드 실행을 막음
+		}
+		
 		// 받은 pdt_id로 상품 테이블 뒤져서 있는지 확인하고
 		ProductDTO needEdit = productService.select1PdtByPdtId(pdt_id);
 		
 		// 없으면 오류처리 해야함
 		
 		SessionDTO sellerInfo = (SessionDTO)session.getAttribute("sessionDTO");
-		if( !sellerInfo.getUserId().equals( needEdit.getSlr_id() ) ) {
-			// 수정 권한이 없다는 오류 처리
-		} else {
-			
-		}
 		
-		;
-		needEdit.getSlr_id();
+		
+		// 등록한놈이랑 다른놈이 수정하려고하면
+		if( !sellerInfo.getUserId().equals( needEdit.getSlr_id() ) ) {
+			PrintWriter out = response.getWriter();
+			response.setContentType("text/html; charset=UTF-8");
+		    response.setCharacterEncoding("UTF-8");
+		    out.println("<script>");
+		    out.println("alert('수정 권한이 없습니다.');");
+		    out.println("history.back();");
+		    out.println("</script>");
+		    out.flush();
+		    out.close();
+		    return null; // 이후 코드 실행을 막음
+		}
 		
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("common/layout");
@@ -134,7 +161,10 @@ public class ProductController {
 		
 		List<CategoryDTO> categories = productService.getGrandCategoryList();
 		mav.addObject("categories", categories);
-		
+		// 카테고리 대분류 띄워주기
+		System.out.println("뭐가문제냐");
+		System.out.println(viewName);
+		mav.addObject("ProductDTO", needEdit);
 		return mav;
 	}
 	
