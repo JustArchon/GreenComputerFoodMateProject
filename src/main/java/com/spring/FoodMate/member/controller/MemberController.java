@@ -56,30 +56,14 @@ public class MemberController {
 	private ModelAndView Loginform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		String viewName = UtilMethod.getViewName(request);
 		HttpSession session = request.getSession();
-		session.setAttribute("action", action);
 		ModelAndView mav = new ModelAndView();
-		mav.addObject("result",result);
-		mav.setViewName("common/layout");
-		mav.addObject("smallHeader", true);
-		mav.addObject("smallFooter", true);
 		mav.addObject("kakao_API_key", KAKAO_API_KEY);
-		mav.addObject("title", "푸드 메이트");
-		mav.addObject("body", "/WEB-INF/views" + viewName + ".jsp");
 		return mav;
 	}
 	
 	@RequestMapping(value="/member/*Form", method=RequestMethod.GET)
 	private ModelAndView form(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String viewName = UtilMethod.getViewName(request);
-		HttpSession session = request.getSession();
-		session.setAttribute("action", action);
 		ModelAndView mav = new ModelAndView();
-		mav.addObject("result",result);
-		mav.setViewName("common/layout");
-		mav.addObject("smallHeader", true);
-		mav.addObject("smallFooter", true);
-		mav.addObject("title", "푸드 메이트");
-		mav.addObject("body", "/WEB-INF/views" + viewName + ".jsp");
 		return mav;
 	}
 	
@@ -174,49 +158,6 @@ public class MemberController {
 		return resEntity;
 	}
 	
-	@RequestMapping(value="/member/loginslr" ,method = RequestMethod.POST)
-	public ResponseEntity loginslr(@RequestParam Map<String, String> loginMap,
-			                  HttpServletRequest request, HttpServletResponse response) throws Exception {
-		response.setContentType("text/html; charset=UTF-8");
-		request.setCharacterEncoding("utf-8");
-		String message = null;
-		ResponseEntity resEntity = null;
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
-		sellerDTO=memberService.loginslr(loginMap);
-		if(sellerDTO!= null && sellerDTO.getSlr_id()!=null){
-			
-//			if(memberVO.getDel_yn().equals("Y")) {
-//				String message="회원 탈퇴가 진행중인 아이디입니다.\\n관리자에게 문의해 주세요.\\nEmail : hong@gil.dong";
-//				mav.addObject("message", message);
-//				mav.setViewName("/member/loginForm");
-//			} else {
-				HttpSession session=request.getSession();
-				session=request.getSession();
-				session.setAttribute("isSellerLogOn", true);
-				session.setAttribute("sellerInfo",sellerDTO);
-				
-				SessionDTO sessionDTO = new SessionDTO();
-				sessionDTO.setUserId(sellerDTO.getSlr_id());
-				sessionDTO.setUserRole("seller");
-				session.setAttribute("sessionDTO", sessionDTO);
-				
-				
-				message  = "<script>";
-			    message += " location.href='"+request.getContextPath()+"/main';";
-			    message += " </script>";
-//			}
-			
-		}else{
-		    message  = "<script>";
-		    message +=" alert('아이디나 비밀번호가 잘못되었습니다. 다시 로그인해주세요.');";
-		    message += " location.href='"+request.getContextPath()+"/member/loginForm';";
-		    message += " </script>";
-		}
-		resEntity = new ResponseEntity(message, responseHeaders, HttpStatus.OK);
-		return resEntity;
-	}
-	
 	@RequestMapping(value="/member/logout", method = RequestMethod.GET)
 	public String logout(HttpServletRequest request) throws Exception {
 	    // 세션 삭제
@@ -225,22 +166,6 @@ public class MemberController {
 	        session.invalidate();  // 세션 무효화
 	    }
 	    return "redirect:/main";  // 로그인 페이지로 리다이렉트
-	}
-	
-	@RequestMapping(value="/member/overlapped.do" ,method = RequestMethod.POST)
-	public ResponseEntity buyIDoverlapped(@RequestParam("id") String id,HttpServletRequest request, HttpServletResponse response) throws Exception{
-		ResponseEntity resEntity = null;
-		String result = memberService.buyerIDoverlapped(id);
-		resEntity =new ResponseEntity(result, HttpStatus.OK);
-		return resEntity;
-	}
-	
-	@RequestMapping(value="/member/overlappedseller.do" ,method = RequestMethod.POST)
-	public ResponseEntity sellerIDoverlapped(@RequestParam("id") String id,HttpServletRequest request, HttpServletResponse response) throws Exception{
-		ResponseEntity resEntity = null;
-		String result = memberService.sellerIDoverlapped(id);
-		resEntity =new ResponseEntity(result, HttpStatus.OK);
-		return resEntity;
 	}
 	
 	@RequestMapping(value="/member/addBuyer" ,method = RequestMethod.POST)
@@ -253,14 +178,8 @@ public class MemberController {
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
 		try {
-            String baseDir = "src/main/resources/images/users/";
             String byrid = _buyerDTO.getByr_id();
-            String uploadDir = baseDir + byrid;
             
-            File uploadPath = new File(uploadDir);
-            if (!uploadPath.exists()) {
-                uploadPath.mkdirs();
-            }
             memberService.addBuyer(_buyerDTO);
             profileService.addNewBuyerProfile(byrid);
 		    
@@ -273,6 +192,42 @@ public class MemberController {
 			message  = "<script>";
 		    message +=" alert('작업 중 오류가 발생했습니다. 다시 시도해 주세요.');";
 		    message += " location.href='"+request.getContextPath()+"/member/signUpForm';";
+		    message += " </script>";
+			e.printStackTrace();
+		}
+		resEntity = new ResponseEntity(message, responseHeaders, HttpStatus.OK);
+		return resEntity;
+	}
+	
+	@RequestMapping(value="/member/overlapped.do" ,method = RequestMethod.POST)
+	public ResponseEntity buyIDoverlapped(@RequestParam("id") String id,HttpServletRequest request, HttpServletResponse response) throws Exception{
+		ResponseEntity resEntity = null;
+		String result = memberService.buyerIDoverlapped(id);
+		resEntity =new ResponseEntity(result, HttpStatus.OK);
+		return resEntity;
+	}
+	
+	@RequestMapping(value="/member/updateBuyer" ,method = RequestMethod.POST)
+	public ResponseEntity updateBuyer(@ModelAttribute("buyerDTO") BuyerDTO _buyerDTO,
+			                HttpServletRequest request, HttpServletResponse response) throws Exception {
+		response.setContentType("text/html; charset=UTF-8");
+		request.setCharacterEncoding("utf-8");
+		String message = null;
+		ResponseEntity resEntity = null;
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+		try {
+            memberService.addBuyer(_buyerDTO);
+		    
+		    message  = "<script>";
+		    message +=" alert('성공적으로 회원 정보를 수정했습니다.');";
+		    message += " location.href='"+request.getContextPath()+"/mypage/myInfoManage/memberEditForm';";
+		    message += " </script>";
+		    
+		}catch(Exception e) {
+			message  = "<script>";
+		    message +=" alert('작업 중 오류가 발생했습니다. 다시 시도해 주세요.');";
+		    message += " location.href='"+request.getContextPath()+"/mypage/myInfoManage/memberEditForm';";
 		    message += " </script>";
 			e.printStackTrace();
 		}
@@ -312,6 +267,151 @@ public class MemberController {
 		    message += " location.href='"+request.getContextPath()+"/member/signUpSocialForm';";
 		    message += " </script>";
 			e.printStackTrace();
+		}
+		resEntity = new ResponseEntity(message, responseHeaders, HttpStatus.OK);
+		return resEntity;
+	}
+	
+	@RequestMapping(value="/member/byrIdFind", method=RequestMethod.POST)
+	public ModelAndView byrIdFind(@ModelAttribute("buyerVO") BuyerDTO _buyerVO,
+	                              HttpServletRequest request, HttpServletResponse response) throws Exception {
+	    request.setCharacterEncoding("utf-8");
+	    
+	    ModelAndView mav = new ModelAndView();
+	    String foundId = null;
+
+	    try {
+	        // 아이디 찾기 로직 (예: memberService.findBuyerId 메서드 호출)
+	        foundId = memberService.findBuyerId(_buyerVO);
+	        
+	        if (foundId != null && !foundId.isEmpty()) {
+	            mav.setViewName("common/layout");  // 공통 레이아웃 적용
+	            mav.addObject("body", "/WEB-INF/views/member/idFindResultForm.jsp"); // 실제 페이지 경로
+	            mav.addObject("name", _buyerVO.getName());
+	            mav.addObject("foundId", foundId); // 찾은 아이디를 뷰로 전달
+	    		mav.addObject("smallHeader", true);
+	    		mav.addObject("smallFooter", true);
+	    		mav.addObject("title", "푸드 메이트");
+	        } else {
+	            // 아이디를 찾지 못했을 경우 메시지 처리
+	            mav.setViewName("redirect:/member/buyeridFindForm?error=notfound");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        mav.setViewName("redirect:/member/buyeridFindForm?error=exception");
+	    }
+
+	    return mav;
+	}
+	
+	@RequestMapping(value="/member/ByrPasswordFind", method=RequestMethod.POST)
+	public ModelAndView ByrPasswordFind(@ModelAttribute("buyerVO") BuyerDTO _buyerVO,
+	                              HttpServletRequest request, HttpServletResponse response) throws Exception {
+	    request.setCharacterEncoding("utf-8");
+	    
+	    ModelAndView mav = new ModelAndView();
+	    String foundInfo = null;
+
+	    try {
+	        // 아이디 찾기 로직 (예: memberService.findBuyerId 메서드 호출)
+	    	foundInfo = memberService.findBuyerId(_buyerVO);
+	        
+	        if (foundInfo != null && !foundInfo.isEmpty()) {
+	        	HttpSession session = request.getSession();
+	        	session.setAttribute("byr_Id", _buyerVO.getByr_id());
+	            session.setAttribute("name", _buyerVO.getName());
+	            session.setAttribute("email", _buyerVO.getEmail());
+	            
+	            mav.setViewName("common/layout");  // 공통 레이아웃 적용
+	            mav.addObject("body", "/WEB-INF/views/member/buyerpasswdResetForm.jsp"); // 실제 페이지 경로
+	    		mav.addObject("smallHeader", true);
+	    		mav.addObject("smallFooter", true);
+	    		mav.addObject("title", "푸드 메이트");
+	        } else {
+	            // 패스워드 리셋정보를 찾지 못했을 경우 메시지 처리
+	        	mav.setViewName("redirect:/member/buyerpasswdFindForm?error=notfound");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        mav.setViewName("redirect:/member/buyerpasswdFindForm?error=exception");
+	    }
+
+	    return mav;
+	}
+	
+	@RequestMapping(value="/member/buyerPasswordReset" ,method = RequestMethod.POST)
+	public ResponseEntity buyerPasswordReset(@ModelAttribute("buyerVO") BuyerDTO _buyerVO,
+			                HttpServletRequest request, HttpServletResponse response) throws Exception {
+		response.setContentType("text/html; charset=UTF-8");
+		request.setCharacterEncoding("utf-8");
+		String message = null;
+		ResponseEntity resEntity = null;
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+		try {
+			HttpSession session = request.getSession();
+			
+			_buyerVO.setByr_id((String)session.getAttribute("byr_Id"));
+			_buyerVO.setName((String)session.getAttribute("name"));
+			_buyerVO.setEmail((String)session.getAttribute("email"));
+		    memberService.resetBuyerPW(_buyerVO);
+		    
+		    
+		    message  = "<script>";
+		    message +=" alert('정상적으로 비밀번호가 변경되었습니다.');";
+		    message += " location.href='"+request.getContextPath()+"/member/loginForm';";
+		    message += " </script>";
+		    session.invalidate();
+		    
+		}catch(Exception e) {
+			message  = "<script>";
+		    message +=" alert('작업 중 오류가 발생했습니다. 다시 시도해 주세요.');";
+		    message += " location.href='"+request.getContextPath()+"/member/ByrPasswordFind';";
+		    message += " </script>";
+			e.printStackTrace();
+		}
+		resEntity = new ResponseEntity(message, responseHeaders, HttpStatus.OK);
+		return resEntity;
+	}
+	
+	@RequestMapping(value="/member/loginslr" ,method = RequestMethod.POST)
+	public ResponseEntity loginslr(@RequestParam Map<String, String> loginMap,
+			                  HttpServletRequest request, HttpServletResponse response) throws Exception {
+		response.setContentType("text/html; charset=UTF-8");
+		request.setCharacterEncoding("utf-8");
+		String message = null;
+		ResponseEntity resEntity = null;
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+		sellerDTO=memberService.loginslr(loginMap);
+		if(sellerDTO!= null && sellerDTO.getSlr_id()!=null){
+			
+//			if(memberVO.getDel_yn().equals("Y")) {
+//				String message="회원 탈퇴가 진행중인 아이디입니다.\\n관리자에게 문의해 주세요.\\nEmail : hong@gil.dong";
+//				mav.addObject("message", message);
+//				mav.setViewName("/member/loginForm");
+//			} else {
+				HttpSession session=request.getSession();
+				session=request.getSession();
+				session.setAttribute("isSellerLogOn", true);
+				session.setAttribute("sellerInfo",sellerDTO);
+				
+				SessionDTO sessionDTO = new SessionDTO();
+				sessionDTO.setUserId(sellerDTO.getSlr_id());
+				sessionDTO.setUserRole("seller");
+				session.setAttribute("sessionDTO", sessionDTO);
+				
+				
+				message  = "<script>";
+			    message += " location.href='"+request.getContextPath()+"/main';";
+			    message += " </script>";
+//			}
+			
+		}else{
+		    message  = "<script>";
+		    message +=" alert('아이디나 비밀번호가 잘못되었습니다. 다시 로그인해주세요.');";
+		    message += " location.href='"+request.getContextPath()+"/member/loginForm';";
+		    message += " </script>";
 		}
 		resEntity = new ResponseEntity(message, responseHeaders, HttpStatus.OK);
 		return resEntity;
@@ -361,36 +461,12 @@ public class MemberController {
 		return resEntity;
 	}
 	
-	@RequestMapping(value="/member/byrIdFind", method=RequestMethod.POST)
-	public ModelAndView byrIdFind(@ModelAttribute("buyerVO") BuyerDTO _buyerVO,
-	                              HttpServletRequest request, HttpServletResponse response) throws Exception {
-	    request.setCharacterEncoding("utf-8");
-	    
-	    ModelAndView mav = new ModelAndView();
-	    String foundId = null;
-
-	    try {
-	        // 아이디 찾기 로직 (예: memberService.findBuyerId 메서드 호출)
-	        foundId = memberService.findBuyerId(_buyerVO);
-	        
-	        if (foundId != null && !foundId.isEmpty()) {
-	            mav.setViewName("common/layout");  // 공통 레이아웃 적용
-	            mav.addObject("body", "/WEB-INF/views/member/idFindResultForm.jsp"); // 실제 페이지 경로
-	            mav.addObject("name", _buyerVO.getName());
-	            mav.addObject("foundId", foundId); // 찾은 아이디를 뷰로 전달
-	    		mav.addObject("smallHeader", true);
-	    		mav.addObject("smallFooter", true);
-	    		mav.addObject("title", "푸드 메이트");
-	        } else {
-	            // 아이디를 찾지 못했을 경우 메시지 처리
-	            mav.setViewName("redirect:/member/buyeridFindForm?error=notfound");
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        mav.setViewName("redirect:/member/buyeridFindForm?error=exception");
-	    }
-
-	    return mav;
+	@RequestMapping(value="/member/overlappedseller.do" ,method = RequestMethod.POST)
+	public ResponseEntity sellerIDoverlapped(@RequestParam("id") String id,HttpServletRequest request, HttpServletResponse response) throws Exception{
+		ResponseEntity resEntity = null;
+		String result = memberService.sellerIDoverlapped(id);
+		resEntity =new ResponseEntity(result, HttpStatus.OK);
+		return resEntity;
 	}
 	
 	@RequestMapping(value="/member/slrIdFind", method=RequestMethod.POST)
@@ -420,41 +496,6 @@ public class MemberController {
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	        mav.setViewName("redirect:/member/selleridFindForm?error=exception");
-	    }
-
-	    return mav;
-	}
-	
-	@RequestMapping(value="/member/ByrPasswordFind", method=RequestMethod.POST)
-	public ModelAndView ByrPasswordFind(@ModelAttribute("buyerVO") BuyerDTO _buyerVO,
-	                              HttpServletRequest request, HttpServletResponse response) throws Exception {
-	    request.setCharacterEncoding("utf-8");
-	    
-	    ModelAndView mav = new ModelAndView();
-	    String foundInfo = null;
-
-	    try {
-	        // 아이디 찾기 로직 (예: memberService.findBuyerId 메서드 호출)
-	    	foundInfo = memberService.findBuyerId(_buyerVO);
-	        
-	        if (foundInfo != null && !foundInfo.isEmpty()) {
-	        	HttpSession session = request.getSession();
-	        	session.setAttribute("byr_Id", _buyerVO.getByr_id());
-	            session.setAttribute("name", _buyerVO.getName());
-	            session.setAttribute("email", _buyerVO.getEmail());
-	            
-	            mav.setViewName("common/layout");  // 공통 레이아웃 적용
-	            mav.addObject("body", "/WEB-INF/views/member/buyerpasswdResetForm.jsp"); // 실제 페이지 경로
-	    		mav.addObject("smallHeader", true);
-	    		mav.addObject("smallFooter", true);
-	    		mav.addObject("title", "푸드 메이트");
-	        } else {
-	            // 패스워드 리셋정보를 찾지 못했을 경우 메시지 처리
-	        	mav.setViewName("redirect:/member/buyerpasswdFindForm?error=notfound");
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        mav.setViewName("redirect:/member/buyerpasswdFindForm?error=exception");
 	    }
 
 	    return mav;
@@ -495,40 +536,7 @@ public class MemberController {
 	    return mav;
 	}
 	
-	@RequestMapping(value="/member/buyerPasswordReset" ,method = RequestMethod.POST)
-	public ResponseEntity buyerPasswordReset(@ModelAttribute("buyerVO") BuyerDTO _buyerVO,
-			                HttpServletRequest request, HttpServletResponse response) throws Exception {
-		response.setContentType("text/html; charset=UTF-8");
-		request.setCharacterEncoding("utf-8");
-		String message = null;
-		ResponseEntity resEntity = null;
-		HttpHeaders responseHeaders = new HttpHeaders();
-		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
-		try {
-			HttpSession session = request.getSession();
-			
-			_buyerVO.setByr_id((String)session.getAttribute("byr_Id"));
-			_buyerVO.setName((String)session.getAttribute("name"));
-			_buyerVO.setEmail((String)session.getAttribute("email"));
-		    memberService.resetBuyerPW(_buyerVO);
-		    
-		    
-		    message  = "<script>";
-		    message +=" alert('정상적으로 비밀번호가 변경되었습니다.');";
-		    message += " location.href='"+request.getContextPath()+"/member/loginForm';";
-		    message += " </script>";
-		    session.invalidate();
-		    
-		}catch(Exception e) {
-			message  = "<script>";
-		    message +=" alert('작업 중 오류가 발생했습니다. 다시 시도해 주세요.');";
-		    message += " location.href='"+request.getContextPath()+"/member/ByrPasswordFind';";
-		    message += " </script>";
-			e.printStackTrace();
-		}
-		resEntity = new ResponseEntity(message, responseHeaders, HttpStatus.OK);
-		return resEntity;
-	}
+
 	
 	@RequestMapping(value="/member/sellerPasswordReset" ,method = RequestMethod.POST)
 	public ResponseEntity sellerPasswordReset(@ModelAttribute("sellerVO") SellerDTO _sellerVO,
