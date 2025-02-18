@@ -175,7 +175,7 @@ public class GlobalExceptionHandler {
 
     // 모든 예외를 처리하는 공통 예외 처리기
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public Object handleGenericException(HttpServletRequest request, Exception ex) {
         logger.error("종류도 안정하고 받는 예외 발생: " + ex.getMessage(), ex);

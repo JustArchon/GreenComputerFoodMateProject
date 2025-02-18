@@ -1,7 +1,6 @@
 package com.spring.FoodMate.product.controller;
 
 import java.io.PrintWriter;
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -80,7 +79,6 @@ public class ProductControllerImpl implements ProductController {
         
 		if(product.getCategory_id() != null) {
 			List<CategoryDTO> categoryStep = productService.categoryStep(product.getCategory_id());
-			Collections.reverse(categoryStep); // 이걸로 배열 안 뒤집으면 카테고리 순서가 거꾸로 나옴
 			mav.addObject("category", categoryStep);
 		}
 		// pdt의 카테고리id 받아서 최상위 부모카테고리까지 싹 받아옴

@@ -10,10 +10,9 @@
 
 <script>
 
-function addToCart() {  // 수정된 부분: 함수 호출 방식 수정
-    // 상품 ID와 수량을 가져옵니다.
-    var productId = $("#pdt_ID").text();  // 수정된 부분: 상품 ID를 가져오는 방식
-    var quantity = $("#quantity").text(); // 수정된 부분: 수량을 가져오는 방식
+function addToCart() {
+    var productId = $("#pdt_ID").text();
+    var quantity = $("#quantity").text();
     var contextPath = "${contextPath}";    // 경로 설정 (확인 필요)
 
     $.ajax({

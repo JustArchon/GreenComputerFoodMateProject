@@ -3,8 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 <c:set var="recipe" value="${recipe}" />
-<c:set var="ingredient" value="${ingredients}" />
-<c:set var="step" value="${steps}" />
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -37,7 +36,25 @@
             <div class="mb-4">
                 <h2>${recipe.food_name}</h2>
             </div>
-
+			
+			<article class="category">
+			    <div id="category_text">
+			        카테고리 : 
+			        <c:choose>
+			            <c:when test="${not empty category}">
+			                <c:forEach var="cat" items="${category}" varStatus="status">
+			                    ${cat.name} 
+			                    <c:if test="${not status.last}"> > </c:if> 
+			                    <!-- 마지막 요소가 아니면 ">" 추가 -->
+			                </c:forEach>
+			            </c:when>
+			            <c:otherwise>
+			                전체
+			            </c:otherwise>
+			        </c:choose>
+			    </div> 
+			</article>
+			
             <!-- 소요시간 -->
             <div class="mb-4">
                 <span class="badge bg-warning text-dark">소요시간: ${recipe.req_time}</span>
@@ -56,7 +73,7 @@
     <div class="mb-4">
 		<h2 class="recipe-section-title">기본재료</h2>
 			<div class="ingredients-box">
-			    <c:forEach var="ingredient" items="${recipeMap.ingredients}">
+			    <c:forEach var="ingredient" items="${ingredients}">
 			        <div class="ingredient-card">
 			            <div class="ingredient-text">
 			                ${ingredient.ingrd_name} ${ingredient.ingrd_qty}${ingredient.unit}
@@ -70,7 +87,7 @@
 	<div class="mb-4">
 	    <h2 class="recipe-section-title">조리법</h2><br>
 	    <div class="cooking-steps-box">
-	        <c:forEach var="step" items="${recipeMap.steps}">
+	        <c:forEach var="step" items="${steps}">
 	            <div class="cooking-step-card">
 	                <div class="cooking-step-image">
 	                    <img src="${pageContext.request.contextPath}/resources/images/${step.stepimg_path}" alt="Step ${step.rcp_step}" class="step-image">

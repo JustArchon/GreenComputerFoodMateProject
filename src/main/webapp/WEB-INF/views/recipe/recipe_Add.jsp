@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="com.spring.FoodMate.member.dto.BuyerDTO" %>
-
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 
 <!DOCTYPE html>
@@ -59,6 +58,14 @@
         box-sizing: border-box;
     }
 
+	#select_category label {
+		display: block;
+	}
+	
+	#select_category select {		
+		width: 20%;
+	}
+
     input:focus, select:focus, textarea:focus {
         border-color: #f39c12;
         outline: none;
@@ -68,7 +75,6 @@
         resize: vertical;
     }
 
-    
     .btn {
         background-color: #f39c12;
         color: white;
@@ -95,8 +101,6 @@
     .submit-btn {
        width: 100%; 
     }
-
-	
 
     .ingredient-card {
         background-color: #f9f9f9;
@@ -186,6 +190,76 @@
 	}
 </style>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+var contextPath = "${contextPath}";
+console.log(contextPath);
+
+$(document).ready(function() {
+    var lastCategoryId = null;  // 마지막 선택된 카테고리 ID
+
+    // 1단계 카테고리 선택 시
+    $('#category_1').on('change', function() {
+        var selectedCategory = $(this).val();
+
+        // 이전 하위 카테고리 초기화
+        $('#category_container').empty();
+
+        if (selectedCategory) {
+            lastCategoryId = selectedCategory;
+            $('#category_id').val(getLastCategoryId());
+            loadSubCategories(selectedCategory, 2);
+        }
+    });
+
+    // 하위 카테고리 로드 함수
+    function loadSubCategories(parentCategoryId, level) {
+        var url = contextPath + '/recipe/getSubCategories/' + parentCategoryId;
+
+        $.ajax({
+            url: url,
+            type: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                if (data.length > 0) {
+                    var select = $('<select>')
+                        .attr('name', 'category_' + level)
+                        .attr('id', 'category_' + level);
+
+                    select.append($('<option>').attr('value', '').text(level + '단계분류'));
+
+                    $.each(data, function(index, category) {
+                        select.append($('<option>').attr('value', category.category_id).text(category.name));
+                    });
+
+                    $('#category_container').append(select);
+
+                    select.on('change', function() {
+                        var selectedSubCategory = $(this).val();
+                        if (selectedSubCategory) {
+                            lastCategoryId = selectedSubCategory;
+                            $('#category_id').val(getLastCategoryId());
+                            $('#category_' + (level + 1)).remove();
+                            loadSubCategories(selectedSubCategory, level + 1);
+                        }
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('자식 카테고리 로드 실패:', error);
+            }
+        });
+    }
+
+    // 마지막 선택된 카테고리 ID 반환
+    function getLastCategoryId() {
+        return lastCategoryId;
+    }
+    
+});
+</script>
+
+
 <body>
 	<div class="recipe-form-container">
 	<h2>📖레시피 작성</h2>
@@ -218,6 +292,21 @@
 		        <label for="food_name">음식 이름:</label>
 		        <input type="text" id="food_name" name="food_name" required placeholder="음식 이름 입력">
 		    </div>
+		    
+		    <section id="select_category">
+				<label for="category">카테고리</label>
+				<p>&#8251;카테고리를 정확히 설정하면 조회수가 평균 20% 올라갑니다.</p>
+				<select name="category_1" id="category_1">
+				    <option value="" disabled selected>1단계분류</option>
+				    <c:forEach var="category" items="${categories}">
+				        <option value="${category.category_id}">${category.name}</option>
+				    </c:forEach>
+				</select>
+				
+				<div id="category_container"></div> <!-- 자식 카테고리들을 넣을 div -->
+
+			</section>
+			<input type="number" id="category_id" name="category_id" value="">
 		    
 		    <div>
 		        <label for="req_time">조리 시간:</label>
@@ -319,6 +408,7 @@
     function removeStep(button) {
         button.parentElement.remove(); // 버튼이 속한 div를 삭제
     }
+   
 
     // 폼 데이터 서버로 전송 함수
     document.getElementById('recipeForm').onsubmit = function(event) {
