@@ -1,3 +1,5 @@
+배송지 -> 주문 -> 쿠폰,포인트 or 찜 -> 회원 탈퇴 -> 쇼핑관리 or 리뷰보기 -> 최근본 상품
+
 페이지에따라서 레시피 작성 or 판매등록 [구매자는 판매등록 미표시] - 뼈대완성
 
 레시피 조회수, 좋아요 기능 추가, 닉네임 저장 추가
@@ -10,10 +12,11 @@
 찜 목록
 최근 본 상품[product제한]
 
-회원정보 수정 몇개 삭제 - 작업
-
 - 배송지 관리
 배송지 추가
+
+- 주문 페이지
+DB등록
 
 - 내정보관리
 
@@ -42,57 +45,61 @@ DB수정
 
 DB ID,PW 이름통일
 
-<img src="${contextPath}/resources/images/Shopping/myungran.jpg" alt="명란 젓" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
-<img src="${contextPath}/resources/images/Shopping/doma.jpg" alt="향균도마" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+CREATE TABLE FOODMATE_BUYER_ADDRESS (
+    ADDR_ID NUMBER PRIMARY KEY,  -- 시퀀스 적용할 것
+    BYR_ID VARCHAR2(50) NOT NULL,
+    ADDR_NICKNAME VARCHAR2(10),
+    POSTAL_CODE CHAR(5) NOT NULL,
+    ADDR VARCHAR2(255) NOT NULL,
+    ADDR_DETAIL VARCHAR2(255),
+    TO_NAME VARCHAR2(50) NOT NULL,
+    TO_PHONE_NUM VARCHAR2(15) NOT NULL,
+    IS_BASE_ADDR CHAR(1) DEFAULT 'N' CHECK (IS_BASE_ADDR IN ('Y', 'N')),
+    CONSTRAINT FK_BUYER FOREIGN KEY (BYR_ID)
+REFERENCES FOODMATE_BUYER (BYR_ID)
+ON DELETE CASCADE
+);
 
-	<select id="selectAllMemberList" resultMap="memResult">
-		<![CDATA[
-			select * from t_member order by joinDate desc
-		]]>
-	</select>
 
-	<select id="selectMemberById" resultType="memberVO" parameterType="String">
-		<![CDATA[
-			select * from t_member where id = #{id}
-		]]>
-	</select>
-	
-	<select id="selectMemberByPwd" resultMap="memResult" parameterType="int">
-		<![CDATA[
-			select * from t_member where pwd = #{pwd}
-		]]>
-	</select>
-	
-	<select id="selectName" resultType="String">
-		<![CDATA[
-			select name from t_member where id = 'hong'
-		]]>
-	</select>
-	
-	<select id="selectPwd" resultType="int">
-		<![CDATA[
-			select pwd from t_member where id = 'hong'
-		]]>
-	</select>
-	
-	
-	<update id="updateCustomer" parameterType="memberVO">
-		<![CDATA[
-			update t_member set pwd=#{pwd}, name=#{name}, email=#{email} where id=#{id}
-		]]>
-	</update>
-	
-	<delete id="deleteCustomer" parameterType="String">
-	<![CDATA[
-		delete from t_member where id=#{id}
-	]]>
-	</delete>
-	
-	<select id="loginById" resultType="buyerVO" parameterType="buyerVO">
-	<![CDATA[
-		select * from t_member where id = #{id} and pwd = #{pwd}
-	]]>
-	</select>
+CREATE TABLE FOODMATE_ORDER (
+    ORD_ID NUMBER,
+    BYR_ID VARCHAR2(50),
+    SLR_ID VARCHAR2(50),
+    TOT_PDT_PRICE NUMBER,
+    SHIP_FEE NUMBER,
+    ORD_STAT CHAR(1),
+    CREATE_DATE DATE DEFAULT SYSDATE,
+    DEL_CODE VARCHAR2(50),
+    WAYBILL_NUM VARCHAR2(50),
+    PRIMARY KEY (ORD_ID),  -- 기본키 설정
+    CONSTRAINT FK_ORDER_BUYER FOREIGN KEY (BYR_ID) REFERENCES FOODMATE_BUYER (BYR_ID) ON DELETE SET NULL,  -- 구매자 ID 외래키 (삭제 시 SET NULL)
+    CONSTRAINT FK_ORDER_SELLER FOREIGN KEY (SLR_ID) REFERENCES FOODMATE_SELLER (SLR_ID) ON DELETE SET NULL  -- 판매자 ID 외래키 (삭제 시 SET NULL)
+);
+
+
+CREATE TABLE FOODMATE_ORDER_ADDRESS (
+    ORD_ID NUMBER,  -- 주문 ID (기본키, "주문 테이블"의 주문ID 외래키)
+    POSTAL_CODE CHAR(5),  -- 우편번호
+    ADDR VARCHAR2(255),  -- 배송지 주소
+    ADDR_DETAIL VARCHAR2(255),  -- 배송지 상세 주소
+    TO_NAME VARCHAR2(50),  -- 수령인 성함
+    TO_PHONE_NUM VARCHAR2(15),  -- 수령인 전화번호
+    PRIMARY KEY (ORD_ID),  -- 기본키 설정
+    CONSTRAINT FK_ORDER_ADDRESS FOREIGN KEY (ORD_ID) REFERENCES FOODMATE_ORDER (ORD_ID) ON DELETE CASCADE  -- "주문 테이블"의 주문ID 외래키
+);
 
 INIpayTest
 inicis~1111
+
+		let birthYearInput = document.getElementById("birthyy");
+	    let hiddenSexInput = document.getElementById("hiddenSex");
+	    let sex = "<c:out value='${buyerInfo.getSex()}'/>"; // 서버에서 받은 성별 값
+	    
+	    let birthYear = parseInt(birthYearInput.value);
+	    
+	 // 출생년도 기준으로 hiddenSex 값 설정
+	    if (birthYear >= 2000) {
+	    	hiddenSexInput.value = (sex === "3" || sex === "4") ? sex : "3"; // 기존 값 유지, 기본값 3
+	    } else {
+	    	hiddenSexInput.value = (sex === "1" || sex === "2") ? sex : "1"; // 기존 값 유지, 기본값 1
+	    }

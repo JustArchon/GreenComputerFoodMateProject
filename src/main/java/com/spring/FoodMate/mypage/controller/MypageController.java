@@ -97,8 +97,6 @@ public class MypageController {
 		HttpSession session = request.getSession();
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("buyerInfo", (BuyerDTO) session.getAttribute("buyerInfo"));
-		BuyerDTO buyerInfo = (BuyerDTO) session.getAttribute("buyerInfo");
-		System.out.println(buyerInfo.getPhone_num());
 		return mav;
 	}
 	
