@@ -36,7 +36,25 @@
             <div class="mb-4">
                 <h2>${recipe.food_name}</h2>
             </div>
-
+			
+			<article class="category">
+			    <div id="category_text">
+			        카테고리 : 
+			        <c:choose>
+			            <c:when test="${not empty category}">
+			                <c:forEach var="cat" items="${category}" varStatus="status">
+			                    ${cat.name} 
+			                    <c:if test="${not status.last}"> > </c:if> 
+			                    <!-- 마지막 요소가 아니면 ">" 추가 -->
+			                </c:forEach>
+			            </c:when>
+			            <c:otherwise>
+			                전체
+			            </c:otherwise>
+			        </c:choose>
+			    </div> 
+			</article>
+			
             <!-- 소요시간 -->
             <div class="mb-4">
                 <span class="badge bg-warning text-dark">소요시간: ${recipe.req_time}</span>

@@ -12,14 +12,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.FoodMate.common.UtilMethod;
 import com.spring.FoodMate.member.dto.BuyerDTO;
+import com.spring.FoodMate.product.dto.CategoryDTO;
+import com.spring.FoodMate.recipe.dto.RecipeCategoryDTO;
 import com.spring.FoodMate.recipe.dto.RecipeDTO;
 import com.spring.FoodMate.recipe.dto.RecipeIngredientDTO;
 import com.spring.FoodMate.recipe.dto.RecipeStepDTO;
@@ -86,7 +90,15 @@ public class RecipeControllerImpl implements RecipeController {
          
         HttpSession session = request.getSession();
         Map<String, Object> recipeMap = recipeService.selectRecipeDetail(rcp_id);
+        RecipeDTO recipe = (RecipeDTO)recipeMap.get("recipe");
+        Integer category_id = recipe.getCategory_id();
         
+        ModelAndView mav = new ModelAndView();
+        
+        if(category_id!=null) {
+        	List<RecipeCategoryDTO> categoryStep = recipeService.categoryStep(category_id);
+        	mav.addObject("category", categoryStep);
+        }
 //        // 최근 본 레시피 리스트 갱신
 //        // 지금 세션에 레시피DTO를 다 주고있는거같은데, 세션에는 레시피id만 주고 
 //        RecipeDTO recipeDTO = (RecipeDTO) recipeMap.get("recipeDTO");
@@ -96,7 +108,7 @@ public class RecipeControllerImpl implements RecipeController {
 //        // "최근 본 레시피" 를 jsp include 하고 거기서 알아서 처리하게 하면 어떨까요?
 //        // 지금 이대로면 모든 메서드마다 리센트레시피리스트관련처리를 해야하는데.
         
-        ModelAndView mav = new ModelAndView();
+        
         
         // 업데이트된 recentRecipeList를 jsp에 전달
 //        mav.addObject("recentRecipeList", (List<RecipeDTO>) session.getAttribute("recentRecipeList"));
@@ -179,6 +191,7 @@ public class RecipeControllerImpl implements RecipeController {
 		mav.addObject("showNavbar", true);
 		mav.addObject("title", "FoodMate - 레시피 작성");
 		mav.addObject("body", "/WEB-INF/views" +  UtilMethod.getViewName(request) + ".jsp");
+		mav.addObject("categories", recipeService.getGrandCategoryList());
 		return mav;
 	}
 	
@@ -188,6 +201,7 @@ public class RecipeControllerImpl implements RecipeController {
 	public ResponseEntity<Map<String, Object>> addNewRecipe(
 	    @RequestParam("title") String title,
 	    @RequestParam("food_name") String foodName,
+	    @RequestParam("category_id") Integer category_id,
 	    @RequestParam("req_time") String reqTime,
 	    @RequestParam("description") String description,
 	    @RequestParam(value = "mainimg_path", required = false) MultipartFile mainImg,
@@ -199,11 +213,12 @@ public class RecipeControllerImpl implements RecipeController {
 	    @RequestParam(value = "stepimg_path") List<MultipartFile> stepImages,
 	    HttpSession session
 	) throws Exception {
-
+		System.out.println("가져온카테고리 id 숫자는"+category_id);
+		
 	    // 세션에서 로그인한 사용자 정보 가져오기
 		BuyerDTO BuyerDTO = (BuyerDTO) session.getAttribute("buyerInfo");
 
-	    String byr_Id = BuyerDTO != null ? BuyerDTO.getByr_id() : "unknownUser"; //삼항연산자  조건 ? 조건이 참일때 실행 : 조건이 거짓일때 실행
+	    String byr_id = BuyerDTO != null ? BuyerDTO.getByr_id() : "unknownUser"; //삼항연산자  조건 ? 조건이 참일때 실행 : 조건이 거짓일때 실행
     	                //세션이데이터가잇니? , //있으면 DTO에서 가져와 , / 없으면 "unknownUser" 데이터를 담아
 	    
 	    // 세션에 로그인데이터가 없으면 로그인에러처리를 해야지 왜 unknownUser를 담아주나요? 
@@ -212,9 +227,10 @@ public class RecipeControllerImpl implements RecipeController {
 	    RecipeDTO recipe = new RecipeDTO();
 	    recipe.setTitle(title);
 	    recipe.setFood_name(foodName);
+	    recipe.setCategory_id(category_id);
 	    recipe.setReq_time(reqTime);
 	    recipe.setDescription(description);
-	    recipe.setByr_id(byr_Id);  // 작성자 ID 추가
+	    recipe.setByr_id(byr_id);  // 작성자 ID 추가
 	    
 	    // 레시피 이미지 저장 (메인 이미지)
 	    if (mainImg != null && !mainImg.isEmpty()) {
@@ -223,7 +239,7 @@ public class RecipeControllerImpl implements RecipeController {
 	    }
 
 	    // 레시피 등록 (ID 반환)
-	    int recipeId = recipeService.addRecipe(recipe, byr_Id);  // 레시피 ID를 반환받음
+	    int recipeId = recipeService.addRecipe(recipe);  // 레시피 ID를 반환받음
 
 	    // 재료 객체 생성 후 배치 삽입
 	    List<RecipeIngredientDTO> ingredients = new ArrayList<>();
@@ -241,7 +257,7 @@ public class RecipeControllerImpl implements RecipeController {
 	            uniqueIngredients.add(ingredientsNames.get(i)); // 중복 재료 체크
 	        }
 	    }
-	    System.out.println("재료 리스트: " + ingredients);
+	    
 	    recipeService.insertRecipeIngredients(ingredients);  // 재료 추가
 
 	    // 단계 객체 생성 후 배치 삽입
@@ -264,10 +280,18 @@ public class RecipeControllerImpl implements RecipeController {
 	        }
 	    }
 	    recipeService.insertRecipeSteps(steps);  // 단계 추가
-	    System.out.println("조리법 리스트: " + steps);
+	    
 	    Map<String, Object> response = new HashMap<>();
 	    response.put("message", "레시피 등록에 성공했습니다.");
 	    response.put("status", "success");
 	    return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@RequestMapping(value="/recipe/getSubCategories/{category_id}", method=RequestMethod.GET)
+	@ResponseBody
+	public List<RecipeCategoryDTO> getSubCategories(@PathVariable("category_id") int category_id) throws Exception {
+	    // 데이터베이스에서 category_id에 해당하는 자식 카테고리 가져오기
+	    List<RecipeCategoryDTO> subCategories = recipeService.getChildCategoryList(category_id);
+	    return subCategories;
 	}
 }

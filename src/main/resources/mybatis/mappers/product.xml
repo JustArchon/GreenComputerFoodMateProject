@@ -55,9 +55,9 @@
 	<select id="getCategoryStep" resultType="CategoryDTO">
 	    SELECT CATEGORY_ID, NAME
 	    FROM FOODMATE_PRODUCT_CATEGORY
-	    START WITH CATEGORY_ID = #{categoryId}
+	    START WITH CATEGORY_ID = #{category_id}
 	    CONNECT BY PRIOR PARENT_ID = CATEGORY_ID
-	    ORDER SIBLINGS BY CATEGORY_ID
+	    ORDER BY LEVEL DESC
 	</select>
 	
 	<select id="getNameById" parameterType="int" resultType="String">

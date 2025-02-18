@@ -1,11 +1,10 @@
 package com.spring.FoodMate.recipe.dao;
 
-
-
 import java.util.List;
 
 import org.springframework.dao.DataAccessException;
 
+import com.spring.FoodMate.recipe.dto.RecipeCategoryDTO;
 import com.spring.FoodMate.recipe.dto.RecipeDTO;
 import com.spring.FoodMate.recipe.dto.RecipeIngredientDTO;
 import com.spring.FoodMate.recipe.dto.RecipeStepDTO;
@@ -35,4 +34,9 @@ public interface RecipeDAO {
     List<RecipeIngredientDTO> selectIngredientDetail(int rcp_Id) throws DataAccessException;
     List<RecipeStepDTO> selectStepDetail(int rcp_Id) throws DataAccessException;
     
+    List<RecipeCategoryDTO> getGrandCategoryList();
+	
+	List<RecipeCategoryDTO> getChildCategoryList(int parent_id); 
+	
+	List<RecipeCategoryDTO> getCategoryStep(int category_id);
 }

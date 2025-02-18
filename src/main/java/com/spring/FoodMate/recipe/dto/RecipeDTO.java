@@ -10,7 +10,7 @@ public class RecipeDTO {
     private String title;
     private String mainimg_path;
     private String food_Name;
-    private int category_id;
+    private Integer category_id;
     private String req_time;
     private String description;
     private LocalDateTime create_date;
@@ -32,8 +32,8 @@ public class RecipeDTO {
 	public void setMainimg_path(String mainimg_path) {		this.mainimg_path = mainimg_path;	}
 	public String getFood_name() {		return food_Name;	}
 	public void setFood_name(String food_Name) {		this.food_Name = food_Name;	}
-	public int getCategory_id() {		return category_id;	}
-	public void setCategory_id(int category_id) {		this.category_id = category_id;	}
+	public Integer getCategory_id() {		return category_id;	}
+	public void setCategory_id(Integer category_id) {		this.category_id = category_id;	}
 	public String getReq_time() {		return req_time;	}
 	public void setReq_time(String req_time) {		this.req_time = req_time;	}
 	public String getDescription() {		return description;	}
