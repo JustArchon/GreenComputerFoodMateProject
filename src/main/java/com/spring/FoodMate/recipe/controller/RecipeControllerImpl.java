@@ -187,16 +187,16 @@ public class RecipeControllerImpl implements RecipeController {
 	@RequestMapping(value = "/recipe/addNewRecipe", method = RequestMethod.POST)
 	public ResponseEntity<Map<String, Object>> addNewRecipe(
 	    @RequestParam("title") String title,
-	    @RequestParam("food_Name") String foodName,
-	    @RequestParam("req_Time") String reqTime,
+	    @RequestParam("food_name") String foodName,
+	    @RequestParam("req_time") String reqTime,
 	    @RequestParam("description") String description,
-	    @RequestParam(value = "mainImg_Path", required = false) MultipartFile mainImg,
-	    @RequestParam(value = "ingrd_Name") List<String> ingredientsNames,
-	    @RequestParam(value = "ingrd_Qty") List<Integer> ingredientsQty,
+	    @RequestParam(value = "mainimg_path", required = false) MultipartFile mainImg,
+	    @RequestParam(value = "ingrd_name") List<String> ingredientsNames,
+	    @RequestParam(value = "ingrd_qty") List<Integer> ingredientsQty,
 	    @RequestParam(value = "unit") List<String> ingredientsUnits,
-	    @RequestParam(value = "rcp_Step") List<Integer> stepNumbers,
-	    @RequestParam(value = "step_Desc") List<String> stepDescriptions,
-	    @RequestParam(value = "stepImg_Path") List<MultipartFile> stepImages,
+	    @RequestParam(value = "rcp_step") List<Integer> stepNumbers,
+	    @RequestParam(value = "step_desc") List<String> stepDescriptions,
+	    @RequestParam(value = "stepimg_path") List<MultipartFile> stepImages,
 	    HttpSession session
 	) throws Exception {
 
