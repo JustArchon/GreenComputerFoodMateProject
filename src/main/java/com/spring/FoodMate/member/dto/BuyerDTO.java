@@ -21,6 +21,11 @@ public class BuyerDTO {
 	private String email_domain;
 	private String customMail;
 	private String ssn1;
+	
+	// 회원정보수정
+	private String birthyy;
+	private String birthmm;
+	private String birthdd;
 
 	private MultipartFile profileImage;
 	
@@ -108,5 +113,24 @@ public class BuyerDTO {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+	public String getBirthyy() {
+		return birthyy;
+	}
+	public void setBirthyy(String birthyy) {
+		this.birthyy = birthyy;
+	}
+	public String getBirthmm() {
+		return birthmm;
+	}
+	public void setBirthmm(String birthmm) {
+		this.birthmm = birthmm;
+	}
+	public String getBirthdd() {
+		return birthdd;
+	}
+	public void setBirthdd(String birthdd) {
+		this.birthdd = birthdd;
+	}
+	
 }
 

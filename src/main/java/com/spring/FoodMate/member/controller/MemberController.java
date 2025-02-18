@@ -217,7 +217,35 @@ public class MemberController {
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
 		try {
-            memberService.addBuyer(_buyerDTO);
+			
+			int birthYear = Integer.parseInt(_buyerDTO.getBirthyy());
+			String originalSex = _buyerDTO.getSex();
+			String updatedSex;
+			if (birthYear >= 2000) {
+			    updatedSex = (originalSex == "3" || originalSex == "4") ? originalSex : "3";
+			} else {
+			    updatedSex = (originalSex == "1" || originalSex == "2") ? originalSex : "1";
+			}
+			_buyerDTO.setSex(updatedSex);
+			
+			_buyerDTO.setBirth_6(_buyerDTO.getBirthyy().substring(2,4)+buyerDTO.getBirthmm()+buyerDTO.getBirthdd());
+			
+			_buyerDTO.setEmail(_buyerDTO.getEmail_id() + "@" + _buyerDTO.getEmail_domain());
+			
+			if(_buyerDTO.getPassword() == null || _buyerDTO.getPassword().isEmpty()) {
+				memberService.updateBuyerNotPW(_buyerDTO);
+			}else {
+				if (_buyerDTO.getPassword_confirm() == null || !_buyerDTO.getPassword().equals(_buyerDTO.getPassword_confirm())) {
+					message  = "<script>";
+				    message +=" alert('비밀번호가 일치하지 않습니다.');";
+				    message += " location.href='"+request.getContextPath()+"/mypage/myInfoManage/memberEditForm';";
+				    message += " </script>";
+				    resEntity = new ResponseEntity(message, responseHeaders, HttpStatus.OK);
+					return resEntity;
+			    }
+				memberService.updateBuyer(_buyerDTO);
+			}
+			
 		    
 		    message  = "<script>";
 		    message +=" alert('성공적으로 회원 정보를 수정했습니다.');";

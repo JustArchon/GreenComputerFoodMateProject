@@ -57,7 +57,7 @@ public class MemberService {
 		memberDAO.updateResetSellerPW(sellerVO);
 	}
 	
-	public void addBuyer(BuyerDTO buyerVO) throws Exception{
+	public void addBuyer(BuyerDTO buyerDTO) throws Exception{
 		
 //		String ssn1 = buyerVO.getSsn1();
 //		if (ssn1 != null && (ssn1.equals("1") || ssn1.equals("3"))) {
@@ -68,14 +68,14 @@ public class MemberService {
 //        	buyerVO.setSex("N");
 //        }
 		
-		if(buyerVO.getEmail_domain().equals("custom")) {
-			buyerVO.setEmail_domain(buyerVO.getCustomMail());
+		if(buyerDTO.getEmail_domain().equals("custom")) {
+			buyerDTO.setEmail_domain(buyerDTO.getCustomMail());
 		}
 		
-		String email = buyerVO.getEmail_id() + "@" + buyerVO.getEmail_domain();
-		buyerVO.setEmail(email);
+		String email = buyerDTO.getEmail_id() + "@" + buyerDTO.getEmail_domain();
+		buyerDTO.setEmail(email);
 		
-		memberDAO.insertNewBuyer(buyerVO);
+		memberDAO.insertNewBuyer(buyerDTO);
 	}
 	
 	public void addSeller(SellerDTO sellerVO) throws Exception{
@@ -90,5 +90,13 @@ public class MemberService {
 		sellerVO.setEmail(email);
 		
 		memberDAO.insertNewSeller(sellerVO);
+	}
+	
+	public void updateBuyer(BuyerDTO buyerDTO) throws Exception{
+		memberDAO.updateBuyer(buyerDTO);
+	}
+	
+	public void updateBuyerNotPW(BuyerDTO buyerDTO) throws Exception{
+		memberDAO.updateBuyerNotPW(buyerDTO);
 	}
 }

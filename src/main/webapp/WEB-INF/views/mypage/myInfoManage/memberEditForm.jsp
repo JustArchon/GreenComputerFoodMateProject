@@ -30,7 +30,7 @@
 				<div class="signUp-container">
 				    <div class="row justify-content-start">
 				        <div class="col-md-12">
-				        	<form name="updateBuyer" action="${contextPath}/member/updateBuyer" method="post" onsubmit="return prepareFormSubmission()">
+				        	<form name="newBuyer" action="${contextPath}/member/updateBuyer" method="post">
 				                <div class="mb-3 row">
 				                    <label class="col-sm-3 col-form-label text-end">아이디</label>
 				                    <div class="col-sm-5">
@@ -60,7 +60,6 @@
 				                    <div class="col-sm-6 d-flex align-items-center">
 				                        <input name="gender" type="radio" value="남" class="me-2" disabled> 남
 				                        <input name="gender" type="radio" value="여" class="ms-4 me-2" disabled> 여
-				                        <input type="hidden" name="hiddenSex" id="hiddenSex">
 				                    </div>
 				                </div>
 				                <div class="mb-3 row">
@@ -172,40 +171,6 @@
 	    setGenderFromSSN();
 	    setBirthFromSSN();
 	    setEmail();
-	    
-	    window.prepareFormSubmission = function () {
-	    	console.log("work");
-	        let birthYearInput = document.getElementById("birthyy");
-	        let hiddenSexInput = document.getElementById("hiddenSex");
-	        let sex = "<c:out value='${buyerInfo.getSex()}'/>"; // 서버에서 받은 성별 값
-
-	        let birthYear = parseInt(birthYearInput.value);
-
-	        if (isNaN(birthYear)) {
-	            alert("출생년도를 올바르게 입력하세요.");
-	            return false;
-	        }
-
-	        // 출생년도 기준으로 hiddenSex 값 설정
-	        if (birthYear >= 2000) {
-	            hiddenSexInput.value = (sex === "3" || sex === "4") ? sex : "3";
-	        } else {
-	            hiddenSexInput.value = (sex === "1" || sex === "2") ? sex : "1";
-	        }
-
-	        console.log("폼 제출 전 업데이트된 hiddenSex 값:", hiddenSexInput.value);
-
-	        // 비밀번호 확인 검사
-	        let password = document.querySelector("input[name='password']").value;
-	        let passwordConfirm = document.querySelector("input[name='password_confirm']").value;
-
-	        if (password !== passwordConfirm) {
-	            alert("비밀번호를 동일하게 입력하세요.");
-	            return false;
-	        }
-
-	        return true;
-	    };
 	});
 </script>
 </html>

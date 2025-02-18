@@ -68,4 +68,10 @@ public class MemberDAO {
 	public void insertNewSeller(SellerDTO sellerVO) throws DataAccessException{
 		sqlSession.insert("mapper.member.insertNewSeller",sellerVO);
 	}
+	public void updateBuyer(BuyerDTO buyerDTO) throws DataAccessException{
+		sqlSession.insert("mapper.member.updateBuyer",buyerDTO);
+	}
+	public void updateBuyerNotPW(BuyerDTO buyerDTO) throws DataAccessException{
+		sqlSession.insert("mapper.member.updateBuyerNotPW",buyerDTO);
+	}
 }
