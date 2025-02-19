@@ -85,7 +85,7 @@
 	</select>
     
 	<!-- 레시피, 재료, 조리법 상세 조회 -->
-	<select id="selectRecipeDetail" resultType="recipeDTO" parameterType="String">
+	<select id="selectRecipeDetail" resultType="recipeDTO" parameterType="int">
         SELECT * 
         FROM FOODMATE_RECIPE
         WHERE RCP_ID = #{rcp_id}

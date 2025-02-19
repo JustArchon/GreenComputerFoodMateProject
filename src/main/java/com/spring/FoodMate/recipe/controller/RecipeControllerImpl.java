@@ -70,8 +70,7 @@ public class RecipeControllerImpl implements RecipeController {
         mav.addObject("body", "/WEB-INF/views/recipe/recipe_Edit.jsp");
         return mav;
     }
-    
-    
+
     // 레시피 목록 조회
     @RequestMapping(value = "/recipe/recipe_list", method = RequestMethod.GET)
     public ModelAndView selectRecipeList(HttpServletRequest request) throws Exception {
@@ -101,8 +100,8 @@ public class RecipeControllerImpl implements RecipeController {
         }
 //        // 최근 본 레시피 리스트 갱신
 //        // 지금 세션에 레시피DTO를 다 주고있는거같은데, 세션에는 레시피id만 주고 
-//        RecipeDTO recipeDTO = (RecipeDTO) recipeMap.get("recipeDTO");
-//        RecentRecipeView(rcp_id, recipeDTO, session);
+        RecipeDTO recipeDTO = (RecipeDTO) recipeMap.get("recipe");
+        RecentRecipeView(rcp_id, recipeDTO, session);
 //
 //        // 지금 레시피 상세조회 페이지에 그냥 최근 본 레시피 파트까지 넣은거같은데, 
 //        // "최근 본 레시피" 를 jsp include 하고 거기서 알아서 처리하게 하면 어떨까요?
@@ -111,7 +110,7 @@ public class RecipeControllerImpl implements RecipeController {
         
         
         // 업데이트된 recentRecipeList를 jsp에 전달
-//        mav.addObject("recentRecipeList", (List<RecipeDTO>) session.getAttribute("recentRecipeList"));
+        mav.addObject("recentRecipeList", (List<RecipeDTO>) session.getAttribute("recentRecipeList"));
         
         // 레시피맵에서 필요한거 뿌림
         mav.addObject("recipe", recipeMap.get("recipe"));
@@ -125,45 +124,50 @@ public class RecipeControllerImpl implements RecipeController {
         return mav;
     }
 
-//    private void RecentRecipeView(int rcp_Id, RecipeDTO recipeVO, HttpSession session) {
-//        // 세션에서 '최근 본 레시피' 리스트를 가져옴
-//        List<RecipeDTO> recentRecipeList = (List<RecipeDTO>) session.getAttribute("recentRecipeList");
-//
-//        // 최근 본 레시피가 세션에 존재할 경우
-//        if (recentRecipeList != null) {
-//            boolean alreadyExisted = false;
-//
-//            // 이미 해당 레시피가 최근 본 리스트에 있는지 확인
-//            for (int i = 0; i < recentRecipeList.size(); i++) {
-//                RecipeDTO _recipe = recentRecipeList.get(i);
-//                if (rcp_Id == _recipe.getRcp_id()) {
-//                    alreadyExisted = true;
-//                    // 이미 리스트에 있으면 해당 레시피를 가장 앞에 오도록 이동
-//                    recentRecipeList.remove(i);  // 기존 항목 삭제
-//                    recentRecipeList.add(0, _recipe);  // 최근 항목으로 추가
-//                    break;
-//                }
-//            }
-//
-//            // 최근 본 레시피 리스트에 없다면
-//            if (!alreadyExisted) {
-//                // 리스트가 20개 이상일 경우, 가장 오래된 레시피를 제거
-//                if (recentRecipeList.size() >= 20) {
-//                    recentRecipeList.remove(recentRecipeList.size() - 1);  // 가장 오래된 레시피 제거
-//                }
-//                // 새로운 레시피를 리스트 앞에 추가
-//                recentRecipeList.add(0, recipeVO);
-//            }
-//        } else {
-//            // '최근 본 레시피' 리스트가 세션에 없으면 새로 생성
-//            recentRecipeList = new ArrayList<RecipeDTO>();
-//            recentRecipeList.add(recipeVO);
+    private void RecentRecipeView(int rcp_Id, RecipeDTO recipeVO, HttpSession session) {
+        // 세션에서 '최근 본 레시피' 리스트를 가져옴
+        List<RecipeDTO> recentRecipeList = (List<RecipeDTO>) session.getAttribute("recentRecipeList");
+        
+        // 비상용 코드 최근본 레시피에 불량값이 들어올경우 주석을풀고 쓸것
+//        if(recentRecipeList.get(0) == null) {
+//        	recentRecipeList.clear();
 //        }
-//        
-//        // 세션에 최근 본 레시피 리스트 저장
-//        session.setAttribute("recentRecipeList", recentRecipeList);
-//        session.setAttribute("recentRecipeListNum", recentRecipeList.size());
-//    }
+         
+        // 최근 본 레시피가 세션에 존재할 경우
+        if (recentRecipeList != null) {
+            boolean alreadyExisted = false;
+            
+            // 이미 해당 레시피가 최근 본 리스트에 있는지 확인
+            for (int i = 0; i < recentRecipeList.size(); i++) {
+                RecipeDTO _recipe = recentRecipeList.get(i);
+                if (rcp_Id == _recipe.getRcp_id()) {
+                    alreadyExisted = true;
+                    // 이미 리스트에 있으면 해당 레시피를 가장 앞에 오도록 이동
+                    recentRecipeList.remove(i);  // 기존 항목 삭제
+                    recentRecipeList.add(0, _recipe);  // 최근 항목으로 추가
+                    break;
+                }
+            }
+
+            // 최근 본 레시피 리스트에 없다면
+            if (!alreadyExisted) {
+                // 리스트가 20개 이상일 경우, 가장 오래된 레시피를 제거
+                if (recentRecipeList.size() >= 20) {
+                    recentRecipeList.remove(recentRecipeList.size() - 1);  // 가장 오래된 레시피 제거
+                }
+                // 새로운 레시피를 리스트 앞에 추가
+                recentRecipeList.add(0, recipeVO);
+            }
+        } else {
+            // '최근 본 레시피' 리스트가 세션에 없으면 새로 생성
+            recentRecipeList = new ArrayList<RecipeDTO>();
+            recentRecipeList.add(recipeVO);
+        }
+        
+        // 세션에 최근 본 레시피 리스트 저장
+        session.setAttribute("recentRecipeList", recentRecipeList);
+        session.setAttribute("recentRecipeListNum", recentRecipeList.size());
+    }
 
     //검색 기능 수정 필요
     @RequestMapping(value = "/recipe/search_recipe_list", method = RequestMethod.GET)

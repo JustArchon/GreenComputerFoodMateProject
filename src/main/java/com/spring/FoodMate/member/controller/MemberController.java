@@ -228,24 +228,27 @@ public class MemberController {
 			}
 			_buyerDTO.setSex(updatedSex);
 			
-			_buyerDTO.setBirth_6(_buyerDTO.getBirthyy().substring(2,4)+buyerDTO.getBirthmm()+buyerDTO.getBirthdd());
+			_buyerDTO.setBirth_6(_buyerDTO.getBirthyy().substring(2,4)+_buyerDTO.getBirthmm()+_buyerDTO.getBirthdd());
 			
 			_buyerDTO.setEmail(_buyerDTO.getEmail_id() + "@" + _buyerDTO.getEmail_domain());
 			
-			if(_buyerDTO.getPassword() == null || _buyerDTO.getPassword().isEmpty()) {
-				memberService.updateBuyerNotPW(_buyerDTO);
-			}else {
-				if (_buyerDTO.getPassword_confirm() == null || !_buyerDTO.getPassword().equals(_buyerDTO.getPassword_confirm())) {
-					message  = "<script>";
-				    message +=" alert('비밀번호가 일치하지 않습니다.');";
-				    message += " location.href='"+request.getContextPath()+"/mypage/myInfoManage/memberEditForm';";
-				    message += " </script>";
-				    resEntity = new ResponseEntity(message, responseHeaders, HttpStatus.OK);
-					return resEntity;
-			    }
-				memberService.updateBuyer(_buyerDTO);
-			}
+			if (_buyerDTO.getPassword_confirm() == "" || !_buyerDTO.getPassword().equals(_buyerDTO.getPassword_confirm())) {
+				message  = "<script>";
+			    message +=" alert('비밀번호가 일치하지 않거나, 비밀번호를 입력하지 않았습니다.');";
+			    message += " location.href='"+request.getContextPath()+"/mypage/myInfoManage/memberEditForm';";
+			    message += " </script>";
+			    resEntity = new ResponseEntity(message, responseHeaders, HttpStatus.OK);
+				return resEntity;
+		    }
+			memberService.updateBuyer(_buyerDTO);
+			Map<String, String> loginMap = new HashMap<>();
+			loginMap.put("byr_id", _buyerDTO.getByr_id());
+			loginMap.put("password", _buyerDTO.getPassword());
+			buyerDTO=memberService.login(loginMap);
 			
+			HttpSession session=request.getSession();
+			session=request.getSession();
+			session.setAttribute("buyerInfo", buyerDTO);
 		    
 		    message  = "<script>";
 		    message +=" alert('성공적으로 회원 정보를 수정했습니다.');";

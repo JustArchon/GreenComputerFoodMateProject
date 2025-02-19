@@ -76,6 +76,16 @@ CREATE TABLE FOODMATE_ORDER (
     CONSTRAINT FK_ORDER_SELLER FOREIGN KEY (SLR_ID) REFERENCES FOODMATE_SELLER (SLR_ID) ON DELETE SET NULL  -- 판매자 ID 외래키 (삭제 시 SET NULL)
 );
 
+CREATE TABLE FOODMATE_PAYMENT (
+    PAY_ID NUMBER,  -- 결제 ID (기본키, 시퀀스 사용)
+    ORD_ID NUMBER,  -- 주문 ID (주문 테이블의 주문ID 외래키, 삭제 시 null)
+    PAY_METHOD VARCHAR2(50),  -- 결제 수단 (외래키 없이 결제 수단명 저장)
+    PAY_STATUS CHAR(1),  -- 결제 상태 (0 = 대기중, 1 = 성공, 2 = 취소, 3 = 환불)
+    PAY_DATE DATE,  -- 결제일 (디폴트 SYSDATE)
+    PRIMARY KEY (PAY_ID),  -- 결제 ID를 기본키로 설정
+    CONSTRAINT FK_PAYMENT_ORDER FOREIGN KEY (ORD_ID) REFERENCES FOODMATE_ORDER (ORD_ID) ON DELETE SET NULL  -- 주문 테이블 외래키
+);
+
 
 CREATE TABLE FOODMATE_ORDER_ADDRESS (
     ORD_ID NUMBER,  -- 주문 ID (기본키, "주문 테이블"의 주문ID 외래키)

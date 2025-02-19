@@ -148,19 +148,7 @@
 			       name = #{name},
 			       sex = #{sex},
 			       email = #{email},
-			       birth_6 = #{birth6},
-			       phone_num = #{phone_num}
-		 	       where byr_id=#{byr_id}
-    	]]>
-	</update>
-	
-	<update id="updateBuyerNotPW" parameterType="buyerDTO">
-	    <![CDATA[
-			update foodmate_buyer
-			       set name = #{name},
-			       sex = #{sex},
-			       email = #{email},
-			       birth_6 = #{birth6},
+			       birth_6 = #{birth_6},
 			       phone_num = #{phone_num}
 		 	       where byr_id=#{byr_id}
     	]]>

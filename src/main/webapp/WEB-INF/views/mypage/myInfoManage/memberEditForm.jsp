@@ -30,11 +30,11 @@
 				<div class="signUp-container">
 				    <div class="row justify-content-start">
 				        <div class="col-md-12">
-				        	<form name="newBuyer" action="${contextPath}/member/updateBuyer" method="post">
+				        	<form name="updateBuyer" action="${contextPath}/member/updateBuyer" method="post">
 				                <div class="mb-3 row">
 				                    <label class="col-sm-3 col-form-label text-end">아이디</label>
 				                    <div class="col-sm-5">
-				                        <input name="id" type="text" class="form-control" placeholder="id" value="${buyerInfo.getByr_id()}" disabled>
+				                        <input name="byr_id" type="text" class="form-control" placeholder="id" value="${buyerInfo.getByr_id()}" readonly>
 				                    </div>
 				                </div>
 				                <div class="mb-3 row">
@@ -97,18 +97,18 @@
 								    <div class="col-sm-8">
 								        <div class="d-flex align-items-center">
 								            <!-- 이메일 입력 -->
-								            <input type="text" id="email_id" name="emailId" maxlength="50" class="form-control me-2" placeholder="email" required>
+								            <input type="text" id="email_id" name="email_id" maxlength="50" class="form-control me-2" placeholder="email" required>
 								            <div class="col-sm-1 d-flex justify-content-center align-items-center me-2" style="width: auto; padding: 0 5px;">
 			            							<span>@</span>
 			        						</div>
-											<input type="text" id="email_domain" name="emailDomain" maxlength="50" class="form-control" placeholder="email" required>
+											<input type="text" id="email_domain" name="email_domain" maxlength="50" class="form-control" placeholder="email" required>
 								        </div>
 								    </div>
 								</div>
 				                <div class="mb-3 row">
 				                    <label class="col-sm-3 col-form-label text-end">전화번호</label>
 				                    <div class="col-sm-5">
-				                        <input name="phone" type="text" class="form-control" placeholder="phone" value="${buyerInfo.getPhone_num()}" required>
+				                        <input name="phone_num" type="text" class="form-control" placeholder="phone" value="${buyerInfo.getPhone_num()}" required>
 				                    </div>
 				                </div>
 									<div class="mb-3 row">
@@ -171,6 +171,15 @@
 	    setGenderFromSSN();
 	    setBirthFromSSN();
 	    setEmail();
+	});
+	
+	document.getElementById("updateBuyer").addEventListener("submit", function() {
+	    let monthSelect = document.getElementById("birthmm");
+	    let selectedValue = monthSelect.value;
+	    
+	    if (selectedValue.length === 1) {
+	        monthSelect.value = "0" + selectedValue; // 값 수정
+	    }
 	});
 </script>
 </html>

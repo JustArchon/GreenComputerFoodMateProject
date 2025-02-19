@@ -95,8 +95,4 @@ public class MemberService {
 	public void updateBuyer(BuyerDTO buyerDTO) throws Exception{
 		memberDAO.updateBuyer(buyerDTO);
 	}
-	
-	public void updateBuyerNotPW(BuyerDTO buyerDTO) throws Exception{
-		memberDAO.updateBuyerNotPW(buyerDTO);
-	}
 }
