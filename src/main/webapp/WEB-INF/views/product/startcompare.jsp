@@ -47,7 +47,7 @@
 	border-radius: 10px;
 }
 
-#wrap_cmp .article_container {
+#wrap_cmp .section_container {
     background-color: white;
     width: 1200px;
     margin: 0px auto;
@@ -143,6 +143,10 @@
     background-color: #d9791b;
 }
 
+.product-qty {
+	width: 30px;
+}
+
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -172,10 +176,11 @@ $(document).on('click', '.rcp_Mtrs', function() {
                 '<div>' +
                     '<span class="pdt_Name">' + product.name + '</span><br>' +
                     '<span class="pdt_Selr">판매자 : ' + product.slr_nickname + '</span><br>' +
-                    '<span class="pdt_Category">상품번호 : ' + product.pdt_id + '</span>' +
+                    '<span class="pdt_Id">상품번호 : ' + product.pdt_id + '</span><br>' +
+                    '<span class="pdt_Rank">' + '⭐⭐⭐⭐⭐' + '(후기 135)' + '</span><br>' +
                 '</div>' +
                 '<div>' +
-                    product.price + '원 ' +
+                	'<span class="pdt_Price">' + product.price + '</span>원 ' +
                     '<button class="pdt_chk" data-category-id="' + product.category_id + '">담기</button>' +
                 '</div>' +
             '</article>';
@@ -191,21 +196,79 @@ $(document).on('click', '.rcp_Mtrs', function() {
         }
     });
 });
+
+$(document).on('click', '.pdt_chk', function() {
+    var categoryId = $(this).data('category-id'); // 상품의 category_id 가져오기
+    var productId = $(this).closest('.pdt_row').find('.pdt_Id').text().replace("상품번호 : ", "").trim();
+    var productName = $(this).closest('.pdt_row').find('.pdt_Name').text(); // 상품 이름
+    var price = parseInt($(this).closest('.pdt_row').find('.pdt_Price').text().trim());
+
+    var existingItem = $("#" + categoryId).find('.rcp_Mtrs_Product input[name="product_id"][value="' + productId + '"]').closest('.rcp_Mtrs_Product');
+    console.log('존재하면 이 숫자가 0보다 큼:', existingItem.length);
+    
+    if (existingItem.length > 0) {
+        // 같은 상품이 이미 존재하면 수량 증가
+        var qtyInput = existingItem.find('.product-qty');
+        qtyInput.val(parseInt(qtyInput.val()) + 1);
+
+        // 총 가격 업데이트
+        updateTotalPrice(existingItem, price);
+    } else {
+        // 새로운 상품 추가
+        var newItem = `
+        	<div class="rcp_Mtrs_Product">
+	            <div class="rcp_Mtrs_Cart">` + productName + `</div>
+	            <div class="rcp_Mtrs_Cart_Amount">
+	                <input type="number" class="product-qty" value="1" min="1">
+	                <button class="remove-item">X</button>
+	                <div class="total-price">총가격 : ` + price + `원</div>
+	            </div>
+	            <input type="hidden" name="product_id" value='` + productId + `'>
+	            <input type="hidden" name="price" value='` + price + `'>
+            </div>
+        `;
+        $("#" + categoryId).append(newItem);
+    }
+});
+
+// 총 가격 업데이트 함수
+function updateTotalPrice(item, price) {
+    var qty = parseInt(item.find('.product-qty').val());
+    var totalPriceElem = item.find('.total-price');
+    totalPriceElem.text("총가격 : " + (price * qty) + "원");
+}
+
+// 수량 인풋 변경 시 총 가격 업데이트
+$(document).on('input', '.product-qty', function() {
+    var item = $(this).closest('.rcp_Mtrs_Product');
+    var price = parseInt(item.find('input[name="price"]').val());
+    updateTotalPrice(item, price);
+});
+
+// 삭제 버튼 클릭 시 해당 상품 삭제
+$(document).on('click', '.remove-item', function() {
+    $(this).closest('.rcp_Mtrs_Product').remove();
+});
+
+
+
+
+
 </script>
 
 
 </head>
 <body>
-<div id="wrap_cmp">
-	<div class="article_container">
-		<article id="rcp_intro">
-			<section id="rcp_imgAndName">
+<main id="wrap_cmp">
+	<div class="section_container">
+		<section id="rcp_intro">
+			<article id="rcp_imgAndName">
 				<img class="rcp_img" src="${contextPath}/resources/images/<c:out value='${recipe.mainimg_path}'/>">
 				<br><c:out value="${recipe.title}" />
-			</section>
-		</article>
+			</article>
+		</section>
 		
-		<article id="rcp_step">
+		<section id="rcp_step">
 		    <div>
 		        <span class="step-number">1</span> 이건중요한게아니니가<br>
 		    </div>
@@ -215,16 +278,16 @@ $(document).on('click', '.rcp_Mtrs', function() {
 		    <div>
 		        <span class="step-number">3</span> ㅇㅋ?<br>
 		    </div>
-		</article>
+		</section>
 	</div>
 
-	<div class="article_container">
-		<div id="rcp_spread">
+	<div class="section_container">
+		<section id="rcp_spread">
 		레시피 펼치기⏬ 이것도 나중에 만들어
-		</div>
+		</section>
 	</div>
 
-	<div class="article_container">
+	<div class="section_container">
 		<section id="cmp_pdt">
 			<article class="pdt_row">
 				<div>
@@ -317,6 +380,9 @@ $(document).on('click', '.rcp_Mtrs', function() {
 	align-items: center
 }
 
+.Mtrs {
+	border-bottom: 1px solid black !important; 
+}
 
 .Mtrs .rcp_Mtrs_Cart_Amount div:nth-child(2) {
   font-family: "Noto Sans KR", serif;
@@ -366,13 +432,6 @@ $(document).on('click', '.rcp_Mtrs', function() {
 				            <c:out value="${ingredient.unit}" />
 				            <input type="hidden" name="category_id" value="<c:out value='${ingredient.category_id}' />">
 				        </button>
-<!-- 				        <div class="rcp_Mtrs_Cart"> -->
-<!-- 				            여기는 선택한 상품이 담기는 부분 -->
-<!-- 				        </div> -->
-<!-- 				        <div class="rcp_Mtrs_Cart_Amount"> -->
-<!-- 				            <div>수량 - 1 +</div> -->
-<!-- 				            <div>총가격 : n원</div>  -->
-<!-- 				        </div> -->
 				    </div>
 				</c:forEach>
 
@@ -381,7 +440,7 @@ $(document).on('click', '.rcp_Mtrs', function() {
 			<button class="cart-button" onclick="window.location.href='${contextPath}/cart/cartForm'">장바구니에 담기</button>
 		</section>
 	</div>
-</div>
+</main>
 
 </body>
 </html>

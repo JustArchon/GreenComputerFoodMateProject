@@ -219,7 +219,7 @@ public class ProductControllerImpl implements ProductController {
 		}
 		
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("common/layout");
+		mav.setViewName("common/layout_noBootStrap");
 		mav.addObject("showNavbar", true);
 		mav.addObject("title", "재료 비교");
 		mav.addObject("body", "/WEB-INF/views" + UtilMethod.getViewName(request) + ".jsp");
@@ -243,7 +243,5 @@ public class ProductControllerImpl implements ProductController {
         } catch (Exception e) {
             throw new UnhandledException("상품 비교하려다 오류발생", e);
         }
-		
 	}
-	
 }
