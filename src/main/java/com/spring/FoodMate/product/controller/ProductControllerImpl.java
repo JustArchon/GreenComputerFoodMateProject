@@ -1,7 +1,9 @@
 package com.spring.FoodMate.product.controller;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,15 +22,21 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.spring.FoodMate.common.SessionDTO;
 import com.spring.FoodMate.common.UtilMethod;
+import com.spring.FoodMate.common.exception.UnhandledException;
 import com.spring.FoodMate.product.dto.CategoryDTO;
 import com.spring.FoodMate.product.dto.ProductDTO;
 import com.spring.FoodMate.product.exception.ProductException;
 import com.spring.FoodMate.product.service.ProductService;
+import com.spring.FoodMate.recipe.dto.RecipeDTO;
+import com.spring.FoodMate.recipe.exception.RecipeException;
+import com.spring.FoodMate.recipe.service.RecipeService;
 
 @Controller
 public class ProductControllerImpl implements ProductController {
 	@Autowired
 	private ProductService productService;
+	@Autowired
+	private RecipeService recipeService;
 	
 	// nav 의 "식료품" 눌렀을 때나 식재료 검색했을 때 
 	@Override
@@ -46,22 +54,6 @@ public class ProductControllerImpl implements ProductController {
 	    // Service 에 keyword(검색어)를 주고 해당하는 상품VO들의 List를 받아옴.
 	    // 검색어 없을땐 전체 상품리스트 갖고옴.
 	    return mav;
-	}
-	
-	@Override
-	@RequestMapping(value="/mypage_seller/ms_pdtlist", method=RequestMethod.GET)
-	public ModelAndView msPdtList(HttpServletRequest request, HttpSession session) throws Exception {
-		    SessionDTO sellerInfo = (SessionDTO)session.getAttribute("sessionDTO");
-		    List<ProductDTO> searchList = productService.ms_pdtList(sellerInfo.getUserId());
-		    
-		    ModelAndView mav = new ModelAndView();
-            mav.setViewName("common/layout");
-            mav.addObject("title", "FoodMate-상품 검색창");
-            mav.addObject("showNavbar", true);
-            mav.addObject("body", "/WEB-INF/views" + UtilMethod.getViewName(request) + ".jsp");
-		    mav.addObject("list", searchList);
-		    // Service 에 판매자 ID를 주고 해당하는 상품VO들의 List를 받아옴.
-		    return mav;
 	}
 	
 	@Override
@@ -119,7 +111,7 @@ public class ProductControllerImpl implements ProductController {
         out = response.getWriter();
         out.println("<script type='text/javascript'>");
         out.println("alert('상품이 추가되었습니다. 상품 관리 페이지로 이동합니다.');");
-        out.println("window.location.href='"+request.getContextPath()+"/mypage_seller/ms_pdtlist';");
+        out.println("window.location.href='" + request.getContextPath() + "/mypage_seller/mypage_sell_productlist';");
         out.println("</script>");
 	}
 	
@@ -209,6 +201,7 @@ public class ProductControllerImpl implements ProductController {
         return "redirect:/mypage_seller/ms_pdtlist";
 	}
 	
+	@Override
 	@RequestMapping(value="/getSubCategories/{category_id}", method=RequestMethod.GET)
 	@ResponseBody
 	public List<CategoryDTO> getSubCategories(@PathVariable("category_id") int category_id) throws Exception {
@@ -216,15 +209,41 @@ public class ProductControllerImpl implements ProductController {
 	    List<CategoryDTO> subCategories = productService.getChildCategoryList(category_id);
 	    return subCategories;
 	}
-
-	@RequestMapping(value="/product/compare", method=RequestMethod.GET)
-	public ModelAndView compare(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String viewName = UtilMethod.getViewName(request);
+	
+	@Override
+	@RequestMapping(value="/product/startcompare", method=RequestMethod.GET)
+	public ModelAndView startcompare(@RequestParam(value = "rcp_id") int rcp_id, HttpServletRequest request) throws Exception {
+		RecipeDTO recipe = recipeService.recipe(rcp_id); 
+		if(recipe == null) {
+			throw new RecipeException(301); // 301은 검색한 레시피가 DB에 존재하지않는다는뜻임
+		}
+		
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("common/layout");
 		mav.addObject("showNavbar", true);
 		mav.addObject("title", "재료 비교");
-		mav.addObject("body", "/WEB-INF/views" + viewName + ".jsp");
+		mav.addObject("body", "/WEB-INF/views" + UtilMethod.getViewName(request) + ".jsp");
+		mav.addObject("recipe", recipe);
+		mav.addObject("ingredients", recipeService.getRecipeIngrd(rcp_id));
 		return mav;
 	}
+	
+	@Override
+	@RequestMapping(value="/product/categorycompare", method=RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> categorycompare(@RequestParam("category_id") Integer category_id) {
+		System.out.println("비교시작한다");
+		try {
+			List<ProductDTO> products = productService.searchList(null, category_id, null);
+		    Map<String, Object> response = new HashMap<>();
+		    response.put("products", products);
+		    return response;
+        } catch (ProductException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new UnhandledException("상품 비교하려다 오류발생", e);
+        }
+		
+	}
+	
 }

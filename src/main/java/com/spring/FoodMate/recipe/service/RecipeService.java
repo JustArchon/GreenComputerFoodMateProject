@@ -25,8 +25,13 @@ public interface RecipeService {
     // 레시피 목록 아이디 조회
     List<RecipeDTO> selectRecipeListByrID(String byr_id) throws Exception;
     
+    // 레시피 하나 조회 (레시피id 넣었을때 그 레시피가 있는지 확인만하는용도임)
+    RecipeDTO recipe(int rcp_id) throws Exception;
+    
     //레시피 상세 조회
     Map<String, Object> selectRecipeDetail(int rcp_id) throws Exception;
+    
+    List<RecipeIngredientDTO> getRecipeIngrd(int rcp_id);
     
     List<RecipeCategoryDTO> getGrandCategoryList();
 	

@@ -62,16 +62,17 @@ public class RecipeDAOImpl implements RecipeDAO {
     	return recipeDTO;
     }
 	
+    // 레시피 id 넣으면 해당하는 레시피재표 테이블의 모든 행 DTO에 넣어서 리스트로 반환
 	@Override
 	public List<RecipeIngredientDTO> selectIngredientDetail(int rcp_id) throws DataAccessException {
-		List<RecipeIngredientDTO> ingredientVO = sqlSession.selectList("mapper.recipe.selectIngredientDetail",rcp_id);
-		return ingredientVO;
+		List<RecipeIngredientDTO> ingredientDTO = sqlSession.selectList("mapper.recipe.selectIngredientDetail", rcp_id);
+		return ingredientDTO;
 	}
 	
 	@Override
 	public List<RecipeStepDTO> selectStepDetail(int rcp_id) throws DataAccessException {
-		List<RecipeStepDTO> stepVO = sqlSession.selectList("mapper.recipe.selectStepDetail",rcp_id);
-		return stepVO;
+		List<RecipeStepDTO> stepDTO = sqlSession.selectList("mapper.recipe.selectStepDetail", rcp_id);
+		return stepDTO;
 	}
     
 	@Override

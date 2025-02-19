@@ -59,14 +59,14 @@ public class MemberService {
 	
 	public void addBuyer(BuyerDTO buyerDTO) throws Exception{
 		
-//		String ssn1 = buyerVO.getSsn1();
-//		if (ssn1 != null && (ssn1.equals("1") || ssn1.equals("3"))) {
-//			buyerVO.setSex("M");
-//        } else if (ssn1 != null && (ssn1.equals("2") || ssn1.equals("4"))) {
-//        	buyerVO.setSex("F");
-//        } else {
-//        	buyerVO.setSex("N");
-//        }
+		String ssn1 = buyerDTO.getSsn1();
+		if (ssn1 != null && (ssn1.equals("1") || ssn1.equals("3"))) {
+			buyerDTO.setSex("M");
+        } else if (ssn1 != null && (ssn1.equals("2") || ssn1.equals("4"))) {
+        	buyerDTO.setSex("F");
+        } else {
+        	buyerDTO.setSex("N");
+        }
 		
 		if(buyerDTO.getEmail_domain().equals("custom")) {
 			buyerDTO.setEmail_domain(buyerDTO.getCustomMail());
@@ -78,18 +78,18 @@ public class MemberService {
 		memberDAO.insertNewBuyer(buyerDTO);
 	}
 	
-	public void addSeller(SellerDTO sellerVO) throws Exception{
+	public void addSeller(SellerDTO sellerDTO) throws Exception{
 		
-		sellerVO.setBusiness_no(sellerVO.getBsnum1() + sellerVO.getBsnum2() + sellerVO.getBsnum3());
+		sellerDTO.setBusiness_no(sellerDTO.getBsnum1() + sellerDTO.getBsnum2() + sellerDTO.getBsnum3());
 		
-		if(sellerVO.getEmail_domain().equals("custom")) {
-			sellerVO.setEmail_domain(sellerVO.getCustomMail());
+		if(sellerDTO.getEmail_domain().equals("custom")) {
+			sellerDTO.setEmail_domain(sellerDTO.getCustomMail());
 		}
 		
-		String email = sellerVO.getEmail_id() + "@" + sellerVO.getEmail_domain();
-		sellerVO.setEmail(email);
+		String email = sellerDTO.getEmail_id() + "@" + sellerDTO.getEmail_domain();
+		sellerDTO.setEmail(email);
 		
-		memberDAO.insertNewSeller(sellerVO);
+		memberDAO.insertNewSeller(sellerDTO);
 	}
 	
 	public void updateBuyer(BuyerDTO buyerDTO) throws Exception{

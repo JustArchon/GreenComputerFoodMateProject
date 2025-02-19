@@ -27,12 +27,12 @@ public interface RecipeDAO {
     List<RecipeDTO> selectRecipeList() throws Exception;
     
     // 레시피 아이디 목록 조회
-    List<RecipeDTO> selectRecipeListByrID(String byr_Id) throws Exception;
+    List<RecipeDTO> selectRecipeListByrID(String byr_id) throws Exception;
     
     // 레시피 상세 조회
-    RecipeDTO selectRecipeDetail(int rcp_Id) throws Exception;
-    List<RecipeIngredientDTO> selectIngredientDetail(int rcp_Id) throws DataAccessException;
-    List<RecipeStepDTO> selectStepDetail(int rcp_Id) throws DataAccessException;
+    RecipeDTO selectRecipeDetail(int rcp_id) throws Exception;
+    List<RecipeIngredientDTO> selectIngredientDetail(int rcp_id) throws DataAccessException;
+    List<RecipeStepDTO> selectStepDetail(int rcp_id) throws DataAccessException;
     
     List<RecipeCategoryDTO> getGrandCategoryList();
 	

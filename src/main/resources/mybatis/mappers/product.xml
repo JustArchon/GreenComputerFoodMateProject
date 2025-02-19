@@ -12,8 +12,8 @@
            WHERE NAME LIKE '%' || #{keyword} || '%'
        ]]>
 	</select>
-
-   <!-- 전체 상품 중 공개 리스트 조회 -->
+	
+	<!-- 전체 상품 중 공개 리스트 조회 -->
    <select id="alllist" resultType="ProductDTO">
 	    SELECT * FROM FOODMATE_PRODUCT_VIEW
 	    WHERE STATUS = 'Y'
@@ -30,7 +30,28 @@
 	    SELECT * FROM FOODMATE_PRODUCT_VIEW
 	    WHERE SLR_ID = #{slr_id}
 	</select>
-
+	
+	<!-- 조건에 따른 상품 검색 기능 실험중 -->
+	<select id="searchlist2" resultType="ProductDTO" parameterType="map">
+	    <![CDATA[
+	        SELECT * 
+	        FROM FOODMATE_PRODUCT_VIEW
+	        WHERE STATUS = 'Y'
+	    ]]>
+	    
+	    <if test="slr_id != null and slr_id != ''">
+	        <![CDATA[ AND SELLER_ID = #{seller_id} ]]>
+	    </if>
+	    
+	    <if test="category_id != null">
+	        <![CDATA[ AND CATEGORY_ID = #{category_id} ]]>
+	    </if>
+	    
+	    <if test="keyword != null and keyword != ''">
+	        <![CDATA[ AND NAME LIKE '%' || #{keyword} || '%' ]]>
+	    </if>
+	</select>
+	
 	<!-- 특정 상품 조회 -->
 	<select id="getPdt" resultType="ProductDTO" parameterType="int">
 		SELECT * FROM FOODMATE_PRODUCT_VIEW

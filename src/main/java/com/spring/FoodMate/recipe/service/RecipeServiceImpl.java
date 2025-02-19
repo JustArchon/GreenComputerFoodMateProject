@@ -49,7 +49,7 @@ public class RecipeServiceImpl implements RecipeService {
             recipeDAO.insertRecipeSteps(step);  // 단계 삽입
         }
     }
-
+   
     // 레시피 목록 조회
     @Override
     public List<RecipeDTO> selectRecipeList() throws Exception {
@@ -61,7 +61,12 @@ public class RecipeServiceImpl implements RecipeService {
         return recipeDAO.selectRecipeListByrID(byr_id);  // 레시피 목록 조회
     }
     
- 
+    @Override
+    // 레시피 하나 조회 (레시피id 넣었을때 그 레시피가 있는지 확인만하는용도임)
+    public RecipeDTO recipe(int rcp_id) throws Exception {
+    	return recipeDAO.selectRecipeDetail(rcp_id);
+    }
+
     // 레시피 상세 조회
     @Override
     public Map<String, Object> selectRecipeDetail(int rcp_id) throws Exception {
@@ -77,6 +82,18 @@ public class RecipeServiceImpl implements RecipeService {
         recipeDetail.put("steps", stepList);
 
         return recipeDetail;
+    }
+    
+    // 레시피 id 입력후 재료정보들 뽑아옴
+    @Override
+    public List<RecipeIngredientDTO> getRecipeIngrd(int rcp_id) {
+    	try {
+    		return recipeDAO.selectIngredientDetail(rcp_id);
+    	} catch (DBException e) {
+    		throw new RecipeException("RecipeServiceImpl에서 DB예외 전달.", e);
+    	} catch (Exception e) {
+    		throw new RecipeException("RecipeServiceImpl.getRecipeIngrd 에러!", e);
+    	}
     }
     
     // 레시피카테고리 최상위만 가져옴(처음에 보여줄 카테고리 처리용)
