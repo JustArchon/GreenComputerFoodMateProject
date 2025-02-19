@@ -5,6 +5,7 @@ public class RecipeException extends RuntimeException {
 	
 	private String errorMessage;
 	private int errorCode;
+	// 301 : 검색한 rcp_id가 DB에 존재하지 않음
 	
 	public String message() {
 		return errorMessage;

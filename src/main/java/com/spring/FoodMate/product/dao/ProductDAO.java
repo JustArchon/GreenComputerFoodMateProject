@@ -1,6 +1,8 @@
 package com.spring.FoodMate.product.dao;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,7 @@ public class ProductDAO {
 		}
 	}
 	
+	// 판매자 당사자가 자기 상품 다 볼때 쓰는거. status 구분 안함.
 	public List<ProductDTO> pdtListBySlrId(String slr_id) {
 		try {
 			List<ProductDTO> searchList = sqlSession.selectList("mapper.product.listBySlrSelf", slr_id);
@@ -42,6 +45,19 @@ public class ProductDAO {
 			throw new DBException("ProductDAO.pdtListBySlrId 에러! 판매자 id : '" + slr_id + "'", e);
 		}
 	}
+	
+	// 판매자 id, 카테고리 id, 검색어로 검색하는거
+	public List<ProductDTO> searchList(String slr_id, Integer category_id, String keyword) {
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("slr_id", slr_id);
+        paramMap.put("category_id", category_id);
+        paramMap.put("keyword", keyword);
+        try {
+            return sqlSession.selectList("mapper.product.searchlist2", paramMap);
+        } catch (DataAccessException e) {
+        	throw new DBException("ProductDAO.searchList 에러! params: " + paramMap, e);
+		}
+    }
 	
 	public ProductDTO select1Pdt(int pdt_id) {
 		try {

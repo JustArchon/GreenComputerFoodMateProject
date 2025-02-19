@@ -132,7 +132,7 @@ public class UtilMethod {
 	
 	public static String saveProfileImage(MultipartFile file, String id) throws Exception {
 	    // 저장할 디렉토리 경로 설정
-		String uploadDir = imagePath3 + "/profile";
+		String uploadDir = imagePath + "/profile";
 
 	    File dir = new File(uploadDir);
 	    // 디렉토리가 존재하지 않으면 생성

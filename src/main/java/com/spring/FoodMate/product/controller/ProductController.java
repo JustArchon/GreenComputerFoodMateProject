@@ -16,8 +16,6 @@ public interface ProductController {
 
     ModelAndView pdtList(String keyword, HttpServletRequest request) throws Exception;
 
-    ModelAndView msPdtList(HttpServletRequest request, HttpSession session) throws Exception;
-
     ModelAndView pdtDetail(int pdt_id, HttpServletRequest request, HttpServletResponse response) throws Exception;
 
     ModelAndView pdtAddForm(HttpServletRequest request, HttpServletResponse response) throws Exception;
@@ -32,5 +30,5 @@ public interface ProductController {
     
     List<CategoryDTO> getSubCategories(int category_id) throws Exception;
 
-    ModelAndView compare(HttpServletRequest request, HttpServletResponse response) throws Exception;
+    ModelAndView startcompare(int rcp_id, HttpServletRequest request) throws Exception;
 }

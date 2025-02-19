@@ -30,6 +30,16 @@ public class ProductService {
 		}
 	}
 	
+	public List<ProductDTO> searchList(String slr_id, Integer category_id, String keyword) {
+		try {
+			return productDAO.searchList(slr_id, category_id, keyword);
+		} catch (DBException e) {
+			throw new ProductException("ProductService에서 DB예외 전달.", e);
+		} catch (Exception e) {
+			throw new ProductException("ProductService.searchList 에러! 값 전해주기 귀찮다", e);
+		}
+	}
+	
 	public List<ProductDTO> ms_pdtList(String slr_id) {
 		try {
 			return productDAO.pdtListBySlrId(slr_id);
