@@ -1,6 +1,5 @@
 package com.spring.FoodMate.mypage.controller;
 
-import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,13 +15,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.multipart.MultipartFile;
 
-import com.spring.FoodMate.common.UtilMethod;
 import com.spring.FoodMate.member.dto.BuyerDTO;
-import com.spring.FoodMate.member.service.MemberService;
 import com.spring.FoodMate.mypage.dto.DeliveryDTO;
-import com.spring.FoodMate.mypage.dto.ProfileDTO;
 import com.spring.FoodMate.mypage.service.DeliveryService;
 
 

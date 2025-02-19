@@ -19,6 +19,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.FoodMate.cart.dto.CartDTO;
 import com.spring.FoodMate.common.UtilMethod;
+import com.spring.FoodMate.member.dto.BuyerDTO;
+import com.spring.FoodMate.mypage.service.DeliveryService;
 import com.spring.FoodMate.order.service.OrderService;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -28,6 +30,8 @@ public class OrderController {
 	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 	@Autowired
 	OrderService orderService; 
+	@Autowired
+	DeliveryService deliveryService;
 	
 	private final Dotenv dotenv = Dotenv.load();
     private final String PimpUid = dotenv.get("PORTONE_IMP_UID");
@@ -37,6 +41,12 @@ public class OrderController {
 		String viewName = UtilMethod.getViewName(request);
 		HttpSession session = request.getSession();
 		session.setAttribute("action", action);
+		BuyerDTO buyerInfo = (BuyerDTO) session.getAttribute("buyerInfo"); // 세션에서 buyerInfo 가져오기
+		String byr_id = null;
+
+		if (buyerInfo != null) {
+		    byr_id = buyerInfo.getByr_id(); // byr_id 값 추출
+		}
 		
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("result",result);
@@ -45,6 +55,9 @@ public class OrderController {
 		mav.addObject("showNavbar", true);
 		mav.addObject("title", "푸드 메이트");
 		mav.addObject("body", "/WEB-INF/views" + viewName + ".jsp");
+		
+		mav.addObject("deliveryList", deliveryService.getdeliveryList(byr_id)); // 배송지
+		mav.addObject("buyerInfo", (BuyerDTO) session.getAttribute("buyerInfo"));
 		if (cartIds != null && !cartIds.isEmpty()) {
 	        List<Integer> cartIdList = Arrays.stream(cartIds.split(","))
 	                                         .map(Integer::parseInt)

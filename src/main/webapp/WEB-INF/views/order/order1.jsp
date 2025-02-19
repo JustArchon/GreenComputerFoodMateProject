@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
+<%@ page import="java.text.NumberFormat" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -319,6 +320,32 @@ function execDaumPostcode() {
 	    }
 	  }).open();
 	}
+	// 
+	document.getElementById("delivery-confirm").addEventListener("change", function() {
+	    let selectedOption = this.options[this.selectedIndex]; // 선택한 옵션
+	    let zipcodeInput = document.getElementById("zipcode");
+	    let roadAddressInput = document.getElementById("road-address");
+	    let detailAddressInput = document.getElementById("detail-address");
+	
+	    if (selectedOption.value === "custom") {
+	        // 직접 입력 선택 시 빈칸 유지하고 활성화
+	        zipcodeInput.value = "";
+	        roadAddressInput.value = "";
+	        detailAddressInput.value = "";
+	        zipcodeInput.readOnly = false;
+	        roadAddressInput.readOnly = false;
+	        detailAddressInput.readOnly = false;
+	    } else {
+	        // 선택된 주소 자동 입력 후 읽기 전용 처리
+	        zipcodeInput.value = selectedOption.getAttribute("data-zipcode");
+	        roadAddressInput.value = selectedOption.getAttribute("data-road-address");
+	        detailAddressInput.value = selectedOption.getAttribute("data-detail-address");
+	        
+	        zipcodeInput.readOnly = true;
+	        roadAddressInput.readOnly = true;
+	        detailAddressInput.readOnly = true;
+	    }
+	});
 </script>
 <body>
     <div class="container">
@@ -365,19 +392,26 @@ function execDaumPostcode() {
             <div class="form-group">
                 <label for="delivery-confirm">배송지 확인</label>
                 <select id="delivery-confirm">
-                    <option value="same">주문자 정보와 동일</option>
                     <option value="custom">직접 입력</option>
+                        <c:forEach var="delivery" items="${deliveryList}">
+        				<option value="${delivery.id}" 
+				                data-zipcode="${delivery.zipcode}" 
+				                data-road-address="${delivery.roadAddress}" 
+				                data-detail-address="${delivery.detailAddress}">
+				            ${delivery.roadAddress} (${delivery.detailAddress})
+				        </option>
+				    </c:forEach>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="recipient-name">받으실 분</label>
-                <input type="text" id="recipient-name" placeholder="받으실 분의 이름">
+                <input type="text" id="recipient-name" placeholder="받으실 분의 이름" >
             </div>
 
             <div class="form-group">
                 <label for="phone">전화번호</label>
-                <input type="text" id="phone" placeholder="전화번호 입력">
+                <input type="text" id="phone" placeholder="전화번호 입력" >
             </div>
 
 			<div class="form-group">
@@ -386,6 +420,7 @@ function execDaumPostcode() {
 			        <input type="text" id="zipcode" placeholder="우편번호" class="zipcode-input">
 			        <button type="button" class="zipcode-btn" onclick="execDaumPostcode()">우편번호 검색</button>
 			    </div>
+			    <input type="text" id="address" placeholder="도로명 주소를 입력하세요" class="address-input">
 			    <input type="text" id="address" placeholder="상세주소를 입력하세요" class="address-input">
 			</div>
 			
@@ -400,22 +435,17 @@ function execDaumPostcode() {
             <h2 class="section-title">주문자 정보</h2> 
             <div class="form-group">
                 <label for="orderer-name">주문하시는 분</label>
-                <input type="text" id="orderer-name" placeholder="주문자 이름">
+                <input type="text" id="orderer-name" placeholder="주문자 이름" value="${buyerInfo.name}">
             </div>
 
             <div class="form-group">
                 <label for="orderer-phone">전화번호</label>
-                <input type="text" id="orderer-phone" placeholder="전화번호">
-            </div>
-
-            <div class="form-group">
-                <label for="orderer-mobile">휴대폰 번호</label>
-                <input type="text" id="orderer-mobile" placeholder="휴대폰 번호">
+                <input type="text" id="orderer-phone" placeholder="전화번호" value="${buyerInfo.phone_num}">
             </div>
 
             <div class="form-group">
                 <label for="orderer-email">이메일</label>
-                <input type="email" id="orderer-email" placeholder="이메일">
+                <input type="email" id="orderer-email" placeholder="이메일" value="${buyerInfo.email}">
             </div>
         </div>
         
@@ -426,7 +456,7 @@ function execDaumPostcode() {
 		    
 		        <div class="payment-detail">
 		            <label>상품 합계 금액</label>
-		            <p class="price">₩ ${totalPrice}</p>
+		            <p class="price">₩ <%= NumberFormat.getInstance().format("${totalPrice}") %></p>
 		        </div>
 		       	<div class="payment-detail">
 		            <label>포인트 할인</label>
