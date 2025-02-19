@@ -39,7 +39,7 @@
 	        WHERE STATUS = 'Y'
 	    ]]>
 	    
-	    <if test="seller_id != null and seller_id != ''">
+	    <if test="slr_id != null and slr_id != ''">
 	        <![CDATA[ AND SELLER_ID = #{seller_id} ]]>
 	    </if>
 	    

@@ -64,32 +64,33 @@
 }
 
 #wrap_cmp #cmp_pdt .pdt_Name {
-	font-size: 1.1rem;
+	font-family: "Noto Sans KR", serif;
+	font-size: 1.5rem;
 }
 
 #wrap_cmp #cmp_pdt .pdt_Selr,
-#wrap_cmp #cmp_pdt .pdt_Rank,
-#wrap_cmp #cmp_pdt .pdt_Category {
-	font-size: 0.75rem;
+#wrap_cmp #cmp_pdt .pdt_Rank {
+	font-family: "Noto Sans KR", serif;
+	font-size: 1.2rem;
 }
 
 #wrap_cmp .pdt_img {
     width: 100px;
 }
 
-#wrap_cmp #cmp_pdt section {
+#wrap_cmp #cmp_pdt article {
     display: flex;
 }
 
-#wrap_cmp #cmp_pdt section div:first-child {
+#wrap_cmp #cmp_pdt article div:first-child {
     margin-right: 20px;
 }
 
-#wrap_cmp #cmp_pdt section div:nth-child(2) {
+#wrap_cmp #cmp_pdt article div:nth-child(2) {
     font-weight: bold;
 }
 
-#wrap_cmp #cmp_pdt section div:nth-child(3) {
+#wrap_cmp #cmp_pdt article div:nth-child(3) {
 	font-family: "Do Hyeon", "Black Han Sans", "Noto Sans KR", serif;
 	font-size: 2rem;
     text-align: right;
@@ -144,6 +145,55 @@
 
 </style>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+var contextPath = "${contextPath}";
+
+// 버튼 클릭 시 이벤트 리스너
+$(document).on('click', '.rcp_Mtrs', function() {
+    var categoryId = $(this).find('input[name="category_id"]').val();
+    // 히든input에서 category_id 값 가져오기
+    console.log(categoryId);
+    
+    $.ajax({
+        url: contextPath + '/product/categorycompare',  // 요청할 URL
+        method: 'GET',
+        data: { category_id: categoryId },  // category_id를 GET 파라미터로 전달
+        success: function(response) {
+	        var products = response.products;  // 상품 목록 받기
+	        var productHtml = '';
+	
+	        products.forEach(function(product) {
+	        	
+            productHtml += '<article class="pdt_row">' +
+                '<div>' +
+                    '<img class="pdt_img" src="' + contextPath + '/resources/images/' + product.img_path + '">' +
+                '</div>' +
+                '<div>' +
+                    '<span class="pdt_Name">' + product.name + '</span><br>' +
+                    '<span class="pdt_Selr">판매자 : ' + product.slr_nickname + '</span><br>' +
+                    '<span class="pdt_Category">상품번호 : ' + product.pdt_id + '</span>' +
+                '</div>' +
+                '<div>' +
+                    product.price + '원 ' +
+                    '<button class="pdt_chk" data-category-id="' + product.category_id + '">담기</button>' +
+                '</div>' +
+            '</article>';
+            
+	        });
+	
+	        $('#cmp_pdt').html(productHtml);  // 결과를 페이지에 반영
+            
+        } ,
+        error: function(xhr, status, error) {
+            console.error('AJAX 요청 실패', error);
+            alert('상품 비교 중 오류가 발생했습니다.');
+        }
+    });
+});
+</script>
+
+
 </head>
 <body>
 <div id="wrap_cmp">
@@ -175,7 +225,7 @@
 	</div>
 
 	<div class="article_container">
-		<article id="cmp_pdt">
+		<section id="cmp_pdt">
 			<article class="pdt_row">
 				<div>
 				<img class="pdt_img" src="${contextPath}/resources/images/a1.jpg">
@@ -192,122 +242,9 @@
 				</div>
 			</article>
 			
-			<section class="pdt_row">
-				<div>
-				<img class="pdt_img" src="${contextPath}/resources/images/a2.jpg">
-				</div>
-				<div>
-				<span class="pdt_Name">돼지고기 뒷다리살 1kg</span><br>
-				<span class="pdt_Selr">㈜유동정육</span><br>
-				<span class="pdt_Rank">⭐⭐⭐⭐(후기 535)</span><br>
-				<span class="pdt_Category">식재료 > 축산 > 돼지고기</span>
-				</div>
-				<div>
-				24,500원
-				<button class="pdt_chk">담기</button>
-				</div>
-			</section>
 			
-			<section class="pdt_row">
-				<div>
-				<img class="pdt_img" src="${contextPath}/resources/images/a3.jpg">
-				</div>
-				<div>
-				<span class="pdt_Name">돼지고기 목전지 500g</span><br>
-				<span class="pdt_Selr">㈜꿀꿀컴퍼니</span><br>
-				<span class="pdt_Rank">⭐⭐⭐⭐⭐(후기 43)</span><br>
-				<span class="pdt_Category">식재료 > 축산 > 돼지고기</span>
-				</div>
-				<div>
-				14,300원
-				<button class="pdt_chk">담기</button>
-				</div>
-			</section>
 			
-			<section class="pdt_row">
-				<div>
-				<img class="pdt_img" src="${contextPath}/resources/images/a1.jpg">
-				</div>
-				<div>
-				<span class="pdt_Name">돼지고기 항정살 300g</span><br>
-				<span class="pdt_Selr">㈜한돈</span><br>
-				<span class="pdt_Rank">⭐⭐⭐⭐⭐(후기 4135)</span><br>
-				<span class="pdt_Category">식재료 > 축산 > 돼지고기</span>
-				</div>
-				<div>
-				35,400원
-				<button class="pdt_chk">담기</button>
-				</div>
-			</section>
-			
-			<section class="pdt_row">
-				<div>
-				<img class="pdt_img" src="${contextPath}/resources/images/a1.jpg">
-				</div>
-				<div>
-				<span class="pdt_Name">돼지고기 목살 600g</span><br>
-				<span class="pdt_Selr">㈜루루축산</span><br>
-				<span class="pdt_Rank">⭐⭐⭐⭐⭐(후기 135)</span><br>
-				<span class="pdt_Category">식재료 > 축산 > 돼지고기</span>
-				</div>
-				<div>
-				27,000원
-				<button class="pdt_chk">담기</button>
-				</div>
-			</section>
-			
-			<section class="pdt_row">
-				<div>
-				<img class="pdt_img" src="${contextPath}/resources/images/a1.jpg">
-				</div>
-				<div>
-				<span class="pdt_Name">돼지고기 목살 600g</span><br>
-				<span class="pdt_Selr">㈜루루축산</span><br>
-				<span class="pdt_Rank">⭐⭐⭐⭐⭐(후기 135)</span><br>
-				<span class="pdt_Category">식재료 > 축산 > 돼지고기</span>
-				</div>
-				<div>
-				27,000원
-				<button class="pdt_chk">담기</button>
-				</div>
-			</section>
-			
-			<section class="pdt_row">
-				<div>
-				<img class="pdt_img" src="${contextPath}/resources/images/a1.jpg">
-				</div>
-				<div>
-				<span class="pdt_Name">돼지고기 목살 600g</span><br>
-				<span class="pdt_Selr">㈜루루축산</span><br>
-				<span class="pdt_Rank">⭐⭐⭐⭐⭐(후기 135)</span><br>
-				<span class="pdt_Category">식재료 > 축산 > 돼지고기</span>
-				</div>
-				<div>
-				27,000원
-				<button class="pdt_chk">담기</button>
-				</div>
-			</section>
-			
-			<section class="pdt_row">
-			
-				<div id="pdt_pagenation">
-				    <button class="page_btn" data-page="prev">이전</button>
-				    <button class="page_btn" data-page="1">1</button>
-				    <button class="page_btn" data-page="2">2</button>
-				    <button class="page_btn" data-page="3">3</button>
-				    <button class="page_btn" data-page="3">4</button>
-				    <button class="page_btn" data-page="3">5</button>
-				    <button class="page_btn" data-page="3">6</button>
-				    <button class="page_btn" data-page="3">7</button>
-				    <button class="page_btn" data-page="3">8</button>
-				    <button class="page_btn" data-page="3">9</button>
-				    <button class="page_btn" data-page="3">10</button>
-				    <button class="page_btn" data-page="next">다음</button>
-				</div>
-			
-			</section>
-			
-		</article>
+		</section>
 		
 <style>
 
@@ -422,11 +359,12 @@
 				재료 목록
 				
 				<c:forEach var="ingredient" items="${ingredients}">
-				    <div class="Mtrs">
+				    <div class="Mtrs" id="<c:out value='${ingredient.category_id}' />">
 				        <button class="rcp_Mtrs">
 				            <c:out value="${ingredient.ingrd_name}" /> 
 				            <c:out value="${ingredient.ingrd_qty}" /> 
 				            <c:out value="${ingredient.unit}" />
+				            <input type="hidden" name="category_id" value="<c:out value='${ingredient.category_id}' />">
 				        </button>
 <!-- 				        <div class="rcp_Mtrs_Cart"> -->
 <!-- 				            여기는 선택한 상품이 담기는 부분 -->
@@ -435,7 +373,6 @@
 <!-- 				            <div>수량 - 1 +</div> -->
 <!-- 				            <div>총가격 : n원</div>  -->
 <!-- 				        </div> -->
-				        <input type="hidden" name="category_id" value="<c:out value='${ingredient.category_id}' />">
 				    </div>
 				</c:forEach>
 

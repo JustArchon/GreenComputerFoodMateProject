@@ -228,14 +228,16 @@ public class ProductControllerImpl implements ProductController {
 		return mav;
 	}
 	
+	@Override
 	@RequestMapping(value="/product/categorycompare", method=RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> categorycompare(@RequestParam("category_id") Integer category_id) {
+		System.out.println("비교시작한다");
 		try {
-			Map<String, Object> response = new HashMap<>();
-			response.put("products", productService.searchList(null, category_id, null));
-            response.put("success", true);
-            return response;
+			List<ProductDTO> products = productService.searchList(null, category_id, null);
+		    Map<String, Object> response = new HashMap<>();
+		    response.put("products", products);
+		    return response;
         } catch (ProductException e) {
             throw e;
         } catch (Exception e) {

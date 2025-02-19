@@ -13,7 +13,7 @@
 function addToCart() {
     var productId = $("#pdt_ID").text();
     var quantity = $("#quantity").text();
-    var contextPath = "${contextPath}";    // 경로 설정 (확인 필요)
+    var contextPath = "${contextPath}";
 
     $.ajax({
         type: "POST",
