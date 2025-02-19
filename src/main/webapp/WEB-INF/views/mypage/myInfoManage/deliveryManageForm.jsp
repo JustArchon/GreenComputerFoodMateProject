@@ -50,6 +50,7 @@
 			    font-size: 14px;
 			}
 </style>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
 <script>
 	document.addEventListener("DOMContentLoaded", () => {
@@ -95,28 +96,41 @@
 		      }
 	
 		      // 우편번호와 주소 정보를 해당 필드에 넣는다.
-		      document.getElementById('zipcode').value = data.zonecode; //5자리 새우편번호 사용
-		      document.getElementById('roadAddress').value = fullRoadAddr;
+		      document.getElementById('postal_Code').value = data.zonecode; //5자리 새우편번호 사용
+		      document.getElementById('addr').value = fullRoadAddr;
 		     
 		    }
 		  }).open();
 		}
+	$(document).ready(function() {
+	    $("#deliveryAdd").submit(function(event) {
+	        event.preventDefault(); // 기본 제출 방지
+
+	        let formData = new FormData(this); // 폼 데이터 생성
+	        let isBaseAddrCheckbox = document.getElementById("is_Base_Addr");
+
+	        // 체크박스 상태 반영 (체크되면 "Y", 해제되면 "N")
+	        formData.set("is_Base_Addr", isBaseAddrCheckbox.checked ? "Y" : "N");
+
+	        $.ajax({
+	            url: contextPath + "/mypage/deliveryAdd",
+	            type: "POST",
+	            data: formData, // FormData 객체 사용
+	            processData: false, // 필수 (폼 데이터 자동 처리 방지)
+	            contentType: false, // 필수 (기본 Content-Type 설정 방지)
+	            success: function(response) {
+	                alert("배송지가 성공적으로 추가되었습니다!");
+	                $("#deliveryModal").modal("hide"); // 모달 닫기
+	                location.reload(); // 필요시 새로고침
+	            },
+	            error: function() {
+	                alert("배송지 추가 실패!");
+	            }
+	        });
+	    });
+	});
+
 	
-	document.addEventListener('DOMContentLoaded', function () {
-		function toggleCustomInput() {
-		    const select = document.getElementById('mail2');
-		    const customInput = document.getElementById('customMail');
-		    
-		    if (select.value === 'custom') {
-		        customInput.style.display = 'block';
-		        customInput.focus();
-		    } else {
-		        customInput.style.display = 'none';
-		        customInput.value = ''; // 입력 필드 초기화
-		    }
-		}
-		window.toggleCustomInput = toggleCustomInput;
-		});
 </script>
 </head>
 <body>
@@ -138,22 +152,24 @@
 			</tr>
 		</thead>
       	<tbody>
-      	<tr>
-      	  <td>우리집</td>
-          <td>홍길동</td>
-          <td>(12345)<br>
-          대전광역시 서구 오라클빌딩 3층 123
-          </td>
-          <td>전화번호 : <br>
-          휴대폰 : 010-1234-5678
-          </td>
-          <td>
-          <div class="d-flex flex-column gap-1">
-		    	<button class="btn btn-outline-secondary btn-sm" disabled>수정</button>
-		    	<button class="btn btn-outline-secondary btn-sm" disabled>삭제</button>
-		  </div>
-          </td>
-        </tr>
+      	<c:forEach var="delivery" items="${deliveryList}">
+	      	<tr>
+	      	  <td>${delivery.is_Base_Addr == 'Y' ? '(기본배송지)<br>' : ''}
+	      	  ${delivery.addr_Nickname}</td>
+	          <td>${delivery.to_Name}</td>
+	          <td>(${delivery.postal_Code})<br>
+	          ${delivery.addr} ${delivery.addr_Detail}
+	          </td>
+	          <td>전화번호 : ${delivery.to_Phone_Num}
+	          </td>
+	          <td>
+	          <div class="d-flex flex-column gap-1">
+			    	<button class="btn btn-outline-secondary btn-sm" disabled>수정</button>
+			    	<button class="btn btn-outline-secondary btn-sm" disabled>삭제</button>
+			  </div>
+	          </td>
+	        </tr>
+        </c:forEach>
 		</tbody>
 	</table>
 	<nav aria-label="Page navigation">
@@ -182,52 +198,49 @@
 	    </li>
 	  </ul>
 	</nav>
-	<div class="modal">
+	<div class="modal" id="deliveryModal">
 		<div class="modal_body">
 			<div class="container mt-1">
 				<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
 			      		<h5 class="mb-0 fw-bold">나의 배송지 관리</h5>
 			    </div>
 			  	<p class="mb-3">배송지 추가</p>
+			  	<form name="deliveryAdd" method="post" action="${contextPath}/mypage/deliveryAdd">
 			  	<table class="table2">
 					<tr>
 				        <td>배송지 이름</td>
 				        <td>
-				        <input type="text" class="form-control" name="deliveryname" size="20">
+				        <input type="text" class="form-control" name="addr_Nickname" size="20" required>
 				        </td>
 				    </tr>
 				    <tr>
 				        <td>받으실분</td>
-				        <td><input type="text" class="form-control" name="humanname" size="40"></td>
+				        <td><input type="text" class="form-control" name="to_Name" size="40" required></td>
 				    </tr>
 				    <tr>
 				        <td>받으실 곳</td>
 				        <td>
 							<div class="col-sm-6 mb-1">
 				                   <div class="d-flex align-items-center">
-				                        <input name="zipcode" id="zipcode" type="text" class="form-control me-2" placeholder="zipcode">
+				                        <input name="postal_Code" id="postal_Code" type="text" class="form-control me-2" required>
 				                        <p class="mb-0"><a href="javascript:execDaumPostcode()">우편번호 찾기</a></p>
 				                    	</div>
 				                    </div>
 				                    <div class="col-sm-9 mb-1">
-				                        <input name="roadAddress" id="roadAddress" type="text" class="form-control" placeholder="roadAddress">
+				                        <input name="addr" id="addr" type="text" class="form-control" required>
 				                    </div>
 				                    <div class="col-sm-9 mb-1">
-				                        <input name="remainaddress" id="remainaddress" type="text" class="form-control" placeholder="address">
+				                        <input name="addr_Detail" id="addr_Detail" type="text" class="form-control">
 				                    </div>
 				        </td>
 				    </tr>
 				    <tr>
 				        <td>전화번호</td>
-				        <td><input type="text" class="form-control" name="phone" size="40"></td>
-				    </tr>
-				    <tr>
-				        <td>휴대폰번호</td>
-				        <td><input type="text" class="form-control" name="iphone" size="40"></td>
+				        <td><input type="text" class="form-control" name="to_Phone_Num" size="40" required></td>
 				    </tr>
 				</table>
 				<div class="d-flex justify-content-center align-items-center form-check mb-1">
-				  <input class="form-check-input me-2 mb-1" type="checkbox" value="" id="flexCheckDefault">
+				  <input class="form-check-input me-2 mb-1" type="checkbox" value="N" name="is_Base_Addr" id="is_Base_Addr" ${delivery.is_Base_Addr == 'Y' ? 'checked' : ''}>
 				  <label class="form-check-label" for="flexCheckDefault">
 				    기본 배송지로 설정
 				  </label>
@@ -236,6 +249,7 @@
 			  		<button type="submit" class="btn btn-success">저장</button>
 	                <button type="reset" class="btn btn-outline-secondary btn-close-modal">취소</button>
 	            </div>
+	           	</form>
 			</div>
 		</div>
 	</div>

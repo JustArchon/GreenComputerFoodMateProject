@@ -227,7 +227,11 @@
         <!-- 주문 상품 정보, 결제 정보 가로 정렬 -->
         <div class="order-info" style="display: flex; justify-content: space-between;">
 			<div class="slider-container">
+			<c:set var="totalPrice" value="0" />
+			<c:set var="totalqty" value="0" />
 			<c:forEach var="orderitems" items="${orderItems}">
+			<c:set var="totalPrice" value="${totalPrice + (orderitems.price * orderitems.qty)}" />
+			<c:set var="totalqty" value="${totalqty + orderitems.qty}" />
 	            <div class="info-box">
 				    <h3 class="section-title">주문 상품 정보</h3>
 				    <table style="width: 100%; border-collapse: collapse;">
@@ -258,20 +262,20 @@
                 <h3 class="section-title">결제 정보</h3>
                 <table>
                     <tr>
-                        <th>주문 금액 (2개)</th>
-                        <td>₩ 45,000</td>
+                        <th>주문 금액 (${totalqty}개)</th>
+                        <td>₩ ${totalPrice}</td>
                     </tr>
                     <tr>
                         <th>포인트 사용</th>
-                        <td>-₩ 1,000</td>
+                        <td>-₩ 0</td>
                     </tr>
                     <tr>
                         <th>배송비</th>
-                        <td>₩ 3,500</td>
+                        <td>₩ 0</td>
                     </tr>
                     <tr>
                         <th>결제 금액</th>
-                        <td><strong>₩ 47,500</strong></td>
+                        <td><strong>₩ ${totalPrice}</strong></td>
                     </tr>
                 </table>
             </div>
@@ -304,8 +308,8 @@
 
         <!-- 버튼 -->
         <div class="button-container">
-            <button onclick="window.location.href='${contextPath}/product/pdtlist'">상품 목록으로 이동</button>
-            <button onclick="window.location.href='${contextPath}/mypage/ShoppingManage/orderlist'">주문/배송상태 확인</button>
+            <button onclick="window.location.href='${contextPath}/product/pdtlist'">상품 목록<br>으로 이동</button>
+            <button onclick="window.location.href='${contextPath}/mypage/ShoppingManage/orderlist'">주문/배송<br>상태 확인</button>
         </div>
     </div>
 </body>
@@ -314,7 +318,7 @@
             $('.slider-container').slick({
                 slidesToShow: 1,
                 slidesToScroll: 1,
-                autoplay: false
+                autoplay: true
             });
         });
     </script>

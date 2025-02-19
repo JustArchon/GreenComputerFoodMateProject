@@ -171,6 +171,8 @@ $(document).on("click", "#deleteSelected", function() {
 
 $(document).on("change", ".cart-checkbox", function() {
     let totalAmount = 0;
+    let deliveryfee = 0;
+    let deliveryTotalAmount = 0;
 
     // 선택된 체크박스에 해당하는 상품의 금액과 수량을 합산
     $(".cart-checkbox:checked").each(function() {
@@ -178,10 +180,14 @@ $(document).on("change", ".cart-checkbox", function() {
         let price = $(this).data("price"); // data-price 속성으로 가격 가져오기
         
         totalAmount += qty * price;  // 가격 * 수량
+        deliveryfee += 3000;
+        deliveryTotalAmount = totalAmount + deliveryfee;
     });
 
     // "선택한 상품의 금액 총합" 부분에 업데이트
     $("#total_amount").text(totalAmount + "원");
+    $("#delivery_fee").text(deliveryfee + "원");
+    $("#delivery_total_amount").text(deliveryTotalAmount + "원");
 });
 
 $(document).ready(function() {
@@ -307,14 +313,14 @@ $(document).ready(function() {
                     </div>
                     <div class="item">
                         <span>배송비</span>
-                        <span class="text-green">m원</span>
+                        <span id="delivery_fee" class="text-green">0원</span>
                     </div>
                     <div class="item">
                         <span class="text-gray">=</span>
                     </div>
                     <div class="item">
                         <span>합계</span>
-                        <span class="text-green">n+m원</span>
+                        <span id="delivery_total_amount" class="text-green">0원</span>
                     </div>
                 </div>
             </div>

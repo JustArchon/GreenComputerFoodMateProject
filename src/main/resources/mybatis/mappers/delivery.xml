@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"../mybatis-3-mapper.dtd">
+
+	<mapper namespace="mapper.delivery">
+		<resultMap id="DeliveryResult" type="deliveryDTO">
+			<result property="byr_id" column="byr_id" />
+		    <result property="addr_Nickname" column="addr_Nickname" />
+		    <result property="postal_Code" column="postal_Code" />
+		    <result property="addr" column="addr" />
+		    <result property="addr_Detail" column="addr_Detail" />
+		    <result property="to_Name" column="to_Name" />
+		    <result property="to_Phone_Num" column="to_Phone_Num" />
+		    <result property="is_Base_Addr" column="is_Base_Addr" />
+		</resultMap>
+	
+	<select id="getdeliveryList" parameterType="String" resultType="deliveryDTO">
+		<![CDATA[
+			select * from FOODMATE_BUYER_ADDRESS where byr_id = #{byr_id}
+		]]>
+	</select>
+	
+	<insert id="adddelivery" parameterType="deliveryDTO">
+		<![CDATA[
+			insert into FOODMATE_BUYER_ADDRESS(
+					addr_id,
+					byr_id, 
+			        addr_Nickname, 
+			        postal_Code, 
+			        addr,
+			        addr_Detail,
+			        to_Name,
+			        to_Phone_Num,
+			        is_Base_Addr
+		        )values(
+		        	FOODMATE_BUYER_ADDRESS_SEQ.NEXTVAL,
+			        #{byr_id}, 
+			        #{addr_Nickname}, 
+			        #{postal_Code},
+			        #{addr},
+			        #{addr_Detail},
+			        #{to_Name},
+			        #{to_Phone_Num},
+			        #{is_Base_Addr}
+		        )
+		]]>
+	</insert>
+	
+	<update id="resetDelivery" parameterType="String">
+	    UPDATE FOODMATE_BUYER_ADDRESS
+	    SET is_Base_Addr = 'N'
+	    WHERE byr_id = #{byr_id}
+	</update>
+
+	
+	
+</mapper>

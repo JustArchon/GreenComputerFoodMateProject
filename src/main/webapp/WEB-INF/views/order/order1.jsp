@@ -430,19 +430,19 @@ function execDaumPostcode() {
 		        </div>
 		       	<div class="payment-detail">
 		            <label>포인트 할인</label>
-		            <p class="price">-₩ 1,000</p>
+		            <p class="price">-₩ 0</p>
 		        </div>
 		        <div class="payment-detail">
 		            <label>쿠폰 할인</label>
-		            <p class="price">-₩ 1,000</p>
+		            <p class="price">-₩ 0</p>
 		        </div>
 		        <div class="payment-detail">
 		            <label>배송비</label>
-		            <p class="price">₩ 3,500</p>
+		            <p class="price">₩ 0</p>
 		        </div>
 		        <div class="payment-detail total">
 		            <label>최종 결제 금액</label>
-		            <p class="total-price">₩ 47,500</p>
+		            <p class="total-price">₩ ${totalPrice}</p>
 		        </div>
 		    </div>
 		</div>

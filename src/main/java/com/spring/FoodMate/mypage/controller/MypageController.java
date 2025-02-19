@@ -19,6 +19,7 @@ import com.spring.FoodMate.common.SessionDTO;
 import com.spring.FoodMate.common.UtilMethod;
 import com.spring.FoodMate.member.dto.BuyerDTO;
 import com.spring.FoodMate.mypage.dto.ProfileDTO;
+import com.spring.FoodMate.mypage.service.DeliveryService;
 import com.spring.FoodMate.mypage.service.MypageService;
 import com.spring.FoodMate.mypage.service.ProfileService;
 import com.spring.FoodMate.product.dto.ProductDTO;
@@ -40,6 +41,9 @@ public class MypageController {
 	
 	@Autowired
     private ProfileService profileService;
+	
+	@Autowired
+	private DeliveryService deliveryService;
 	
 	@RequestMapping(value="/mypage/mypageForm", method=RequestMethod.GET)
 	private ModelAndView mypageform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -86,12 +90,6 @@ public class MypageController {
 		return new ModelAndView();
 	}
 	
-	@RequestMapping(value="/mypage/myInfoManage/*Form", method=RequestMethod.GET)
-	private ModelAndView myInfoManageform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		HttpSession session = request.getSession();
-		return new ModelAndView();
-	}
-	
 	@RequestMapping(value="/mypage/myInfoManage/memberEditForm", method=RequestMethod.GET)
 	private ModelAndView myInfoManageMemberEditform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HttpSession session = request.getSession();
@@ -115,6 +113,21 @@ public class MypageController {
 		
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("profile", profileDTO);
+		return mav;
+	}
+	
+	@RequestMapping(value="/mypage/myInfoManage/deliveryManageForm", method=RequestMethod.GET)
+	private ModelAndView deliveryManageform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		HttpSession session = request.getSession();
+		BuyerDTO buyerInfo = (BuyerDTO) session.getAttribute("buyerInfo"); // 세션에서 buyerInfo 가져오기
+		String byr_id = null;
+
+		if (buyerInfo != null) {
+		    byr_id = buyerInfo.getByr_id(); // byr_id 값 추출
+		}
+		
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("deliveryList", deliveryService.getdeliveryList(byr_id));
 		return mav;
 	}
 	
