@@ -236,9 +236,8 @@ $(document).on('click', '.pdt_chk', function() {
 	            <div class="rcp_Mtrs_Cart">` + productName + `</div>
 	            <div class="rcp_Mtrs_Cart_Amount">
 	                <input type="number" class="product-qty" value="1" min="1">
-	                <div class="product-unit">` + productUnit + `</div>
 	                <button class="remove-item">X</button>
-	                <div class="total-price">총가격 : ` + price + `원</div>
+	                <div class="total-price">` + price + `원</div>
 	            </div>
 	            <input type="hidden" name="product-id" value='` + productId + `'>
 	            <input type="hidden" name="price" value='` + price + `'>
@@ -246,13 +245,31 @@ $(document).on('click', '.pdt_chk', function() {
         `;
         $("#" + categoryId).append(newItem);
     }
+    updateLastTotalPrice();
 });
 
-// 총 가격 업데이트 함수
+//개별 상품 총 가격 업데이트 함수
 function updateTotalPrice(item, price) {
     var qty = parseInt(item.find('.product-qty').val());
     var totalPriceElem = item.find('.total-price');
-    totalPriceElem.text("총가격 : " + (price * qty) + "원");
+    var totalPrice = price * qty;
+    
+    totalPriceElem.text(totalPrice + "원");
+
+    // 전체 최종 가격 업데이트
+    updateLastTotalPrice();
+}
+
+// 전체 최종 가격 업데이트 함수
+function updateLastTotalPrice() {
+    var lastTotalPrice = 0;
+
+    $(".rcp_Mtrs_Product").each(function() {
+        var totalPriceText = $(this).find('.total-price').text().replace("원", "").trim();
+        lastTotalPrice += parseInt(totalPriceText);
+    });
+
+    $("#last_total_price").text(lastTotalPrice);
 }
 
 // 수량 인풋 변경 시 총 가격 업데이트
@@ -265,6 +282,7 @@ $(document).on('input', '.product-qty', function() {
 // 삭제 버튼 클릭 시 해당 상품 삭제
 $(document).on('click', '.remove-item', function() {
     $(this).closest('.rcp_Mtrs_Product').remove();
+    updateLastTotalPrice();
 });
 
 // 담은 상품 모아서 장바구니로 ajax 던지기
@@ -448,6 +466,12 @@ $(document).on("click", "#cart-button", function() {
     background-color: #d9791b;
 }
 
+#last_total_price_container {
+	font-family: "Noto Sans KR", serif;
+	font-size: 1.5rem;
+	color: red;
+}
+
 </style>
 		
 		<section id="cmp_rcp">
@@ -465,6 +489,10 @@ $(document).on("click", "#cart-button", function() {
 				    </div>
 				</c:forEach>
 
+			</article>
+			
+			<article id="last_total_price_container">
+			총 가격 : <span id="last_total_price"></span>원
 			</article>
 			
 			<button id="cart-button">장바구니에 담기</button>
