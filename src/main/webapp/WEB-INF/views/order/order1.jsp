@@ -377,6 +377,7 @@ function execDaumPostcode() {
                         <th>수량</th>
                         <th>금액</th>
                         <th>포인트 차감</th>
+                        <th>쿠폰 차감</th>
                         <th>배송비</th>
                     </tr>
                 </thead>
@@ -392,7 +393,8 @@ function execDaumPostcode() {
                         <td>${orderitems.qty}</td>
                         <td><fmt:formatNumber value="${orderitems.price * orderitems.qty}" type="number" groupingUsed="true" /></td>
                         <td>0p</td>
-                        <td>기본 0원</td>
+                        <td>0원</td>
+                        <td>기본 3000원</td>
                     </tr>
                     </c:forEach>
                 </tbody>
@@ -556,16 +558,28 @@ function execDaumPostcode() {
         	
 		    function requestPay() {
 		    	// 옵션 값 가져오기 (id를 사용하여 직접 선택)
-		        let optionText = document.getElementById("product-option").textContent;
-		        let productName = optionText.split(":")[1].trim();  // ":" 기준으로 나누어 옵션 값만 가져오기
+		        let optionElements = document.querySelectorAll("#product-option"); // 모든 상품명 요소 가져오기
+				let options = [];
+				
+				optionElements.forEach(element => {
+				    let optionText = element.textContent.split(":")[1].trim(); // "상품명: 상품A"에서 "상품A"만 추출
+				    options.push(optionText);
+				});
+				
+				let productName = options[0]; // 첫 번째 상품명
+				let optionslength = options.length -1;
+				if (options.length > 1) {
+				    productName += `외 ` + optionslength + '건'; // 여러 개일 경우 "상품A + 외 N건" 형식으로 변환
+				}
+				
+				console.log(productName);
 		        
 		    	// 주문자 정보 가져오기
 		        let ordererName = document.getElementById("orderer-name").value || "홍길동";
 			    let ordererPhone = document.getElementById("orderer-phone").value || "000-0000-0000";
-			    let ordererMobile = document.getElementById("orderer-mobile").value || ordererPhone;
 			    let ordererEmail = document.getElementById("orderer-email").value || "honggildong@naver.com";
-			    let ordererAddress = document.getElementById("address").value || "서울특별시 강남구";
-			    let ordererPostCode = document.getElementById("zipcode").value || "12345";
+			    let ordererAddress = document.getElementById("addr").value || "서울특별시 강남구";
+			    let ordererPostCode = document.getElementById("postal_Code").value || "12345";
 		        
 		        var IMP = window.IMP;
 		        IMP.init("<%= impUid %>"); //  포트원에서 발급받은 가맹점 식별 코드 입력 (ex: imp12345678)
@@ -578,7 +592,7 @@ function execDaumPostcode() {
 		            amount: 1000, //  결제 금액 (숫자로 입력)
 		            buyer_email: ordererEmail,
 		            buyer_name: ordererName,
-		            buyer_tel: ordererMobile,
+		            buyer_tel: ordererPhone,
 		            buyer_addr: ordererAddress,
 		            buyer_postcode: ordererPostCode
 		        }, function (rsp) {
