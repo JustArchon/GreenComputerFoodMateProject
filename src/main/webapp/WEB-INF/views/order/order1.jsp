@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 <!DOCTYPE html>
 <html lang="ko">
@@ -323,9 +324,22 @@ function execDaumPostcode() {
 	// 
 	document.addEventListener("DOMContentLoaded", function() {
     let deliveryConfirm = document.getElementById("delivery-confirm");
-    if (deliveryConfirm) { // 요소가 존재하는 경우에만 이벤트 추가
-        deliveryConfirm.addEventListener("change", function() {
-            let selectedOption = this.options[this.selectedIndex]; // 선택한 옵션
+    let defaultOption = deliveryConfirm.querySelector("option[data-default='Y']");
+    let customOption = document.getElementById("customAddressOption");
+    
+    if (defaultOption) {
+        defaultOption.selected = true; // 기본 배송지가 있으면 선택
+    } else {
+        customOption.selected = true; // 없으면 "직접 입력" 선택
+    }
+    
+    updateAddressFields(deliveryConfirm.options[deliveryConfirm.selectedIndex]);
+    
+    deliveryConfirm.addEventListener("change", function() {
+        updateAddressFields(this.options[this.selectedIndex]);
+    });
+    
+        function updateAddressFields(selectedOption) {
             let to_Name = document.getElementById("to_name");
             let to_Phone_Num = document.getElementById("to_phone_num");
             let zipcodeInput = document.getElementById("postal_Code");
@@ -339,9 +353,6 @@ function execDaumPostcode() {
                 zipcodeInput.value = "";
                 roadAddressInput.value = "";
                 detailAddressInput.value = "";
-//                zipcodeInput.readOnly = false;
-//                roadAddressInput.readOnly = false;
-//                detailAddressInput.readOnly = false;
             } else {
                 // 선택된 주소 자동 입력 
                 to_Name.value = selectedOption.getAttribute("data-toname");
@@ -349,15 +360,8 @@ function execDaumPostcode() {
                 zipcodeInput.value = selectedOption.getAttribute("data-zipcode");
                 roadAddressInput.value = selectedOption.getAttribute("data-road-address");
                 detailAddressInput.value = selectedOption.getAttribute("data-detail-address");
-
-//                zipcodeInput.readOnly = true;
-//                roadAddressInput.readOnly = true;
-//                detailAddressInput.readOnly = true;
             }
-        });
-    } else {
-        console.error("Element with ID 'delivery-confirm' not found.");
-    }
+        };
 });
 </script>
 <body>
@@ -383,18 +387,26 @@ function execDaumPostcode() {
                 </thead>
                 <tbody>
                 <c:set var="totalPrice" value="0" />
+                <c:set var="totalShippingFee" value="0" />
+				<c:set var="uniqueNicknames" value="," />
+				
                 <c:forEach var="orderitems" items="${orderItems}">
                 <c:set var="totalPrice" value="${totalPrice + (orderitems.price * orderitems.qty)}" />
+                <!-- 판매자 중복 체크 -->
+			    <c:if test="${not fn:contains(uniqueNicknames, orderitems.nickname)}">
+			        <c:set var="totalShippingFee" value="${totalShippingFee + 3000}" />
+			        <c:set var="uniqueNicknames" value="${uniqueNicknames},${orderitems.nickname}" />
+			    </c:if>
                     <tr>
                         <td class="product-info">
                             <img src="${pageContext.request.contextPath}/resources/images/${orderitems.img_path}" alt="상품 이미지">
                             <div id="product-option"><strong>상품명</strong>: ${orderitems.pdt_name}</div>
                         </td>
-                        <td>${orderitems.qty}</td>
-                        <td><fmt:formatNumber value="${orderitems.price * orderitems.qty}" type="number" groupingUsed="true" /></td>
+                        <td>${orderitems.qty}개</td>
+                        <td>₩ <fmt:formatNumber value="${orderitems.price * orderitems.qty}" type="number" groupingUsed="true" />원</td>
                         <td>0p</td>
                         <td>0원</td>
-                        <td>기본 3000원</td>
+                        <td>기본 3,000원</td>
                     </tr>
                     </c:forEach>
                 </tbody>
@@ -407,15 +419,16 @@ function execDaumPostcode() {
             <div class="form-group">
                 <label for="delivery-confirm">배송지 확인</label>
                 <select id="delivery-confirm">
-                    <option value="custom">직접 입력</option>
+                    <option value="custom" id="customAddressOption">직접 입력</option>
                         <c:forEach var="delivery" items="${deliveryList}">
         				<option value="${delivery.addr_Nickname}"
         						data-toname="${delivery.to_Name}" 
         						data-tophonenum="${delivery.to_Phone_Num}"
 				                data-zipcode="${delivery.postal_Code}" 
 				                data-road-address="${delivery.addr}" 
-				                data-detail-address="${delivery.addr_Detail}">
-				        ${delivery.addr_Nickname}
+				                data-detail-address="${delivery.addr_Detail}"
+				                data-default="${delivery.is_Base_Addr}">
+				        ${delivery.addr_Nickname} ${delivery.is_Base_Addr == 'Y' ? '(기본 배송지)' : ''} 
 				        </option>
 				    </c:forEach>
                 </select>
@@ -478,19 +491,19 @@ function execDaumPostcode() {
 		        </div>
 		       	<div class="payment-detail">
 		            <label>포인트 할인</label>
-		            <p class="price">-₩ 0</p>
+		            <p class="price">- ₩ 0</p>
 		        </div>
 		        <div class="payment-detail">
 		            <label>쿠폰 할인</label>
-		            <p class="price">-₩ 0</p>
+		            <p class="price">- ₩ 0</p>
 		        </div>
 		        <div class="payment-detail">
 		            <label>배송비</label>
-		            <p class="price">₩ 0</p>
+		            <p class="price">₩ <fmt:formatNumber value="${totalShippingFee}" type="number" groupingUsed="true" /></p>
 		        </div>
 		        <div class="payment-detail total">
 		            <label>최종 결제 금액</label>
-		            <p class="total-price">₩ <fmt:formatNumber value="${totalPrice}" type="number" groupingUsed="true" /></p>
+		            <p class="total-price">₩ <fmt:formatNumber value="${totalPrice + totalShippingFee}" type="number" groupingUsed="true" /></p>
 		        </div>
 		    </div>
 		</div>
@@ -548,7 +561,7 @@ function execDaumPostcode() {
                     data: JSON.stringify(orderItemList),  // 기존 데이터를 전송
                     success: function(response) {
                         // 데이터 저장 후 주문 완료 페이지로 이동
-                        window.location.replace("${contextPath}/order/order2");
+                        window.location.replace("${contextPath}/order/order2?merchant_uid=" + encodeURIComponent("ORDER12345") + "&pay_method=" + encodeURIComponent("trans"));
                     },
                     error: function(xhr, status, error) {
                         alert("결제 데이터 저장 중 오류 발생: " + error);
@@ -604,7 +617,7 @@ function execDaumPostcode() {
 		                    data: JSON.stringify(orderItemList),  // 기존 데이터를 전송
 		                    success: function(response) {
 		                        // 데이터 저장 후 주문 완료 페이지로 이동
-		                        window.location.replace("${contextPath}/order/order2");
+		                    	window.location.replace("${contextPath}/order/order2?merchant_uid=" + encodeURIComponent(rsp.merchant_uid) + "&pay_method=" + encodeURIComponent(rsp.pay_method));
 		                    },
 		                    error: function(xhr, status, error) {
 		                        alert("결제 데이터 저장 중 오류 발생: " + error);

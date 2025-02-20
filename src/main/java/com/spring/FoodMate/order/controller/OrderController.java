@@ -72,7 +72,7 @@ public class OrderController {
 	@RequestMapping("/order/setOrderItems")
 	public String setOrderItems(@RequestBody List<Integer> cartIds, HttpSession session) {
 		
-		 System.out.println("받은 주문 ID 리스트: " + cartIds); // 디버깅용
+//		 System.out.println("받은 주문 ID 리스트: " + cartIds); // 디버깅용
 		 
 		// 받은 cartIds를 이용해 실제 주문 아이템 가져오기
 	    List<CartDTO> cartItems = orderService.getCartItems(cartIds);

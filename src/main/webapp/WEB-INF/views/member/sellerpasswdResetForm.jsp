@@ -39,7 +39,7 @@
 <div class="d-flex justify-content-center align-items-center">
     <div class="login-container ">
         <h2 style="color:#87c058">판매자 비밀번호 재설정</h2>
-        <form name="frmpasswdreset" method="post" action="${contextPath}/member/sellerPasswordReset" onsubmit="return prepareFormSubmission()">
+        <form name="frmpasswdreset" method="post" action="${contextPath}/memberfind/sellerPasswordReset" onsubmit="return prepareFormSubmission()">
         	<p>새로 설정하실 비밀번호를 입력해주십시오.</p>
             <!-- 비밀번호 입력 필드 -->
             <div class="mb-3">

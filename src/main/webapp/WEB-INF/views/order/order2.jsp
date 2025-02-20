@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 <!DOCTYPE html>
 <html lang="ko">
@@ -215,13 +217,18 @@
 <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
 <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+<%
+    String merchantUid = request.getParameter("merchant_uid");
+%>
 <body>
     <div class="container">
         <!-- 주문 완료 알림 -->
         <div class="order-summary">
             <i class="fas fa-check-circle" style="font-size: 50px; color: #f39c12;"></i>
             <h2>주문이 완료되었습니다!</h2>
-            <p>2025.01.14 주문하신 상품의 주문번호는 <strong>#S125497819</strong> 입니다.</p>
+            <fmt:setLocale value="ko_KR"/>
+			<fmt:formatDate var="currentDate" value="<%= new java.util.Date() %>" pattern="yyyy.MM.dd" />
+            <p>${currentDate} 주문하신 상품의 주문번호는 <strong>#<%= merchantUid %></strong> 입니다.</p>
         </div>
 
         <!-- 주문 상품 정보, 결제 정보 가로 정렬 -->
@@ -229,9 +236,15 @@
 			<div class="slider-container">
 			<c:set var="totalPrice" value="0" />
 			<c:set var="totalqty" value="0" />
+			<c:set var="totalShippingFee" value="0" />
+			<c:set var="uniqueNicknames" value="," />
 			<c:forEach var="orderitems" items="${orderItems}">
-			<c:set var="totalPrice" value="${totalPrice + (orderitems.price * orderitems.qty)}" />
-			<c:set var="totalqty" value="${totalqty + orderitems.qty}" />
+				<c:set var="totalPrice" value="${totalPrice + (orderitems.price * orderitems.qty)}" />
+				<c:set var="totalqty" value="${totalqty + orderitems.qty}" />
+				<c:if test="${not fn:contains(uniqueNicknames, orderitems.nickname)}">
+				        <c:set var="totalShippingFee" value="${totalShippingFee + 3000}" />
+				        <c:set var="uniqueNicknames" value="${uniqueNicknames},${orderitems.nickname}" />
+				    </c:if>
 	            <div class="info-box">
 				    <h3 class="section-title">주문 상품 정보</h3>
 				    <table style="width: 100%; border-collapse: collapse;">
@@ -247,11 +260,11 @@
 				        </tr>
 				        <tr>
 				            <th style="text-align: left; padding: 10px;">개별 판매가</th>
-				            <td style="padding: 10px;">₩ ${orderitems.price}</td>
+				            <td style="padding: 10px;">₩ <fmt:formatNumber value="${orderitems.price}" type="number" groupingUsed="true" /></td>
 				        </tr>
 						<tr>
 				            <th style="text-align: left; padding: 10px;">총 구입가</th>
-				            <td style="padding: 10px;">₩ ${orderitems.price * orderitems.qty}</td>
+				            <td style="padding: 10px;">₩ <fmt:formatNumber value="${orderitems.price * orderitems.qty}" type="number" groupingUsed="true" /></td>
 				        </tr>
 				    </table>
 				</div>
@@ -263,19 +276,23 @@
                 <table>
                     <tr>
                         <th>주문 금액 (${totalqty}개)</th>
-                        <td>₩ ${totalPrice}</td>
+                        <td>₩ <fmt:formatNumber value="${totalPrice}" type="number" groupingUsed="true" /></td>
                     </tr>
                     <tr>
                         <th>포인트 사용</th>
-                        <td>-₩ 0</td>
+                        <td>- ₩ 0</td>
+                    </tr>
+                    <tr>
+                        <th>쿠폰 사용</th>
+                        <td>- ₩ 0</td>
                     </tr>
                     <tr>
                         <th>배송비</th>
-                        <td>₩ 0</td>
+                        <td>₩ <fmt:formatNumber value="${totalShippingFee}" type="number" groupingUsed="true" /></td>
                     </tr>
                     <tr>
                         <th>결제 금액</th>
-                        <td><strong>₩ ${totalPrice}</strong></td>
+                        <td><strong>₩ <fmt:formatNumber value="${totalPrice + totalShippingFee}" type="number" groupingUsed="true" /></strong></td>
                     </tr>
                 </table>
             </div>
@@ -285,13 +302,31 @@
  
 
         <!-- 결제 수단 -->
+        <c:set var="payMethod" value="${param.pay_method}" />
         <div class="payment-info">
             <h2 class="section-title">결제 수단</h2>
             <div class="payment-methods-container">
-                <div class="method selected">
-                    <img src="${pageContext.request.contextPath}/resources/images/credit_card.png" alt="신용카드">
-                    <p>신용카드</p>
-                </div>
+            	<div class="method selected">
+            	<c:choose>
+            		<c:when test="${payMethod eq 'card'}">
+		                    <img src="${pageContext.request.contextPath}/resources/images/credit_card.png" alt="신용카드">
+		                    <p>신용카드</p>
+		            </c:when>
+		            <c:when test="${payMethod eq 'vbank'}">
+		                    <img src="${pageContext.request.contextPath}/resources/images/bank_transfer.png" alt="무통장입금">
+		            		<p>무통장입금</p>
+		            </c:when>
+		            <c:when test="${payMethod eq 'trans'}">
+		                    <img src="${pageContext.request.contextPath}/resources/images/account_transfer.png" alt="계좌이체">
+		            		<p>계좌이체</p>
+		            </c:when>
+		            <c:otherwise>
+		            	<p>전달된 결제 방식: ${payMethod}</p>
+		            	
+						<p>비교실패</p>
+			        </c:otherwise>
+	            </c:choose>
+	            </div>
             </div>
         </div>
 
