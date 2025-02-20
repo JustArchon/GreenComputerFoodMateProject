@@ -152,11 +152,9 @@ public class ProductControllerImpl implements ProductController {
 		
 		// 만약 사진첨부를 안했으면 다시 이미지 경로 갖고와서 넣어
 		if(editPdt.getPdt_img() == null || editPdt.getPdt_img().isEmpty()) {
-			System.out.println("이새끼사진첨부안함");
 			editPdt.setImg_path(productService.select1PdtByPdtId(oldPdt_id).getImg_path());
 		} else {
 		// 사진첨부 했으면 사진 넣어, 나중에 옛날사진 삭제하는 기능 넣어
-			System.out.println("사진첨부했음");
 			String imagePath = UtilMethod.savePdtImage(request, editPdt.getPdt_img()); // 유틸메서드로 일단 경로에 이미지 저장해
 			editPdt.setImg_path(imagePath);
 		}

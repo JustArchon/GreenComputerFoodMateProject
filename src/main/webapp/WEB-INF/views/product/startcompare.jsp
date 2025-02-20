@@ -100,6 +100,20 @@
     align-self: center;
 }
 
+#wrap_cmp #cmp_pdt article div:nth-child(3) .pdt_Qty,
+#wrap_cmp #cmp_pdt article div:nth-child(3) .pdt_Unit {
+	font-family: "Noto Sans KR", serif;
+	font-size: 1.2rem;
+    text-align: right;
+    margin-left: auto;
+    color: black;
+    align-self: center;
+}
+
+#wrap_cmp #cmp_pdt article div:nth-child(3) .pdt_Unit {
+	margin-right: 10px;
+}
+
 #wrap_cmp .pdt_chk {
 	font-family: "Noto Sans KR", serif;
 	font-size: 1.25rem;
@@ -153,7 +167,7 @@
 <script>
 var contextPath = "${contextPath}";
 
-// 버튼 클릭 시 이벤트 리스너
+// 레시피 재료 누르면 비교 시작하게 상품들 띄워주는 스크립트
 $(document).on('click', '.rcp_Mtrs', function() {
     var categoryId = $(this).find('input[name="category_id"]').val();
     // 히든input에서 category_id 값 가져오기
@@ -180,6 +194,7 @@ $(document).on('click', '.rcp_Mtrs', function() {
                     '<span class="pdt_Rank">' + '⭐⭐⭐⭐⭐' + '(후기 135)' + '</span><br>' +
                 '</div>' +
                 '<div>' +
+                	'<span class="pdt_Qty">' + product.qty + '</span>' + '<span class="pdt_Unit">' + product.unit + '</span>' +
                 	'<span class="pdt_Price">' + product.price + '</span>원 ' +
                     '<button class="pdt_chk" data-category-id="' + product.category_id + '">담기</button>' +
                 '</div>' +
@@ -197,14 +212,15 @@ $(document).on('click', '.rcp_Mtrs', function() {
     });
 });
 
+// 담기 누르면 재료목록에 담는 기능
 $(document).on('click', '.pdt_chk', function() {
     var categoryId = $(this).data('category-id'); // 상품의 category_id 가져오기
     var productId = $(this).closest('.pdt_row').find('.pdt_Id').text().replace("상품번호 : ", "").trim();
     var productName = $(this).closest('.pdt_row').find('.pdt_Name').text(); // 상품 이름
     var price = parseInt($(this).closest('.pdt_row').find('.pdt_Price').text().trim());
+    var productUnit = $(this).closest('.pdt_row').find('.pdt_Unit').text();
 
-    var existingItem = $("#" + categoryId).find('.rcp_Mtrs_Product input[name="product_id"][value="' + productId + '"]').closest('.rcp_Mtrs_Product');
-    console.log('존재하면 이 숫자가 0보다 큼:', existingItem.length);
+    var existingItem = $("#" + categoryId).find('.rcp_Mtrs_Product input[name="product-id"][value="' + productId + '"]').closest('.rcp_Mtrs_Product');
     
     if (existingItem.length > 0) {
         // 같은 상품이 이미 존재하면 수량 증가
@@ -220,10 +236,11 @@ $(document).on('click', '.pdt_chk', function() {
 	            <div class="rcp_Mtrs_Cart">` + productName + `</div>
 	            <div class="rcp_Mtrs_Cart_Amount">
 	                <input type="number" class="product-qty" value="1" min="1">
+	                <div class="product-unit">` + productUnit + `</div>
 	                <button class="remove-item">X</button>
 	                <div class="total-price">총가격 : ` + price + `원</div>
 	            </div>
-	            <input type="hidden" name="product_id" value='` + productId + `'>
+	            <input type="hidden" name="product-id" value='` + productId + `'>
 	            <input type="hidden" name="price" value='` + price + `'>
             </div>
         `;
@@ -250,9 +267,39 @@ $(document).on('click', '.remove-item', function() {
     $(this).closest('.rcp_Mtrs_Product').remove();
 });
 
+// 담은 상품 모아서 장바구니로 ajax 던지기
+$(document).on("click", "#cart-button", function() {
+    console.log("장바구니 버튼 클릭됨!"); // 버튼 클릭 확인
 
+    var dataToSend = [];
 
+    $(".rcp_Mtrs_Product").each(function() {
+        var productId = $(this).find('input[name="product-id"]').val();
+        var quantity = $(this).find('.product-qty').val();
 
+        dataToSend.push({
+            pdt_id: productId,
+            qty: quantity
+        });
+    });
+    
+    console.log('보낼데이터는');
+    console.log(dataToSend);
+
+    $.ajax({
+    	url: contextPath + "/cart/compareaddtocart",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(dataToSend),
+        success: function(response) {
+            alert("장바구니에 상품들을 추가했습니다. 장바구니로 이동합니다.");
+            window.location.href = contextPath + "/cart/cartlist";
+        },
+        error: function(error) {
+            alert("장바구니에 상품들을 담는 중 오류가 발생하였습니다. 다시 시도해 주세요.");
+        }
+    });
+});
 
 </script>
 
@@ -291,22 +338,9 @@ $(document).on('click', '.remove-item', function() {
 		<section id="cmp_pdt">
 			<article class="pdt_row">
 				<div>
-				<img class="pdt_img" src="${contextPath}/resources/images/a1.jpg">
-				</div>
-				<div>
-				<span class="pdt_Name">돼지고기 목살 600g</span><br>
-				<span class="pdt_Selr">㈜루루축산</span><br>
-				<span class="pdt_Rank">⭐⭐⭐⭐⭐(후기 135)</span><br>
-				<span class="pdt_Category">식재료 > 축산 > 돼지고기</span>
-				</div>
-				<div>
-				27,000원
-				<button class="pdt_chk">담기</button>
+					구매할 재료를 선택하세요
 				</div>
 			</article>
-			
-			
-			
 		</section>
 		
 <style>
@@ -388,17 +422,13 @@ $(document).on('click', '.remove-item', function() {
   font-family: "Noto Sans KR", serif;
   font-size: 1.25rem;
   font-weight: 600;
-  color: red;
 }
 
-.Spices .rcp_Spices_Cart_Amount div:nth-child(2) {
-  font-family: "Noto Sans KR", serif;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: red;
+.Mtrs .rcp_Mtrs_Cart_Amount div:last-child {
+	margin-left: auto;
 }
 
-#cmp_rcp .cart-button {
+#cmp_rcp #cart-button {
     display: block;
     width: 250px;
     text-align: center;
@@ -437,7 +467,7 @@ $(document).on('click', '.remove-item', function() {
 
 			</article>
 			
-			<button class="cart-button" onclick="window.location.href='${contextPath}/cart/cartForm'">장바구니에 담기</button>
+			<button id="cart-button">장바구니에 담기</button>
 		</section>
 	</div>
 </main>
