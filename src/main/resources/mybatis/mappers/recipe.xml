@@ -86,8 +86,20 @@
     
 	<!-- 레시피, 재료, 조리법 상세 조회 -->
 	<select id="selectRecipeDetail" resultType="recipeDTO" parameterType="int">
-        SELECT * 
-        FROM FOODMATE_RECIPE
+        SELECT 
+	        R.RCP_ID, 
+	        R.BYR_ID, 
+	        BP.NICKNAME,  <!-- 닉네임 추가 -->
+	        R.CATEGORY_ID, 
+	        R.TITLE, 
+	        R.MAINIMG_PATH, 
+	        R.FOOD_NAME, 
+	        R.REQ_TIME, 
+	        R.DESCRIPTION, 
+	        R.STATUS, 
+	        R.CREATE_DATE
+	    FROM FOODMATE_RECIPE R
+	    LEFT JOIN FOODMATE_BUYER_PROFILE BP ON R.BYR_ID = BP.BYR_ID
         WHERE RCP_ID = #{rcp_id}
 	</select>
     

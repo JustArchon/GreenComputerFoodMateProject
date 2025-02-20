@@ -8,7 +8,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.FoodMate.common.SessionDTO;
-import com.spring.FoodMate.common.UtilMethod;
 import com.spring.FoodMate.common.exception.UnauthorizedException;
 
 public class BuyerInterceptor implements HandlerInterceptor {
@@ -32,7 +31,7 @@ public class BuyerInterceptor implements HandlerInterceptor {
         if (sessionInfo.getUserId() == null) {
             throw new UnauthorizedException(105);
         }
-
+        
         return true; // 정상적인 경우 컨트롤러 실행
     }
 

@@ -60,27 +60,32 @@ public class RecipeServiceImpl implements RecipeService {
     public List<RecipeDTO> selectRecipeListByrID(String byr_id) throws Exception {
         return recipeDAO.selectRecipeListByrID(byr_id);  // 레시피 목록 조회
     }
-    
+
+    // 레시피 하나 조회
     @Override
-    // 레시피 하나 조회 (레시피id 넣었을때 그 레시피가 있는지 확인만하는용도임)
     public RecipeDTO recipe(int rcp_id) throws Exception {
     	return recipeDAO.selectRecipeDetail(rcp_id);
     }
+    
+    // 레시피 하나에 대한 재료만 조회
+    @Override
+    public List<RecipeIngredientDTO> recipeIngrds(int rcp_id) throws Exception {
+    	return recipeDAO.selectIngredientDetail(rcp_id);
+    }
+    
+    // 레시피 하나에 대한 순서도만 조회
+    @Override
+    public List<RecipeStepDTO> recipeSteps(int rcp_id) throws Exception {
+    	return recipeDAO.selectStepDetail(rcp_id);
+    }
 
-    // 레시피 상세 조회
+    // 레시피 상세 조회에 필요한 모든 데이터 쌈싸주기
     @Override
     public Map<String, Object> selectRecipeDetail(int rcp_id) throws Exception {
         Map<String, Object> recipeDetail = new HashMap<>();
-
-        RecipeDTO recipe = recipeDAO.selectRecipeDetail(rcp_id);
-        recipeDetail.put("recipe", recipe);
-
-        List<RecipeIngredientDTO> ingredientList = recipeDAO.selectIngredientDetail(rcp_id);
-        recipeDetail.put("ingredients", ingredientList);
-
-        List<RecipeStepDTO> stepList = recipeDAO.selectStepDetail(rcp_id);
-        recipeDetail.put("steps", stepList);
-
+        recipeDetail.put("recipe", recipe(rcp_id));
+        recipeDetail.put("ingredients", recipeIngrds(rcp_id));
+        recipeDetail.put("steps", recipeSteps(rcp_id));
         return recipeDetail;
     }
     

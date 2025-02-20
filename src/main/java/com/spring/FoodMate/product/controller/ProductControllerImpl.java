@@ -221,8 +221,10 @@ public class ProductControllerImpl implements ProductController {
 		mav.addObject("showNavbar", true);
 		mav.addObject("title", "재료 비교");
 		mav.addObject("body", "/WEB-INF/views" + UtilMethod.getViewName(request) + ".jsp");
-		mav.addObject("recipe", recipe);
-		mav.addObject("ingredients", recipeService.getRecipeIngrd(rcp_id));
+		Map<String, Object> um = recipeService.selectRecipeDetail(rcp_id);
+		mav.addObject("recipe", um.get("recipe"));
+		mav.addObject("ingredients", um.get("ingredients"));
+		mav.addObject("steps", um.get("steps"));
 		return mav;
 	}
 	

@@ -238,8 +238,7 @@ public class RecipeControllerImpl implements RecipeController {
 	    
 	    // 레시피 이미지 저장 (메인 이미지)
 	    if (mainImg != null && !mainImg.isEmpty()) {
-	        String mainImgPath = UtilMethod.saveRecipeImage(mainImg);
-	        recipe.setMainimg_path(mainImgPath);  // 이미지 경로 저장
+	        recipe.setMainimg_path(UtilMethod.saveRecipeImage(mainImg));  // 이미지 경로 저장
 	    }
 
 	    // 레시피 등록 (ID 반환)
