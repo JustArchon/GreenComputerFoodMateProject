@@ -335,7 +335,7 @@ public class MemberController {
 	    return mav;
 	}
 	
-	@RequestMapping(value="/member/ByrPasswordFind", method=RequestMethod.POST)
+	@RequestMapping(value="/member/buyerpasswdFindForm", method=RequestMethod.POST)
 	public ModelAndView ByrPasswordFind(@ModelAttribute("buyerVO") BuyerDTO _buyerVO,
 	                              HttpServletRequest request, HttpServletResponse response) throws Exception {
 	    request.setCharacterEncoding("utf-8");

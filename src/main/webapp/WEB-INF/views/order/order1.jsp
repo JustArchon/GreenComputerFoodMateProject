@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
-<%@ page import="java.text.NumberFormat" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -314,38 +314,51 @@ function execDaumPostcode() {
 	      }
 
 	      // 우편번호와 주소 정보를 해당 필드에 넣는다.
-	      document.getElementById('zipcode').value = data.zonecode; //5자리 새우편번호 사용
-	      document.getElementById('address').value = fullRoadAddr;
+	      document.getElementById('postal_Code').value = data.zonecode; //5자리 새우편번호 사용
+	      document.getElementById('addr').value = fullRoadAddr;
 	     
 	    }
 	  }).open();
 	}
 	// 
-	document.getElementById("delivery-confirm").addEventListener("change", function() {
-	    let selectedOption = this.options[this.selectedIndex]; // 선택한 옵션
-	    let zipcodeInput = document.getElementById("zipcode");
-	    let roadAddressInput = document.getElementById("road-address");
-	    let detailAddressInput = document.getElementById("detail-address");
-	
-	    if (selectedOption.value === "custom") {
-	        // 직접 입력 선택 시 빈칸 유지하고 활성화
-	        zipcodeInput.value = "";
-	        roadAddressInput.value = "";
-	        detailAddressInput.value = "";
-	        zipcodeInput.readOnly = false;
-	        roadAddressInput.readOnly = false;
-	        detailAddressInput.readOnly = false;
-	    } else {
-	        // 선택된 주소 자동 입력 후 읽기 전용 처리
-	        zipcodeInput.value = selectedOption.getAttribute("data-zipcode");
-	        roadAddressInput.value = selectedOption.getAttribute("data-road-address");
-	        detailAddressInput.value = selectedOption.getAttribute("data-detail-address");
-	        
-	        zipcodeInput.readOnly = true;
-	        roadAddressInput.readOnly = true;
-	        detailAddressInput.readOnly = true;
-	    }
-	});
+	document.addEventListener("DOMContentLoaded", function() {
+    let deliveryConfirm = document.getElementById("delivery-confirm");
+    if (deliveryConfirm) { // 요소가 존재하는 경우에만 이벤트 추가
+        deliveryConfirm.addEventListener("change", function() {
+            let selectedOption = this.options[this.selectedIndex]; // 선택한 옵션
+            let to_Name = document.getElementById("to_name");
+            let to_Phone_Num = document.getElementById("to_phone_num");
+            let zipcodeInput = document.getElementById("postal_Code");
+            let roadAddressInput = document.getElementById("addr");
+            let detailAddressInput = document.getElementById("addr_Detail");
+
+            if (selectedOption.value === "custom") {
+                // 직접 입력 선택 시 빈칸 유지하고 활성화
+                to_Name.value = "";
+                to_Phone_Num.value = "";
+                zipcodeInput.value = "";
+                roadAddressInput.value = "";
+                detailAddressInput.value = "";
+//                zipcodeInput.readOnly = false;
+//                roadAddressInput.readOnly = false;
+//                detailAddressInput.readOnly = false;
+            } else {
+                // 선택된 주소 자동 입력 
+                to_Name.value = selectedOption.getAttribute("data-toname");
+                to_Phone_Num.value = selectedOption.getAttribute("data-tophonenum");
+                zipcodeInput.value = selectedOption.getAttribute("data-zipcode");
+                roadAddressInput.value = selectedOption.getAttribute("data-road-address");
+                detailAddressInput.value = selectedOption.getAttribute("data-detail-address");
+
+//                zipcodeInput.readOnly = true;
+//                roadAddressInput.readOnly = true;
+//                detailAddressInput.readOnly = true;
+            }
+        });
+    } else {
+        console.error("Element with ID 'delivery-confirm' not found.");
+    }
+});
 </script>
 <body>
     <div class="container">
@@ -377,7 +390,7 @@ function execDaumPostcode() {
                             <div id="product-option"><strong>상품명</strong>: ${orderitems.pdt_name}</div>
                         </td>
                         <td>${orderitems.qty}</td>
-                        <td>${orderitems.price * orderitems.qty}</td>
+                        <td><fmt:formatNumber value="${orderitems.price * orderitems.qty}" type="number" groupingUsed="true" /></td>
                         <td>0p</td>
                         <td>기본 0원</td>
                     </tr>
@@ -394,11 +407,13 @@ function execDaumPostcode() {
                 <select id="delivery-confirm">
                     <option value="custom">직접 입력</option>
                         <c:forEach var="delivery" items="${deliveryList}">
-        				<option value="${delivery.id}" 
-				                data-zipcode="${delivery.zipcode}" 
-				                data-road-address="${delivery.roadAddress}" 
-				                data-detail-address="${delivery.detailAddress}">
-				            ${delivery.roadAddress} (${delivery.detailAddress})
+        				<option value="${delivery.addr_Nickname}"
+        						data-toname="${delivery.to_Name}" 
+        						data-tophonenum="${delivery.to_Phone_Num}"
+				                data-zipcode="${delivery.postal_Code}" 
+				                data-road-address="${delivery.addr}" 
+				                data-detail-address="${delivery.addr_Detail}">
+				        ${delivery.addr_Nickname}
 				        </option>
 				    </c:forEach>
                 </select>
@@ -406,22 +421,22 @@ function execDaumPostcode() {
 
             <div class="form-group">
                 <label for="recipient-name">받으실 분</label>
-                <input type="text" id="recipient-name" placeholder="받으실 분의 이름" >
+                <input type="text" id="to_name" name="to_name" placeholder="받으실 분의 이름" >
             </div>
 
             <div class="form-group">
                 <label for="phone">전화번호</label>
-                <input type="text" id="phone" placeholder="전화번호 입력" >
+                <input type="text" id="to_phone_num" name="to_phone_num" placeholder="전화번호 입력" >
             </div>
 
 			<div class="form-group">
 			    <label for="address">받으실 곳</label>
 			    <div class="zipcode-container">
-			        <input type="text" id="zipcode" placeholder="우편번호" class="zipcode-input">
+			        <input type="text" id="postal_Code" name="postal_Code" placeholder="우편번호" class="zipcode-input">
 			        <button type="button" class="zipcode-btn" onclick="execDaumPostcode()">우편번호 검색</button>
 			    </div>
-			    <input type="text" id="address" placeholder="도로명 주소를 입력하세요" class="address-input">
-			    <input type="text" id="address" placeholder="상세주소를 입력하세요" class="address-input">
+			    <input type="text" id="addr" name="addr" placeholder="도로명 주소를 입력하세요" class="address-input">
+			    <input type="text" id="addr_Detail" name="addr_Detail" placeholder="상세주소를 입력하세요" class="address-input">
 			</div>
 			
             <div class="form-group">
@@ -456,7 +471,8 @@ function execDaumPostcode() {
 		    
 		        <div class="payment-detail">
 		            <label>상품 합계 금액</label>
-		            <p class="price">₩ <%= NumberFormat.getInstance().format("${totalPrice}") %></p>
+		            
+		            <p class="price">₩ <fmt:formatNumber value="${totalPrice}" type="number" groupingUsed="true" /></p>
 		        </div>
 		       	<div class="payment-detail">
 		            <label>포인트 할인</label>
@@ -472,7 +488,7 @@ function execDaumPostcode() {
 		        </div>
 		        <div class="payment-detail total">
 		            <label>최종 결제 금액</label>
-		            <p class="total-price">₩ ${totalPrice}</p>
+		            <p class="total-price">₩ <fmt:formatNumber value="${totalPrice}" type="number" groupingUsed="true" /></p>
 		        </div>
 		    </div>
 		</div>

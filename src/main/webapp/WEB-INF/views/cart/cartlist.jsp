@@ -173,17 +173,22 @@ $(document).on("change", ".cart-checkbox", function() {
     let totalAmount = 0;
     let deliveryfee = 0;
     let deliveryTotalAmount = 0;
+    let sellerSet = new Set(); // 판매자 정보를 저장할 Set
 
     // 선택된 체크박스에 해당하는 상품의 금액과 수량을 합산
     $(".cart-checkbox:checked").each(function() {
         let qty = $(this).closest("tr").find(".qty-input").val();
         let price = $(this).data("price"); // data-price 속성으로 가격 가져오기
+        let seller = $(this).data("seller"); // data-seller 속성으로 판매자 정보 가져오기
         
         totalAmount += qty * price;  // 가격 * 수량
-        deliveryfee += 3000;
-        deliveryTotalAmount = totalAmount + deliveryfee;
+        // 해당 판매자가 처음 추가되는 경우에만 배송비 부과
+        if (!sellerSet.has(seller)) {
+            sellerSet.add(seller);
+            deliveryfee += 3000;
+        }
     });
-
+    deliveryTotalAmount = totalAmount + deliveryfee;
     // "선택한 상품의 금액 총합" 부분에 업데이트
     $("#total_amount").text(totalAmount + "원");
     $("#delivery_fee").text(deliveryfee + "원");
@@ -273,7 +278,7 @@ $(document).ready(function() {
             <c:forEach var="cart" items="${entry.value}">
                 <tr>
                     <td>
-					    <input type="checkbox" class="cart-checkbox" data-cart-id="${cart.cart_id}" data-price="${cart.price}" data-qty="${cart.qty}">
+					    <input type="checkbox" class="cart-checkbox" data-cart-id="${cart.cart_id}" data-price="${cart.price}" data-qty="${cart.qty}" data-seller="${entry.key}">
 					</td>
 					<td class="slr_nickname">${entry.key}</td>
 					<td class="pdt_name">
