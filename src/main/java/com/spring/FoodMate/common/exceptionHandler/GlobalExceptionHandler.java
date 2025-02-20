@@ -49,10 +49,8 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public Object handleUnauthorizedException(HttpServletRequest request, HttpServletResponse response, UnauthorizedException ex) {
+    	HttpSession session = request.getSession();
         boolean ajax = isAjaxRequest(request);
-        logger.error("권한오류, 이 요청은 Ajax 요청이 " + ajax + "입니다. " + ex.getMessage(), ex);
-        HttpSession session = request.getSession();
-
         String alertMsg = "로그인이 필요한 서비스입니다.";
         
         switch (ex.getErrorCode()) {
@@ -68,6 +66,7 @@ public class GlobalExceptionHandler {
                 session.invalidate();
                 alertMsg = "비정상적인 로그인이 감지되었습니다. 다시 로그인해 주세요."; break;
         }
+        logger.error("권한오류, Ajax 요청여부: " + ajax + ", 오류코드 " + ex.getErrorCode() + alertMsg);
 
         if (ajax) {
             Map<String, Object> errorResponse = new HashMap<>();
