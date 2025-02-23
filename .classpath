@@ -38,5 +38,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/iamport-rest-client-java-0.2.23.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/ojdbc8.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/ucp.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

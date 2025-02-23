@@ -44,6 +44,12 @@
 	    WHERE BYR_ID = #{id}
 	</select>
 	
+	<select id="selectOrdId" resultType="java.lang.Integer">
+	    SELECT ORD_ID
+	    FROM FOODMATE_ORDER
+	    WHERE SLR_ID = #{slr_id} AND BYR_ID = #{byr_id} AND ORD_CODE = #{ord_code}
+	</select>
+	
 	<!-- AllOrdByOrdIds 쿼리: resultType을 orderDTO로 수정 -->
 	<select id="AllOrdByOrdIds" resultType="orderDTO">
 	    SELECT * 
@@ -53,5 +59,25 @@
 	        #{id}
 	    </foreach>
 	</select>
+	
+	<insert id="insertOrderList" parameterType="orderDTO">
+	    INSERT INTO FOODMATE_ORDER (ORD_ID, ORD_CODE, BYR_ID, SLR_ID, TOT_PDT_PRICE, SHIP_FEE, ORD_STAT, CREATE_DATE, DEL_CODE, WAYBILL_NUM)
+	    VALUES (FOODMATE_ORDER_SEQ.NEXTVAL, #{ord_code}, #{byr_id}, #{slr_id}, #{tot_Pdt_Price}, #{ship_Fee}, #{ord_Stat}, SYSDATE, #{del_Code}, #{waybill_Num})
+	</insert>
+	
+	<insert id="insertOrderDetail" parameterType="orderdetailDTO">
+	    INSERT INTO FOODMATE_ORDER_DETAIL (ORD_DETAIL_ID, ORD_ID, PDT_ID, PDT_NAME, PDT_PRICE, QTY)
+	    VALUES (FOODMATE_ORDER_DETAIL_SEQ.NEXTVAL, #{ord_id}, #{pdt_id}, #{pdt_name}, #{pdt_price}, #{qty})
+	</insert>
+	
+	<insert id="insertOrderAddress" parameterType="orderaddressDTO">
+	    INSERT INTO FOODMATE_ORDER_ADDRESS (ORD_ID, POSTAL_CODE, ADDR, ADDR_DETAIL, TO_NAME, TO_PHONE_NUM)
+	    VALUES (#{ordId}, #{postalCode}, #{addr}, #{addrDetail}, #{toName}, #{toPhoneNum})
+	</insert>
+	
+	<insert id="insertOrderPayment" parameterType="orderpaymentDTO">
+	    INSERT INTO FOODMATE_PAYMENT (PAY_ID, ORD_ID, PG_ID, PAY_METHOD, PAY_STATUS, PAY_DATE)
+	    VALUES (FOODMATE_PAYMENT_SEQ.NEXTVAL, #{ord_id}, #{pg_id}, #{pay_Method}, #{pay_Status}, SYSDATE)
+	</insert>
 	
 </mapper>

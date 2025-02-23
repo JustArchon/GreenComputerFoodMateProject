@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 <!DOCTYPE html>
@@ -551,17 +551,33 @@ function execDaumPostcode() {
     		String impUid = (String) request.getAttribute("impUid");
 		%>
         <script>
-        	var orderItemList = ${orderItemList != null ? orderItemList : '[]'};
+	        var orderItemList = ${orderItemList != null ? orderItemList : '[]'};
+	        if (typeof orderItemList === "string") {
+	            orderItemList = JSON.parse(orderItemList); // 문자열이면 JSON 배열로 변환
+	        }
         	
         	function requestOrder2() {
+        		var orderData = {
+        				cartIds: orderItemList, // 주문 아이템 목록을 그대로 전송
+        		        merchantUid: "ORD-" + new Date().getTime(), // 예시: 주문번호 생성
+        		        payMethod: "card", // 결제방식 (ex: 카드, 계좌이체)
+        		        pgId: "imp11122", // PG사 ID
+        		        orderAddress: {
+        		            postalCode: $("#postal_Code").val(),
+        		            addr: $("#addr").val(),
+        		            addrDetail: $("#addr_Detail").val(),
+        		            toName: $("#to_name").val(),
+        		            toPhoneNum: $("#to_phone_num").val()
+        		        },
+        		    };
         		$.ajax({
                     type: "POST",
                     url: "${contextPath}/order/setOrderItems",
                     contentType: "application/json",
-                    data: JSON.stringify(orderItemList),  // 기존 데이터를 전송
+                    data: JSON.stringify(orderData),  // 기존 데이터를 전송
                     success: function(response) {
                         // 데이터 저장 후 주문 완료 페이지로 이동
-                        window.location.replace("${contextPath}/order/order2?merchant_uid=" + encodeURIComponent("ORDER12345") + "&pay_method=" + encodeURIComponent("trans"));
+                        window.location.replace("${contextPath}/order/order2?merchant_uid=" + encodeURIComponent("1234") + "&pay_method=" + encodeURIComponent("card"));
                     },
                     error: function(xhr, status, error) {
                         alert("결제 데이터 저장 중 오류 발생: " + error);
@@ -610,11 +626,24 @@ function execDaumPostcode() {
 		            buyer_postcode: ordererPostCode
 		        }, function (rsp) {
 		            if (rsp.success) {
+		            	var orderData = {
+		            			cartIds: orderItemList, // 주문 아이템 목록을 그대로 전송
+		        		        merchantUid: rsp.merchant_uid,
+		        		        payMethod: rsp.pay_method, // 결제방식 (ex: 카드, 계좌이체)
+		        		        pgId: rsp.imp_uid, // PG사 ID
+		        		        orderAddress: {
+		        		            postalCode: $("#postal_Code").val(),
+		        		            addr: $("#addr").val(),
+		        		            addrDetail: $("#addr_Detail").val(),
+		        		            toName: $("#to_name").val(),
+		        		            toPhoneNum: $("#to_phone_num").val()
+		        		        },
+		        		    };
 		            	$.ajax({
 		                    type: "POST",
 		                    url: "${contextPath}/order/setOrderItems",
 		                    contentType: "application/json",
-		                    data: JSON.stringify(orderItemList),  // 기존 데이터를 전송
+		                    data: JSON.stringify(orderData),  // 기존 데이터를 전송
 		                    success: function(response) {
 		                        // 데이터 저장 후 주문 완료 페이지로 이동
 		                    	window.location.replace("${contextPath}/order/order2?merchant_uid=" + encodeURIComponent(rsp.merchant_uid) + "&pay_method=" + encodeURIComponent(rsp.pay_method));

@@ -1,7 +1,11 @@
 package com.spring.FoodMate.order.controller;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +25,11 @@ import com.spring.FoodMate.cart.dto.CartDTO;
 import com.spring.FoodMate.common.UtilMethod;
 import com.spring.FoodMate.member.dto.BuyerDTO;
 import com.spring.FoodMate.mypage.service.DeliveryService;
+import com.spring.FoodMate.order.dto.OrderAddressDTO;
+import com.spring.FoodMate.order.dto.OrderDTO;
+import com.spring.FoodMate.order.dto.OrderDetailDTO;
+import com.spring.FoodMate.order.dto.OrderPaymentDTO;
+import com.spring.FoodMate.order.dto.OrderRequestDTO;
 import com.spring.FoodMate.order.service.OrderService;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -70,15 +79,94 @@ public class OrderController {
 	}
 	
 	@RequestMapping("/order/setOrderItems")
-	public String setOrderItems(@RequestBody List<Integer> cartIds, HttpSession session) {
+	public String setOrderItems(@RequestBody OrderRequestDTO orderRequestDTO, HttpSession session) {
 		
 //		 System.out.println("받은 주문 ID 리스트: " + cartIds); // 디버깅용
+		BuyerDTO buyerInfo = (BuyerDTO) session.getAttribute("buyerInfo");
 		 
 		// 받은 cartIds를 이용해 실제 주문 아이템 가져오기
-	    List<CartDTO> cartItems = orderService.getCartItems(cartIds);
+	    List<CartDTO> cartItems = orderService.getCartItems(orderRequestDTO.getCartItems());
 
 	    // FlashAttribute에 저장하여 order2에서도 사용 가능
 	    session.setAttribute("orderItems", cartItems);
+	    
+	    Map<String, List<CartDTO>> groupedBySeller = cartItems.stream()
+	    	    .collect(Collectors.groupingBy(cart -> cart.getSlr_id()));
+	    
+	    System.out.println(groupedBySeller);
+	    
+	    List<OrderDTO> orderList = new ArrayList<>();
+	    List<Integer> orderNumberList = new ArrayList<>();
+	    
+	    // 주문 정보 등록
+	    for (String slrId : groupedBySeller.keySet()) {
+	        List<CartDTO> sellerCartList = groupedBySeller.get(slrId);
+
+	        int totalProductPrice = sellerCartList.stream()
+	            .mapToInt(cart -> cart.getPrice() * cart.getQty())
+	            .sum();
+
+	        int shippingFee = 3000;
+	        
+//	        System.out.println(totalProductPrice);
+
+	        OrderDTO order = new OrderDTO();
+	        order.setOrd_code(orderRequestDTO.getMerchantUid());
+	        order.setByr_id(buyerInfo.getByr_id());
+	        order.setSlr_id(slrId);
+	        order.setTot_Pdt_Price(totalProductPrice);
+	        order.setShip_Fee(shippingFee);
+	        order.setOrd_Stat('1'); // '1' = 결제완료 상태
+	        order.setCreate_Date(LocalDateTime.now());
+
+	        orderList.add(order);
+	    }
+	    for (OrderDTO order : orderList) {
+	    	orderService.setOrderList(order);
+	    }
+	    
+	    // 주문 상세정보 등록 [sellerid, buyerid, ord_code활용]
+	    for (String slrId : groupedBySeller.keySet()) {
+	    	Map<String, Object> ordMap = new HashMap<>();
+	    	ordMap.put("slr_id", slrId);
+	    	ordMap.put("byr_id", buyerInfo.getByr_id());
+	    	ordMap.put("ord_code", orderRequestDTO.getMerchantUid());
+	    	int ordid = orderService.getOrdId(ordMap);
+	    	
+	    	// OrderDetail 추가
+	    	List<CartDTO> filteredCartItems = cartItems.stream()
+	    	        .filter(cart -> cart.getSlr_id().equals(slrId))
+	    	        .collect(Collectors.toList());
+	    	
+	    	for (CartDTO cartItem : filteredCartItems) {
+	    		OrderDetailDTO orderDetail = new OrderDetailDTO();
+	            orderDetail.setOrd_id(ordid);
+	            orderDetail.setPdt_id(cartItem.getPdt_id());
+	            orderDetail.setPdt_name(cartItem.getPdt_name());
+	            orderDetail.setPdt_price(cartItem.getPrice());
+	            orderDetail.setQty(cartItem.getQty());
+
+	            // 5️ DB에 삽입
+	            orderService.insertOrderDetail(orderDetail);
+	            
+	            // 해야할것 payment, address 추가 ordid는 그대로for돌리면될듯? 어떻게든 form에있는거 가져올거생각해야할듯
+	        }
+	      // Address 정보 추가
+	    	OrderAddressDTO orderAddress = orderRequestDTO.getOrderAddress();
+	    	orderAddress.setOrdId(ordid);
+	    	
+	    	orderService.insertOrderAddress(orderAddress);
+	    	
+	    	
+	      // Payment 정보 추가
+	    	OrderPaymentDTO orderPayment = new OrderPaymentDTO();
+	    	orderPayment.setOrd_id(ordid);
+	    	orderPayment.setPay_Method(orderRequestDTO.getPayMethod());
+	    	orderPayment.setPay_Status('1');
+	    	orderPayment.setPg_id(orderRequestDTO.getPgId());
+	    	
+	    	orderService.insertOrderPayment(orderPayment);
+	    }
 	    
 	    // 주문 완료 페이지로 리다이렉트
 	    return "redirect:/order/order2";

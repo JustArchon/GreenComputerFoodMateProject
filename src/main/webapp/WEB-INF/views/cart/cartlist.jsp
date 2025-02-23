@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 <!DOCTYPE html>
 <html>
@@ -190,9 +191,9 @@ $(document).on("change", ".cart-checkbox", function() {
     });
     deliveryTotalAmount = totalAmount + deliveryfee;
     // "선택한 상품의 금액 총합" 부분에 업데이트
-    $("#total_amount").text(totalAmount + "원");
-    $("#delivery_fee").text(deliveryfee + "원");
-    $("#delivery_total_amount").text(deliveryTotalAmount + "원");
+    $("#total_amount").text(totalAmount.toLocaleString() + "원");
+    $("#delivery_fee").text(deliveryfee.toLocaleString() + "원");
+    $("#delivery_total_amount").text(deliveryTotalAmount.toLocaleString() + "원");
 });
 
 $(document).ready(function() {
@@ -288,12 +289,13 @@ $(document).ready(function() {
 					<td class="qty">
 					    <input type="number" class="qty-input" data-cart-id="${cart.cart_id}" data-original-qty="${cart.qty}" value="${cart.qty}" min="1">
 					</td>
-					<td class="pdt_price">${cart.price}원</td>
+					<td class="pdt_price"><fmt:formatNumber value="${cart.price}" type="number" groupingUsed="true" />원</td>
+					
                     
                     
                     
-                    <td>${cart.qty * cart.price}원</td>
-                    <td class="ship_fee">3000원</td>
+                    <td><fmt:formatNumber value="${cart.qty * cart.price}" type="number" groupingUsed="true" />원</td>
+                    <td class="ship_fee">3,000원</td>
                     <td>
                         <button class="btn btn-danger btn-sm delete-product" data-cart-id="${cart.cart_id}">삭제</button>
                     </td>
