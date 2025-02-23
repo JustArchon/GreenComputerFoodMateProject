@@ -42,8 +42,11 @@ public class ProductControllerImpl implements ProductController {
 	@Override
 	@RequestMapping(value="/product/pdtlist", method=RequestMethod.GET)
 	public ModelAndView pdtList(
-	    @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword, HttpServletRequest request) throws Exception {
-	    List<ProductDTO> searchList = productService.pdtList(keyword);
+		@RequestParam(value = "slr_id", required = false, defaultValue = "") String slr_id,	
+		@RequestParam(value = "category_id", required = false, defaultValue = "") Integer category_id,
+	    @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+	    HttpServletRequest request) throws Exception {
+	    List<ProductDTO> searchList = productService.searchList(slr_id, category_id, keyword);
 	    
 	    ModelAndView mav = new ModelAndView();
         mav.setViewName("common/layout");
@@ -173,7 +176,7 @@ public class ProductControllerImpl implements ProductController {
         out = response.getWriter();
         out.println("<script type='text/javascript'>");
         out.println("alert('상품 정보를 수정하였습니다. 상품 관리 페이지로 이동합니다.');");
-        out.println("window.location.href='" + request.getContextPath() + "/mypage_seller/ms_pdtlist';");
+        out.println("window.location.href='" + request.getContextPath() + "/mypage_seller/mypage_sell_productlist';");
         out.println("</script>");
 	}
 
@@ -200,7 +203,7 @@ public class ProductControllerImpl implements ProductController {
 	}
 	
 	@Override
-	@RequestMapping(value="/getSubCategories/{category_id}", method=RequestMethod.GET)
+	@RequestMapping(value="/product/getSubCategories/{category_id}", method=RequestMethod.GET)
 	@ResponseBody
 	public List<CategoryDTO> getSubCategories(@PathVariable("category_id") int category_id) throws Exception {
 	    // 데이터베이스에서 category_id에 해당하는 자식 카테고리 가져오기
@@ -232,7 +235,6 @@ public class ProductControllerImpl implements ProductController {
 	@RequestMapping(value="/product/categorycompare", method=RequestMethod.GET)
 	@ResponseBody
 	public Map<String, Object> categorycompare(@RequestParam("category_id") Integer category_id) {
-		System.out.println("비교시작한다");
 		try {
 			List<ProductDTO> products = productService.searchList(null, category_id, null);
 		    Map<String, Object> response = new HashMap<>();

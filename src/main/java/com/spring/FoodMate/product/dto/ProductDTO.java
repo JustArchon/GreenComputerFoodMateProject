@@ -20,6 +20,7 @@ public class ProductDTO {
 	
 	private String slr_nickname; // pdt_id 매개로 Join 해서 쓰는 판매자 별명
 	private MultipartFile pdt_img; // 실제 이미지 전달용
+	private Double unit_price;
 	
 	public void setPdt_id(int pdt_id) { this.pdt_id = pdt_id; }
 	public String getSlr_id() { return slr_id; }
@@ -47,22 +48,27 @@ public class ProductDTO {
 	public int getPdt_id() { return pdt_id; }
 	public MultipartFile getPdt_img() {return pdt_img;}
 	public void setPdt_img(MultipartFile pdt_img) {this.pdt_img = pdt_img;}
+	public Double getUnit_price() {return unit_price;}
+	public void setUnit_price(Double unit_price) {this.unit_price = unit_price;}
+	
 	
 	// 예외 로그 기록용
 	public String toLogString() {
 	    return "ProductDTO{" +
-	            "pdt_id=" + pdt_id +
-	            ", slr_id='" + slr_id + '\'' +
-	            ", name='" + name + '\'' +
-	            ", img_path='" + img_path + '\'' +
-	            ", price=" + price +
-	            ", qty=" + qty +
-	            ", unit='" + unit + '\'' +
-	            ", category_id=" + category_id +
-	            ", stock=" + stock +
-	            ", status='" + status + '\'' +
-	            ", description='" + description + '\'' +
-	            ", slr_nickname='" + slr_nickname + '\'' +
+	            "pdt_id=" + getPdt_id() +
+	            ", slr_id='" + getSlr_id() +
+	            ", name='" + getName() +
+	            ", img_path='" + getImg_path() +
+	            ", price=" + getPrice() +
+	            ", qty=" + getQty() +
+	            ", unit='" + getUnit() +
+	            ", category_id=" + getCategory_id() +
+	            ", stock=" + getStock() +
+	            ", status='" + getStatus() +
+	            ", description='" + getDescription() +
+	            ", slr_nickname='" + getSlr_nickname() +
+	            ", slr_nickname='" + getSlr_nickname() +
+	            ", unit_price=" + getUnit_price() + 
 	            '}';
 	}
 }
