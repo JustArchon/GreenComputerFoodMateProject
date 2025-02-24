@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.FoodMate.cart.dto.CartDTO;
+import com.spring.FoodMate.cart.service.CartService;
 import com.spring.FoodMate.common.UtilMethod;
 import com.spring.FoodMate.member.dto.BuyerDTO;
 import com.spring.FoodMate.mypage.service.DeliveryService;
@@ -41,6 +42,9 @@ public class OrderController {
 	OrderService orderService; 
 	@Autowired
 	DeliveryService deliveryService;
+	@Autowired
+	CartService cartService;
+	
 	
 	private final Dotenv dotenv = Dotenv.load();
     private final String PimpUid = dotenv.get("PORTONE_IMP_UID");
@@ -167,6 +171,8 @@ public class OrderController {
 	    	
 	    	orderService.insertOrderPayment(orderPayment);
 	    }
+	    
+	    cartService.deleteCartByrID(buyerInfo.getByr_id());
 	    
 	    // 주문 완료 페이지로 리다이렉트
 	    return "redirect:/order/order2";

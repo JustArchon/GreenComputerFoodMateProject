@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Component("deliveryDTO")
 public class DeliveryDTO {
+	private int addr_id; // 주소 고유 ID
 	private String byr_id;
     private String addr_Nickname; // 주소 별칭
     private String postal_Code;   // 우편번호
@@ -13,6 +14,13 @@ public class DeliveryDTO {
     private String to_Name;       // 받는 사람 이름
     private String to_Phone_Num;   // 받는 사람 전화번호
     private String is_Base_Addr;   // 기본 주소 여부 ('Y' or 'N')
+
+	public int getAddr_id() {
+		return addr_id;
+	}
+	public void setAddr_id(int addr_id) {
+		this.addr_id = addr_id;
+	}
 	public String getByr_id() {
 		return byr_id;
 	}
@@ -61,5 +69,6 @@ public class DeliveryDTO {
 	public void setIs_Base_Addr(String is_Base_Addr) {
 		this.is_Base_Addr = is_Base_Addr;
 	}
+
 	
 }

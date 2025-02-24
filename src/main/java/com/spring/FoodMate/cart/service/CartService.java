@@ -79,5 +79,9 @@ public class CartService {
         } catch (Exception e) {
             throw new CartException("CartService.updateCartQuantity 에러! cart_id=" + cart_id, e);
         }
-    }   
+    }
+    
+    public void deleteCartByrID(String byr_id) {
+    	cartDAO.deleteCartByrID(byr_id);
+    }
 }

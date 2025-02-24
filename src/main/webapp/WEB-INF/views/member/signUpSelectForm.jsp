@@ -53,7 +53,7 @@
 			        <div class="row justify-content-center">
 			            <!-- 일반 회원 -->
 			            <div class="col-6 col-md-4 mb-3">
-			            	<a href="${contextPath}/member/signUpForm.do" class="text-decoration-none">
+			            	<a href="${contextPath}/member/signUpBuyerContactForm" class="text-decoration-none">
 			                <div class="card text-center card-select" id="general" onclick="selectCard('general')">
 			                    <div class="card-body">
 			                        <div class="icon mb-2">👤</div>
@@ -66,7 +66,7 @@
 			
 			            <!-- 시설 회원 -->
 			            <div class="col-6 col-md-4 mb-3">
-			            <a href="${contextPath}/member/signUpSellerForm.do" class="text-decoration-none">
+			            <a href="${contextPath}/member/signUpSellerContactForm" class="text-decoration-none">
 			                <div class="card text-center card-select" id="facility" onclick="selectCard('facility')">
 			                    <div class="card-body">
 			                        <div class="icon mb-2">🛒</div>

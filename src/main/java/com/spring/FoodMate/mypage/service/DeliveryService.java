@@ -27,6 +27,14 @@ public class DeliveryService {
 	public void resetdelivery(String id) {
 		deliveryDAO.resetdelivery(id);
 	}
+	
+	public void deletedelivery(int id) {
+		deliveryDAO.deletedelivery(id);
+	}
+	
+	public void updatedelivery(DeliveryDTO deliveryDTO) {
+		deliveryDAO.updatedelivery(deliveryDTO);
+	}
 		
 //		// 주문목록이 없을경우 빈리스트를 반환해서 페이지 500에러 방지
 //		if (list == null || list.isEmpty()) {

@@ -72,7 +72,7 @@
 						</a>
 						<p> ${sessionScope.buyerInfo.name} 회원님 </p>
 						<p> 보유포인트 </p>
-						<p> 0 포인트 </p>
+						<p> ${sessionScope.buyerInfo.points} 포인트 </p>
 						<p> 보유쿠폰 </p>
 						<p> 0개 </p>
 					</div>

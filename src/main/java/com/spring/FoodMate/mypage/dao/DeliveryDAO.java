@@ -24,12 +24,16 @@ public class DeliveryDAO {
 		sqlSession.insert("mapper.delivery.adddelivery", _deliveryDAO);
 	}
 	
-	public void resetdelivery(String id) throws DataAccessException{
-		sqlSession.update("mapper.delivery.resetDelivery", id);
+	public void resetdelivery(String byr_id) throws DataAccessException{
+		sqlSession.update("mapper.delivery.resetDelivery", byr_id);
 	}
 	
-	public int updateUserProfile(DeliveryDAO _profileDTO) throws DataAccessException{
-		return sqlSession.update("mapper.profile.updateUserProfile", _profileDTO);
+	public void deletedelivery(int addr_id) throws DataAccessException{
+		sqlSession.delete("mapper.delivery.deletedelivery", addr_id);
+	}
+	
+	public void updatedelivery(DeliveryDTO deliveryDTO) throws DataAccessException{
+		sqlSession.update("mapper.delivery.updatedelivery", deliveryDTO);
 	}
 
 }

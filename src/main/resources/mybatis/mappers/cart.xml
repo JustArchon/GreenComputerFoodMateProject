@@ -49,5 +49,9 @@
     <delete id="deleteCartItem" parameterType="int">
 	    DELETE FROM FOODMATE_CART WHERE CART_ID = #{cart_id}
 	</delete>
+	
+	<delete id="deleteCartByrid" parameterType="String">
+	    DELETE FROM FOODMATE_CART WHERE BYR_ID = #{byr_id}
+	</delete>
 
 </mapper>
