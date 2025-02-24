@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 <!DOCTYPE html>
 <html>
@@ -103,6 +104,73 @@
 		  }).open();
 		}
 	$(document).ready(function() {
+		var contextPath = "${pageContext.request.contextPath}";
+		let isBaseAddrCheckbox = document.getElementById("is_Base_Addr");
+
+	    // 체크박스 변경 감지 (디버깅용)
+	    isBaseAddrCheckbox.addEventListener("change", function() {
+	        console.log("체크박스 상태 변경됨:", this.checked ? "Y" : "N");
+	    });
+	    
+	    $(".edit-btn").click(function() {
+	        let btn = $(this); // 현재 클릭된 버튼
+	        
+	        let modal = document.getElementById("deliveryModal");
+	        document.getElementById("modalTitle").textContent = "배송지 수정";
+
+	        // 버튼의 data-* 속성에서 값 가져오기
+	        let addrId = btn.data("id");
+	        let nickname = btn.data("nickname");
+	        let name = btn.data("name");
+	        let postalCode = btn.data("postal");
+	        let addr = btn.data("addr");
+	        let detail = btn.data("detail");
+	        let phone = btn.data("phone");
+	        let isBaseAddr = btn.data("base");
+
+	        // 모달 폼에 데이터 채우기
+	        $("input[name='addr_Nickname']").val(nickname);
+	        $("input[name='to_Name']").val(name);
+	        $("input[name='postal_Code']").val(postalCode);
+	        $("input[name='addr']").val(addr);
+	        $("input[name='addr_Detail']").val(detail);
+	        $("input[name='to_Phone_Num']").val(phone);
+
+	        // 기본 배송지 설정 체크박스 처리
+	        $("#is_Base_Addr").prop("checked", isBaseAddr === "Y");
+	        
+	     // 기존 hidden input이 있으면 삭제 후 추가
+	        $("input[name='addr_id']").remove();
+	        $("form[name='deliveryAdd']").append('<input type="hidden" name="addr_id" value="' + addrId + '">');
+
+	        // 기존 action 변경 (업데이트 API로 변경)
+	        $("form[name='deliveryAdd']").attr("action", contextPath + "/mypage/deliveryUpdate");
+
+	        // 모달 띄우기
+	        modal.style.display = "flex";
+	    });
+	    
+	    $(".delete-btn").click(function() {
+	        let addrid = $(this).data("id"); // data-id 속성에서 addr_id 값 가져오기
+
+	        if (!confirm("정말 삭제하시겠습니까?")) {
+	            return; // 취소하면 삭제 요청 중단
+	        }
+
+	        $.ajax({
+	            url: contextPath + "/mypage/deliverydelete", // 서버 삭제 API
+	            type: "POST",
+	            data: { addr_id: addrid }, // 서버에 addr_id 전송
+	            success: function(response) {
+	                alert("삭제가 완료되었습니다.");
+	                location.reload(); // 새로고침
+	            },
+	            error: function() {
+	                alert("삭제에 실패했습니다.");
+	            }
+	        });
+	    });
+		
 	    $("#deliveryAdd").submit(function(event) {
 	        event.preventDefault(); // 기본 제출 방지
 
@@ -111,6 +179,7 @@
 
 	        // 체크박스 상태 반영 (체크되면 "Y", 해제되면 "N")
 	        formData.set("is_Base_Addr", isBaseAddrCheckbox.checked ? "Y" : "N");
+	        console.log("폼 데이터 전송:", formData.get("is_Base_Addr")); // 확인용
 
 	        $.ajax({
 	            url: contextPath + "/mypage/deliveryAdd",
@@ -133,6 +202,15 @@
 	
 </script>
 </head>
+<%-- 현재 페이지 정보 가져오기 (기본값: 1페이지) --%>
+<c:set var="currentPage" value="${param.page != null ? param.page : 1}" />
+<c:set var="itemsPerPage" value="6" />
+<c:set var="startIndex" value="${(currentPage - 1) * itemsPerPage}" />
+<c:set var="endIndex" value="${currentPage * itemsPerPage}" />
+
+<%-- 전체 데이터 개수 구하기 --%>
+<c:set var="totalItems" value="${fn:length(deliveryList)}" />
+<c:set var="totalPages" value="${(totalItems + itemsPerPage - 1) / itemsPerPage}" />
 <body>
 <div class="container mt-1">
 	<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
@@ -152,51 +230,59 @@
 			</tr>
 		</thead>
       	<tbody>
-      	<c:forEach var="delivery" items="${deliveryList}">
-	      	<tr>
-	      	  <td>${delivery.is_Base_Addr == 'Y' ? '(기본배송지)<br>' : ''}
-	      	  ${delivery.addr_Nickname}</td>
-	          <td>${delivery.to_Name}</td>
-	          <td>(${delivery.postal_Code})<br>
-	          ${delivery.addr} ${delivery.addr_Detail}
-	          </td>
-	          <td>전화번호 : ${delivery.to_Phone_Num}
-	          </td>
-	          <td>
-	          <div class="d-flex flex-column gap-1">
-			    	<button class="btn btn-outline-secondary btn-sm" disabled>수정</button>
-			    	<button class="btn btn-outline-secondary btn-sm" disabled>삭제</button>
-			  </div>
-	          </td>
-	        </tr>
+      	<c:forEach var="delivery" items="${deliveryList}" varStatus="status">
+      		<c:if test="${status.index >= startIndex && status.index < endIndex}">
+		      	<tr>
+		      	  <td>${delivery.is_Base_Addr == 'Y' ? '(기본배송지)<br>' : ''}
+		      	  ${delivery.addr_Nickname}</td>
+		          <td>${delivery.to_Name}</td>
+		          <td>(${delivery.postal_Code})<br>
+		          ${delivery.addr} ${delivery.addr_Detail}
+		          </td>
+		          <td>전화번호 : ${delivery.to_Phone_Num}
+		          </td>
+		          <td>
+		          <div class="d-flex flex-column gap-1">
+				    	<button class="btn btn-outline-secondary btn-sm edit-btn" 
+					    	data-id="${delivery.addr_id}"
+			                data-nickname="${delivery.addr_Nickname}"
+			                data-name="${delivery.to_Name}"
+			                data-postal="${delivery.postal_Code}"
+			                data-addr="${delivery.addr}"
+			                data-detail="${delivery.addr_Detail}"
+			                data-phone="${delivery.to_Phone_Num}"
+			                data-base="${delivery.is_Base_Addr}">
+			                수정
+			            </button>
+				    	<button class="btn btn-outline-secondary btn-sm delete-btn" data-id="${delivery.addr_id}">삭제</button>
+				  </div>
+		          </td>
+		        </tr>
+      		</c:if>
         </c:forEach>
 		</tbody>
 	</table>
-	<nav aria-label="Page navigation">
-	  <ul class="pagination justify-content-center">
-	    <li class="page-item">
-	      <a class="page-link" href="#" aria-label="Previous">
-	        <span aria-hidden="true">Prev</span>
-	      </a>
-	    </li>
-	    <li class="page-item active" aria-current="page">
-	      <a class="page-link" href="#">1</a>
-	    </li>
-	    <li class="page-item"><a class="page-link" href="#">2</a></li>
-	    <li class="page-item"><a class="page-link" href="#">3</a></li>
-	    <li class="page-item"><a class="page-link" href="#">4</a></li>
-	    <li class="page-item"><a class="page-link" href="#">5</a></li>
-	    <li class="page-item"><a class="page-link" href="#">6</a></li>
-	    <li class="page-item"><a class="page-link" href="#">7</a></li>
-	    <li class="page-item"><a class="page-link" href="#">8</a></li>
-	    <li class="page-item"><a class="page-link" href="#">9</a></li>
-	    <li class="page-item"><a class="page-link" href="#">10</a></li>
-	    <li class="page-item">
-	      <a class="page-link" href="#" aria-label="Next">
-	        <span aria-hidden="true">Next</span>
-	      </a>
-	    </li>
-	  </ul>
+	<%-- 페이지네이션 --%>
+	<nav>
+	    <ul class="pagination justify-content-center">
+	        <c:if test="${currentPage > 1}">
+	            <li class="page-item">
+	                <a class="page-link" href="?page=${currentPage - 1}">Prev</a>
+	            </li>
+	        </c:if>
+	
+	        <c:forEach var="i" begin="1" end="${totalPages}">
+	            <li class="page-item ${i == currentPage ? 'active' : ''}">
+	                <a class="page-link" href="?page=${i}">${i}</a>
+	            </li>
+	        </c:forEach>
+	
+	        <c:if test="${currentPage < totalPages}">
+	            <li class="page-item">
+	                <a class="page-link" href="?page=${currentPage + 1}">Next</a>
+	            </li>
+	        </c:if>
+	    </ul>
 	</nav>
 	<div class="modal" id="deliveryModal">
 		<div class="modal_body">
@@ -204,7 +290,7 @@
 				<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
 			      		<h5 class="mb-0 fw-bold">나의 배송지 관리</h5>
 			    </div>
-			  	<p class="mb-3">배송지 추가</p>
+			  	<p class="mb-3" id="modalTitle">배송지 추가</p>
 			  	<form name="deliveryAdd" method="post" action="${contextPath}/mypage/deliveryAdd">
 			  	<table class="table2">
 					<tr>
@@ -240,7 +326,7 @@
 				    </tr>
 				</table>
 				<div class="d-flex justify-content-center align-items-center form-check mb-1">
-				  <input class="form-check-input me-2 mb-1" type="checkbox" value="N" name="is_Base_Addr" id="is_Base_Addr" ${delivery.is_Base_Addr == 'Y' ? 'checked' : ''}>
+				  <input type="checkbox" class="form-check-input me-2 mb-1" value="Y" name="is_Base_Addr" id="is_Base_Addr" ${delivery.is_Base_Addr == 'Y' ? 'checked' : ''}>
 				  <label class="form-check-label" for="flexCheckDefault">
 				    기본 배송지로 설정
 				  </label>

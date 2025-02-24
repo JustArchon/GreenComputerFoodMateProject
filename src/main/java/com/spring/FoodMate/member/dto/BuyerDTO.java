@@ -13,6 +13,7 @@ public class BuyerDTO {
 	private String sex;
 	private String email;
 	private String phone_num;
+	private int points;
 	private String status;
 	
 	// 회원가입 요소
@@ -131,6 +132,13 @@ public class BuyerDTO {
 	public void setBirthdd(String birthdd) {
 		this.birthdd = birthdd;
 	}
+	public int getPoints() {
+		return points;
+	}
+	public void setPoints(int points) {
+		this.points = points;
+	}
+	
 	
 }
 

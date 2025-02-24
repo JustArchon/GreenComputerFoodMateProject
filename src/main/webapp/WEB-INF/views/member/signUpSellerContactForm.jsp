@@ -99,7 +99,7 @@
 	
 	document.getElementById("submitButton").addEventListener("click", function() {
 	    if (!this.disabled) {
-	        window.location.href = "${contextPath}/member/signUpSelectForm.do"; // 이동할 페이지
+	        window.location.href = "${contextPath}/member/signUpSellerForm"; // 이동할 페이지
 	    }
 	});
 </script>

@@ -52,7 +52,18 @@
 	    SET is_Base_Addr = 'N'
 	    WHERE byr_id = #{byr_id}
 	</update>
+	
+	<delete id="deletedelivery" parameterType="int">
+	    DELETE FROM FOODMATE_BUYER_ADDRESS WHERE ADDR_ID = #{addr_id}
+	</delete>
 
+	<update id="updatedelivery" parameterType="deliveryDTO">
+	    UPDATE FOODMATE_BUYER_ADDRESS
+	    SET 
+	        ADDR_NICKNAME = #{addr_Nickname}, POSTAL_CODE = #{postal_Code}, ADDR = #{addr}, 
+	        ADDR_DETAIL = #{addr_Detail}, TO_NAME = #{to_Name}, TO_PHONE_NUM = #{to_Phone_Num}, IS_BASE_ADDR = #{is_Base_Addr}
+	    WHERE ADDR_ID = #{addr_id}
+	</update>
 	
 	
 </mapper>

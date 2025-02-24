@@ -65,7 +65,7 @@
         <hr>
         <h5>혜택관리</h5>
         <ul>
-	        <li><a href="${contextPath}/mypage/pointManage/couponeManageForm.do">쿠폰</a></li>
+	        <li><a href="#" onclick="alert('서비스 준비 중입니다.'); return false;">쿠폰</a></li>
 	        <li><a href="${contextPath}/mypage/pointManage/pointManageForm.do">포인트</a></li>
         </ul>
         <hr>

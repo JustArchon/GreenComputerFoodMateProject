@@ -67,4 +67,8 @@ public class CartDAO {
 			throw new DBException("CartDAO.deleteCartItem 에러! cart_id=" + cart_id, e);
 		}
     }
+	
+	public void deleteCartByrID(String byr_id) {
+		sqlSession.delete("mapper.cart.deleteCartByrid", byr_id);
+    }
 }

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%
 	request.setCharacterEncoding("UTF-8");
 %>
@@ -72,7 +73,6 @@
 		                </div>
 		                <div class="item-footer">
 		              		<p><span>작성자: ${recipe.nickname}</span></p>
-		              		<p>♥ <span>0</span></p>
 		            	</div>
 			        </div>
 			    </div>
@@ -96,7 +96,6 @@
 		                </div>
 		                <div class="item-footer">
 		              		<p><span>작성자: ${recipe.nickname}</span></p>
-		              		<p>♥ <span>0</span></p>
 		            	</div>
 			        </div>
 			    </div>
@@ -113,7 +112,10 @@
 			        <div class="item-title d-flex flex-column justify-content-center align-items-center">
 			            <h5><strong>${product.name}</strong></h5>
 			            <div class="item_etc">
-		                	<p><span class="item_product_price">${product.price}원</span> <span>⭐⭐⭐⭐⭐</span></p>
+		                	<p><span class="item_product_price"><fmt:formatNumber value="${product.price}" type="number" groupingUsed="true" />원</span></p>
+		                </div>
+		                <div class="item_review_star">
+		                	<p><span>⭐⭐⭐⭐⭐</span></p>
 		                </div>
 		                <div class="item-footer">
 		              		<p><span>판매자: ${product.slr_nickname}</span></p>

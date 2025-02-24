@@ -92,7 +92,7 @@
                             / 
                 <a href="${contextPath}/member/buyerpasswdFindForm" class="link_find">비밀번호 찾기</a>
                         	/
-                <a href="${contextPath}/member/signUpContactForm" class="link_find">회원가입</a>
+                <a href="${contextPath}/member/signUpSelectForm" class="link_find">회원가입</a>
             </span>
             <div class="container mt-2 d-inline-block">
 			    <div class="row">
