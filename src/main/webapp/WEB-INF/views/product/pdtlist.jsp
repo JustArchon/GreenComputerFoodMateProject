@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8" isELIgnored="false"%>    
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<c:set var="contextPath"  value="${pageContext.request.contextPath}"  />  
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<c:set var="contextPath"  value="${pageContext.request.contextPath}"  /> 
 <html>
 <head>
 <style>
@@ -111,6 +112,12 @@ body {
 	font-weight: 800;
 }
 
+#product_list .pdt_UnitPrice {
+	font-size: 1.1rem;
+	color: blue;
+	font-wieght: 800;
+}
+
 #product_list .pagination {
     margin: 30px 0;
     display: flex;
@@ -168,28 +175,54 @@ body {
 	<section class="container_display">
 	
 		<c:choose>
-		    <c:when test="${empty list}">
-		        <p>표시할 내용이 없습니다.</p>
-		    </c:when>
-		    
-		    <c:otherwise>
-		        <c:forEach var="product" items="${list}">
-		        <article class="container_product">
-		            <div>
-		                <a href="${contextPath}/product/pdtdetail?pdt_id=${product.pdt_id}">
-		                    <img class="pdt_Image" src="${contextPath}/resources/images/${product.img_path}" alt="productImg">
-		                </a>
-		                <p>
-		                    ${product.name}<br>
-		                    판매자 : ${product.slr_nickname}<br>
-		                    <span class="pdt_FinalPrice">${product.price}원</span><br>
-		                    ⭐⭐⭐⭐⭐<br>
-		                </p>
-		            </div>
-		        </article>
-		        </c:forEach>
-		    </c:otherwise>
-		</c:choose>
+    <c:when test="${empty list}">
+        <p>표시할 내용이 없습니다.</p>
+    </c:when>
+    
+    <c:otherwise>
+        <c:forEach var="product" items="${list}">
+            <article class="container_product">
+                <div>
+                    <a href="${contextPath}/product/pdtdetail?pdt_id=${product.pdt_id}">
+                        <img class="pdt_Image" src="${contextPath}/resources/images/${product.img_path}" alt="productImg">
+                    </a>
+                    <p>
+                        ${product.name}<br>
+                        판매자 : ${product.slr_nickname}<br>
+                        <span class="pdt_FinalPrice">${product.price}원</span><br>
+                        
+                        <!-- unit_price가 null이 아닐 때만 출력 -->
+                        <c:choose>
+						    <c:when test="${product.unit == 'ml' or product.unit == 'g'}">
+						        <c:if test="${not empty product.unit_price}">
+						            100${product.unit}당 가격 : 
+						            <span class="pdt_UnitPrice"><fmt:formatNumber value="${product.unit_price * 100}" pattern="#,###"/>원</span><br>
+						        </c:if>
+						    </c:when>
+						    <c:when test="${product.unit == 'l'}">
+						        <c:if test="${not empty product.unit_price}">
+						            100ml당 가격 : 
+						            <span class="pdt_UnitPrice"><fmt:formatNumber value="${product.unit_price * 100}" pattern="#,###"/>원</span><br>
+						        </c:if>
+						    </c:when>
+						    <c:when test="${product.unit == 'kg'}">
+						        <c:if test="${not empty product.unit_price}">
+						            100g당 가격 : 
+						            <span class="pdt_UnitPrice"><fmt:formatNumber value="${product.unit_price * 100}" pattern="#,###"/>원</span><br>
+						        </c:if>
+						    </c:when>
+						    <c:otherwise>
+						        1${product.unit}당 가격 : <span class="pdt_UnitPrice"><fmt:formatNumber value="${product.unit_price}" pattern="#,###"/>원</span><br>
+						    </c:otherwise>
+						</c:choose>
+                        ⭐⭐⭐⭐⭐<br>
+                    </p>
+                </div>
+            </article>
+        </c:forEach>
+    </c:otherwise>
+</c:choose>
+
 	
 	</section>
 

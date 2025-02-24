@@ -171,7 +171,6 @@ var contextPath = "${contextPath}";
 $(document).on('click', '.rcp_Mtrs', function() {
     var categoryId = $(this).find('input[name="category_id"]').val();
     // 히든input에서 category_id 값 가져오기
-    console.log(categoryId);
     
     $.ajax({
         url: contextPath + '/product/categorycompare',  // 요청할 URL
@@ -182,10 +181,14 @@ $(document).on('click', '.rcp_Mtrs', function() {
 	        var productHtml = '';
 	
 	        products.forEach(function(product) {
-	        	
+	        
             productHtml += '<article class="pdt_row">' +
                 '<div>' +
-                    '<img class="pdt_img" src="' + contextPath + '/resources/images/' + product.img_path + '">' +
+	                '<a href="' + contextPath + '/product/pdtdetail?pdt_id=' + product.pdt_id + '" target="_blank" rel="noopener noreferrer">' + 
+	                // target="_blank"랑 rel="noopener noreferrer" 속성이 보안에 도움된다고 합니다
+	                
+		                '<img class="pdt_img" src="' + contextPath + '/resources/images/' + product.img_path + '">' +
+		            '</a>' +
                 '</div>' +
                 '<div>' +
                     '<span class="pdt_Name">' + product.name + '</span><br>' +
@@ -328,21 +331,20 @@ $(document).on("click", "#cart-button", function() {
 	<div class="section_container">
 		<section id="rcp_intro">
 			<article id="rcp_imgAndName">
-				<img class="rcp_img" src="${contextPath}/resources/images/<c:out value='${recipe.mainimg_path}'/>">
+				<a href="${contextPath}/recipe/recipe_Detail?rcp_id=${recipe.rcp_id}" target="_blank">
+					<img class="rcp_img" src="${contextPath}/resources/images/<c:out value='${recipe.mainimg_path}'/>">
+				</a>
 				<br><c:out value="${recipe.title}" />
+				<br>작성자 : <c:out value="${recipe.nickname }" />
 			</article>
 		</section>
 		
 		<section id="rcp_step">
-		    <div>
-		        <span class="step-number">1</span> 이건중요한게아니니가<br>
-		    </div>
-		    <div>
-		        <span class="step-number">2</span> 나중에반복문으로알아서가져오샘<br>
-		    </div>
-		    <div>
-		        <span class="step-number">3</span> ㅇㅋ?<br>
-		    </div>
+		    <c:forEach var="step" items="${steps}">
+			    <div>
+			        <span class="step-number">${step.rcp_step}</span> ${step.step_desc}<br>
+			    </div>
+			</c:forEach>
 		</section>
 	</div>
 

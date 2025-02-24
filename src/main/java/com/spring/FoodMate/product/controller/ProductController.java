@@ -16,7 +16,7 @@ import com.spring.FoodMate.product.dto.ProductDTO;
 
 public interface ProductController {
 
-    ModelAndView pdtList(String keyword, HttpServletRequest request) throws Exception;
+    ModelAndView pdtList(String slr_id, Integer category_id, String keyword, HttpServletRequest request) throws Exception;
 
     ModelAndView pdtDetail(int pdt_id, HttpServletRequest request, HttpServletResponse response) throws Exception;
 

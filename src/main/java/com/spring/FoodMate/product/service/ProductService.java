@@ -16,6 +16,7 @@ public class ProductService {
 	@Autowired
 	private ProductDAO productDAO;
 	
+	//기존에 쓰던 전체상품+검색어로 상품조회
 	public List<ProductDTO> pdtList(String keyword) {
 		try {
 			if(keyword.equals("")) {
@@ -30,6 +31,7 @@ public class ProductService {
 		}
 	}
 	
+	// 앞으로 쓸 전체상품 & 판매자별 & 카테고리별 & 검색어별 상품목록조회
 	public List<ProductDTO> searchList(String slr_id, Integer category_id, String keyword) {
 		try {
 			return productDAO.searchList(slr_id, category_id, keyword);

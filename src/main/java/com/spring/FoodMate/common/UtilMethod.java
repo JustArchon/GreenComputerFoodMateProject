@@ -54,12 +54,11 @@ public class UtilMethod {
 	// 배포할 때는 배포환경에 맞게 바꿔주면 됨
 	private static final String imagePath = "C:/Users/Administrator/git/GreenComputerFoodMateProject/src/main/webapp/resources/images";
 	
-	
 	private static final String imagePath1 = "C:/Users/Administrator/git/GreenComputerFoodMateProject/src/main/webapp/resources/images";
-	// 그린컴퓨터학원 - 송태호. 아마 다른사람도 깃허브로하면 다 이 경로 쓸듯?
+	// 그린컴퓨터학원 - 송태호 자리
 	private static final String imagePath2 = "C:/Users/confl/git/GreenComputerFoodMateProject/src/main/webapp/resources/images";
 	// 송태호 자택의 경로.
-	private static String imagePath3 = "C:/Web/FoodMate/src/main/webapp/resources/images";
+	private static final String imagePath3 = "C:/Web/FoodMate/src/main/webapp/resources/images";
 	// 그린컴퓨터학원 - 강규진.
 	
 	public static String savePdtImage(HttpServletRequest request, MultipartFile file) throws Exception {

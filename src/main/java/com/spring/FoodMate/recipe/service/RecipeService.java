@@ -25,10 +25,16 @@ public interface RecipeService {
     // 레시피 목록 아이디 조회
     List<RecipeDTO> selectRecipeListByrID(String byr_id) throws Exception;
     
-    // 레시피 하나 조회 (레시피id 넣었을때 그 레시피가 있는지 확인만하는용도임)
+    // 레시피 하나 조회(순서랑 재료는 안들어있음)
     RecipeDTO recipe(int rcp_id) throws Exception;
     
-    //레시피 상세 조회
+    // 레시피 하나에 대한 재료만 조회
+    List<RecipeIngredientDTO> recipeIngrds(int rcp_id) throws Exception;
+    
+    // 레시피 하나에 대한 순서만 조회
+    List<RecipeStepDTO> recipeSteps(int rcp_id) throws Exception;
+    
+    //레시피 상세 조회에 필요한 모든 데이터 쌈싸주기
     Map<String, Object> selectRecipeDetail(int rcp_id) throws Exception;
     
     List<RecipeIngredientDTO> getRecipeIngrd(int rcp_id);

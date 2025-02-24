@@ -30,7 +30,7 @@ $(document).ready(function() {
 
     // 하위 카테고리 로드 함수
     function loadSubCategories(parentCategoryId, level) {
-        var url = contextPath + '/getSubCategories/' + parentCategoryId;
+        var url = contextPath + '/product/getSubCategories/' + parentCategoryId;
         console.log(url);
 
         $.ajax({
@@ -57,6 +57,14 @@ $(document).ready(function() {
                             lastCategoryId = selectedSubCategory;
                             $('#category_' + (level + 1)).remove();
                             loadSubCategories(selectedSubCategory, level + 1);
+
+                            // 선택된 카테고리의 recommend_unit 찾기
+                            var selectedCategory = data.find(category => category.category_id == selectedSubCategory);
+                            if (selectedCategory && selectedCategory.recommend_unit) {
+                                $('#unit').val(selectedCategory.recommend_unit);
+                            } else {
+                                $('#unit').val(''); // 값이 없으면 초기화
+                            }
                         }
                     });
                 }
@@ -67,6 +75,9 @@ $(document).ready(function() {
         });
     }
 
+    
+    
+    
     // 마지막 선택된 카테고리 ID 반환
     function getLastCategoryId() {
         return lastCategoryId;

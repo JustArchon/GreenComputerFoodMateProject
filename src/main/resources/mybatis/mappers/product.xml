@@ -31,24 +31,39 @@
 	    WHERE SLR_ID = #{slr_id}
 	</select>
 	
-	<!-- 조건에 따른 상품 검색 기능 실험중 -->
+	<!-- 조건에 따른 상품 검색 기능 / 단위당 가격 표시 실험중 -->
 	<select id="searchlist2" resultType="ProductDTO" parameterType="map">
 	    <![CDATA[
-	        SELECT * 
-	        FROM FOODMATE_PRODUCT_VIEW
-	        WHERE STATUS = 'Y'
+        SELECT p.*, 
+	       CASE 
+	           WHEN p.CATEGORY_ID IS NOT NULL 
+	                AND p.QTY IS NOT NULL 
+	                AND p.QTY > 0 
+	           THEN 
+	                CASE 
+	                    WHEN p.UNIT = c.RECOMMEND_UNIT THEN p.PRICE / p.QTY
+	                    WHEN p.UNIT IN ('L', 'l') AND c.RECOMMEND_UNIT IN ('ml', 'mL') THEN (p.PRICE / p.QTY) / 1000
+	                    WHEN p.UNIT IN ('kg', 'KG') AND c.RECOMMEND_UNIT IN ('g', 'G') THEN (p.PRICE / p.QTY) / 1000
+	                    ELSE p.PRICE / p.QTY
+	                END 
+	           ELSE NULL 
+	       END AS UNIT_PRICE
+		FROM FOODMATE_PRODUCT_VIEW p
+		JOIN FOODMATE_SELLER s ON p.SLR_ID = s.SLR_ID
+		LEFT JOIN FOODMATE_PRODUCT_CATEGORY c ON p.CATEGORY_ID = c.CATEGORY_ID
+		WHERE p.STATUS = 'Y'
 	    ]]>
 	    
 	    <if test="slr_id != null and slr_id != ''">
-	        <![CDATA[ AND SELLER_ID = #{seller_id} ]]>
+	        <![CDATA[ AND p.SLR_ID = #{seller_id} ]]>
 	    </if>
 	    
 	    <if test="category_id != null">
-	        <![CDATA[ AND CATEGORY_ID = #{category_id} ]]>
+	        <![CDATA[ AND p.CATEGORY_ID = #{category_id} ]]>
 	    </if>
 	    
 	    <if test="keyword != null and keyword != ''">
-	        <![CDATA[ AND NAME LIKE '%' || #{keyword} || '%' ]]>
+	        <![CDATA[ AND p.NAME LIKE '%' || #{keyword} || '%' ]]>
 	    </if>
 	</select>
 	
@@ -67,7 +82,7 @@
 	
 	<!-- 카테고리를 선택하면 그거에 해당하는 직계자식 카테고리만 가져온다. 상품등록할때 필요 -->
 	<select id="getChildCategory" resultType="CategoryDTO" parameterType="java.lang.Integer">
-		SELECT CATEGORY_ID, NAME, PARENT_ID
+		SELECT *
 	    FROM FOODMATE_PRODUCT_CATEGORY
 	    WHERE PARENT_ID = #{parent_id}
 	</select>
