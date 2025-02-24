@@ -70,8 +70,9 @@
 }
 
 #pdt_DsctPer {
-  font-size: 26px;
-  color: orange;
+  font-size: 32px;
+  color: red;
+  font-weight: 700;
 }
 .info3 #text_Price {
   position: absolute;
@@ -101,9 +102,12 @@
   text-decoration: line-through;
 }
 #pdt_DiscountedPrice {
-  font-size: 32px;
-  color: red;
-  font-weight: 700;
+  font-size: 16px;
+}
+
+#pdt_DiscountedPrice .pdt_UnitPrice {
+  font-size: 16px;
+  color : black
 }
 
 .info4 {

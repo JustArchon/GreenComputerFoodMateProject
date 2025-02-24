@@ -32,9 +32,9 @@ public class ProductService {
 	}
 	
 	// 앞으로 쓸 전체상품 & 판매자별 & 카테고리별 & 검색어별 상품목록조회
-	public List<ProductDTO> searchList(String slr_id, Integer category_id, String keyword) {
+	public List<ProductDTO> searchList(String slr_id, Integer category_id, String keyword, String sort) {
 		try {
-			return productDAO.searchList(slr_id, category_id, keyword);
+			return productDAO.searchList(slr_id, category_id, keyword, sort);
 		} catch (DBException e) {
 			throw new ProductException("ProductService에서 DB예외 전달.", e);
 		} catch (Exception e) {

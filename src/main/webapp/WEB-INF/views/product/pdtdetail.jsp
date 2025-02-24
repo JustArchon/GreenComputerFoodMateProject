@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8" isELIgnored="false"%>    
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"  />  
 <html>
 <head>
@@ -86,8 +87,34 @@ function addToCart() {
 			<div id="pdt_Dsc">${product.description}</div>
 		</div>
 		<div class="info3">
-			<div id="text_Price">판매가</div>
-			
+			<div id="text_Price">판매가</div>            
+            <div id="pdt_DiscountedPrice">
+            	<c:choose>
+				    <c:when test="${product.unit == 'ml' or product.unit == 'g'}">
+				        <c:if test="${not empty product.unit_price}">
+				            <span class="pdt_UnitPrice">100${product.unit}당 가격 : <fmt:formatNumber value="${product.unit_price * 100}" pattern="#,###"/>원</span>
+				        </c:if>
+				    </c:when>
+				    <c:when test="${product.unit == 'l'}">
+				        <c:if test="${not empty product.unit_price}">
+				            <span class="pdt_UnitPrice">100ml당 가격 : <fmt:formatNumber value="${product.unit_price * 100}" pattern="#,###"/>원</span>
+				        </c:if>
+				    </c:when>
+				    <c:when test="${product.unit == 'kg'}">
+				        <c:if test="${not empty product.unit_price}">
+				            <span class="pdt_UnitPrice">100g당 가격 : <fmt:formatNumber value="${product.unit_price * 100}" pattern="#,###"/>원</span>
+				        </c:if>
+				    </c:when>
+				    <c:otherwise>
+				        <span class="pdt_UnitPrice">1${product.unit}당 가격 : <fmt:formatNumber value="${product.unit_price}" pattern="#,###"/>원</span>
+				    </c:otherwise>
+				</c:choose>
+                <span id="pdt_DsctPer"><fmt:formatNumber value="${product.price}" pattern="#,###"/>&#32;원</span>
+            </div>
+            
+            
+            
+            			
 <%-- 			 <c:choose> --%>
 <%--                 <c:when test="${isSale}"> --%>
 <!--                     <div id="pdt_DiscountedPrice"> -->
@@ -102,10 +129,6 @@ function addToCart() {
 <%--                 </c:otherwise> --%>
 <%--             </c:choose> --%>
 <!--             이부분은 나중에 할인기능 구현할때 넣을거임 -->
-            
-            <div id="pdt_DiscountedPrice">
-                <span id="pdt_DsctPer">${product.price}&#32;</span>원
-            </div>
 
 			<div id="text_DelivFee">배송비</div>
 			<div id="pdt_DelivPee">3,000원(40,000원 이상 구매 시 무료)</div>

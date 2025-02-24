@@ -47,11 +47,12 @@ public class ProductDAO {
 	}
 	
 	// 판매자 id, 카테고리 id, 검색어로 검색하는거
-	public List<ProductDTO> searchList(String slr_id, Integer category_id, String keyword) {
+	public List<ProductDTO> searchList(String slr_id, Integer category_id, String keyword, String sort) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("slr_id", slr_id);
         paramMap.put("category_id", category_id);
         paramMap.put("keyword", keyword);
+        paramMap.put("sort", sort);
         try {
             return sqlSession.selectList("mapper.product.searchlist2", paramMap);
         } catch (DataAccessException e) {

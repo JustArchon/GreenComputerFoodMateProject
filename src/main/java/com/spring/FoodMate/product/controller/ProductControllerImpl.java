@@ -45,8 +45,9 @@ public class ProductControllerImpl implements ProductController {
 		@RequestParam(value = "slr_id", required = false, defaultValue = "") String slr_id,	
 		@RequestParam(value = "category_id", required = false, defaultValue = "") Integer category_id,
 	    @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
+	    @RequestParam(value = "sort", required = false, defaultValue = "") String sort,
 	    HttpServletRequest request) throws Exception {
-	    List<ProductDTO> searchList = productService.searchList(slr_id, category_id, keyword);
+	    List<ProductDTO> searchList = productService.searchList(slr_id, category_id, keyword, sort);
 	    
 	    ModelAndView mav = new ModelAndView();
         mav.setViewName("common/layout");
@@ -54,10 +55,13 @@ public class ProductControllerImpl implements ProductController {
         mav.addObject("showNavbar", true);
         mav.addObject("body", "/WEB-INF/views" + UtilMethod.getViewName(request) + ".jsp");
 	    mav.addObject("list", searchList);
+	    mav.addObject("keyword", keyword);
 	    // Service 에 keyword(검색어)를 주고 해당하는 상품VO들의 List를 받아옴.
 	    // 검색어 없을땐 전체 상품리스트 갖고옴.
 	    return mav;
 	}
+	
+	
 	
 	@Override
 	@RequestMapping(value="/product/pdtdetail", method=RequestMethod.GET)
@@ -234,9 +238,10 @@ public class ProductControllerImpl implements ProductController {
 	@Override
 	@RequestMapping(value="/product/categorycompare", method=RequestMethod.GET)
 	@ResponseBody
-	public Map<String, Object> categorycompare(@RequestParam("category_id") Integer category_id) {
+	public Map<String, Object> categorycompare(@RequestParam("category_id") Integer category_id,
+			@RequestParam(value = "sort", required = false, defaultValue = "") String sort) {
 		try {
-			List<ProductDTO> products = productService.searchList(null, category_id, null);
+			List<ProductDTO> products = productService.searchList(null, category_id, null, sort);
 		    Map<String, Object> response = new HashMap<>();
 		    response.put("products", products);
 		    return response;
