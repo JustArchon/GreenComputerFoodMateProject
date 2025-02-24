@@ -77,12 +77,14 @@
         <c:forEach var="order" items="${orderList}">
             <tr>
                 <!-- 주문 날짜 및 주문번호 -->
-                <td>${order.create_Date}(${order.ord_code})</td>
+                <td>${order.create_date}(${order.ord_code})</td>
 
                 <!-- 상품명과 옵션 -->
                 <td>
-                    <img src="${contextPath}/resources/images/${order.img_path}" alt="${order.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
-                    ${order.pdt_name}
+                	<a href=${contextPath}/product/pdtdetail?pdt_id=${order.pdt_id}>
+	                    <img src="${contextPath}/resources/images/${order.img_path}" alt="${order.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+	                    ${order.pdt_name}
+                    </a>
                 </td>
 
                 <!-- 상품 금액 및 수량 -->

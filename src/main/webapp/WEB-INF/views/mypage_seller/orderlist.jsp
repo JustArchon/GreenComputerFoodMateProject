@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+
+
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 <!DOCTYPE html>
 <html>
@@ -31,6 +34,10 @@
 	    
 	    th:first-child, td:first-child {
 		    width: 10%; /* 첫 번째 열의 폭을 15%로 설정 */
+		}
+		
+		.table tbody .ImgAndName {
+		  text-align: left;
 		}
 </style>
 </head>
@@ -65,12 +72,12 @@
 	<table class="table table-hover table-custom">
     <thead class="table-header table-secondary">
         <tr>
-            <td>날짜/주문번호</td>
+            <td>주문일</td>
+            <td>주문번호</td>
             <td>상품명</td>
             <td>상품금액/수량</td>
             <td>주문상태</td>
             <td>배송지 정보</td>
-            <td>택배사</td>
             <td>운송장번호</td>
         </tr>
     </thead>
@@ -79,11 +86,13 @@
         <c:forEach var="order" items="${orderList}">
             <tr>
                 <!-- 주문 날짜 및 주문번호 -->
-                <td>${order.ord_id}</td>
-
-                <td>
-                    <img src="${contextPath}/resources/images/${order.img_path}" alt="${order.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
-                    ${order.pdt_name}
+                <td>${order.create_date}</td>
+				<td>${order.ord_code}</td>
+                <td class="ImgAndName">
+                    <a href=${contextPath}/product/pdtdetail?pdt_id=${order.pdt_id}>
+	                    <img src="${contextPath}/resources/images/${order.img_path}" alt="${order.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+	                    ${order.pdt_name}
+                    </a>
                 </td>
 
                 <!-- 상품 금액 및 수량 -->
@@ -107,15 +116,9 @@
                 <td><button class="btn btn-outline-secondary btn-sm" disabled>배송지정보 조회</button></td>
                 
                 <td>
-                	<c:choose>
-					<c:when test="${order.ord_stat == 2 || order.ord_stat == 3 || order.ord_stat == 4 || order.ord_stat == 5}">${order.del_code}</c:when>
-					<c:otherwise>없음</c:otherwise>
-					</c:choose>
-                </td>
-                <td>
 					<c:choose>    	
 					<c:when test="${order.ord_stat == 1}"><button class="btn btn-outline-secondary btn-sm" disabled>운송장번호 입력</button></c:when>
-					<c:when test="${order.ord_stat == 2 || order.ord_stat == 3 || order.ord_stat == 4 || order.ord_stat == 5}">${order.waybill_num}</c:when>
+					<c:when test="${order.ord_stat == 2 || order.ord_stat == 3 || order.ord_stat == 4 || order.ord_stat == 5}">${order.del_code}${order.waybill_num}</c:when>
 					<c:otherwise>없음</c:otherwise>
 					</c:choose>
                 </td>
