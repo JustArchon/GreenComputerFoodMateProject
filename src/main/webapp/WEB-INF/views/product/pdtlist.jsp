@@ -112,6 +112,12 @@ body {
 	font-weight: 800;
 }
 
+#product_list .pdt_UnitPrice {
+	font-size: 1.1rem;
+	color: blue;
+	font-wieght: 800;
+}
+
 #product_list .pagination {
     margin: 30px 0;
     display: flex;
@@ -189,12 +195,24 @@ body {
                         <c:choose>
 						    <c:when test="${product.unit == 'ml' or product.unit == 'g'}">
 						        <c:if test="${not empty product.unit_price}">
-						            100 ${product.unit} 당 가격 : 
-						            <fmt:formatNumber value="${product.unit_price * 100}" pattern="#,###"/> 원<br>
+						            100${product.unit}당 가격 : 
+						            <span class="pdt_UnitPrice"><fmt:formatNumber value="${product.unit_price * 100}" pattern="#,###"/>원</span><br>
+						        </c:if>
+						    </c:when>
+						    <c:when test="${product.unit == 'l'}">
+						        <c:if test="${not empty product.unit_price}">
+						            100ml당 가격 : 
+						            <span class="pdt_UnitPrice"><fmt:formatNumber value="${product.unit_price * 100}" pattern="#,###"/>원</span><br>
+						        </c:if>
+						    </c:when>
+						    <c:when test="${product.unit == 'kg'}">
+						        <c:if test="${not empty product.unit_price}">
+						            100g당 가격 : 
+						            <span class="pdt_UnitPrice"><fmt:formatNumber value="${product.unit_price * 100}" pattern="#,###"/>원</span><br>
 						        </c:if>
 						    </c:when>
 						    <c:otherwise>
-						        1 ${product.unit} 당 가격 : 1<br>
+						        1${product.unit}당 가격 : <span class="pdt_UnitPrice"><fmt:formatNumber value="${product.unit_price}" pattern="#,###"/>원</span><br>
 						    </c:otherwise>
 						</c:choose>
                         ⭐⭐⭐⭐⭐<br>

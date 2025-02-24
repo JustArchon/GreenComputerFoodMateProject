@@ -34,19 +34,24 @@
 	<!-- 조건에 따른 상품 검색 기능 / 단위당 가격 표시 실험중 -->
 	<select id="searchlist2" resultType="ProductDTO" parameterType="map">
 	    <![CDATA[
-	        SELECT p.*, 
-	               CASE 
-	                   WHEN p.CATEGORY_ID IS NOT NULL 
-	                        AND p.UNIT = c.RECOMMEND_UNIT 
-	                        AND p.QTY IS NOT NULL 
-	                        AND p.QTY > 0 
-	                   THEN p.PRICE / p.QTY 
-	                   ELSE NULL 
-	               END AS UNIT_PRICE
-	        FROM FOODMATE_PRODUCT_VIEW p
-	        JOIN FOODMATE_SELLER s ON p.SLR_ID = s.SLR_ID
-	        LEFT JOIN FOODMATE_PRODUCT_CATEGORY c ON p.CATEGORY_ID = c.CATEGORY_ID
-	        WHERE p.STATUS = 'Y'
+        SELECT p.*, 
+	       CASE 
+	           WHEN p.CATEGORY_ID IS NOT NULL 
+	                AND p.QTY IS NOT NULL 
+	                AND p.QTY > 0 
+	           THEN 
+	                CASE 
+	                    WHEN p.UNIT = c.RECOMMEND_UNIT THEN p.PRICE / p.QTY
+	                    WHEN p.UNIT IN ('L', 'l') AND c.RECOMMEND_UNIT IN ('ml', 'mL') THEN (p.PRICE / p.QTY) / 1000
+	                    WHEN p.UNIT IN ('kg', 'KG') AND c.RECOMMEND_UNIT IN ('g', 'G') THEN (p.PRICE / p.QTY) / 1000
+	                    ELSE p.PRICE / p.QTY
+	                END 
+	           ELSE NULL 
+	       END AS UNIT_PRICE
+		FROM FOODMATE_PRODUCT_VIEW p
+		JOIN FOODMATE_SELLER s ON p.SLR_ID = s.SLR_ID
+		LEFT JOIN FOODMATE_PRODUCT_CATEGORY c ON p.CATEGORY_ID = c.CATEGORY_ID
+		WHERE p.STATUS = 'Y'
 	    ]]>
 	    
 	    <if test="slr_id != null and slr_id != ''">
