@@ -1,7 +1,5 @@
 package com.spring.FoodMate.order.dto;
 
-import java.time.LocalDateTime;
-
 public class OrderDetailDTO {
 	private int ord_detail_id;	// 상세고유id[시퀀스]
 	private int ord_id;			// 주문id[부모키]
@@ -9,6 +7,11 @@ public class OrderDetailDTO {
 	private String pdt_name;	// 상품 이름
 	private int pdt_price;		// 상품 가격
 	private int qty;			// 개수
+	
+	private String img_path;
+	private String ord_stat;
+	
+	// 조인해서 가져올 짜바리들
 	
 	public int getOrd_detail_id() {
 		return ord_detail_id;
@@ -45,5 +48,17 @@ public class OrderDetailDTO {
 	}
 	public void setQty(int qty) {
 		this.qty = qty;
+	}
+	public String getImg_path() {
+		return img_path;
+	}
+	public void setImg_path(String img_path) {
+		this.img_path = img_path;
+	}
+	public String getOrd_stat() {
+		return ord_stat;
+	}
+	public void setOrd_stat(String ord_stat) {
+		this.ord_stat = ord_stat;
 	}
 }

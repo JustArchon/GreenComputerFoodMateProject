@@ -156,6 +156,24 @@ body {
 
 </style>
 </head>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $(".button").on("click", function() {
+            let sort = $(this).data("sort"); // 클릭한 버튼의 data-sort 값을 가져옴
+            let categoryId = $("#category_id").val(); // hidden input에서 카테고리 ID 값 가져옴
+            let keyword = $("#keyword").val(); // hidden input에서 키워드 값 가져옴
+
+            // 링크 생성
+            let url = `${contextPath}/product/pdtlist?sort=` + sort + `&category_id=` + categoryId + `&keyword=` + keyword;
+
+            // 페이지 이동 (새로고침)
+            window.location.href = url;
+        });
+    });
+</script>
+
 <body>
 <main id="product_list">
 
@@ -166,10 +184,15 @@ body {
 	</article>
 	
 	<article class="sort_button">
-	    <div class="button">메이트추천</div>
-	    <div class="button">낮은 가격순</div>
-	    <div class="button">높은 가격순</div>
-	    <div class="button">판매량순</div>
+	    <a href="javascript:void(0)" class="button" data-sort="price_asc">낮은 가격순</a>
+	    <a href="javascript:void(0)" class="button" data-sort="price_desc">높은 가격순</a>
+	    <a href="javascript:void(0)" class="button" data-sort="unitprice_asc">단위당 낮은 가격순</a>
+	    <a href="javascript:void(0)" class="button" data-sort="unitprice_desc">단위당 높은 가격순</a>
+	</article>
+	
+	<article class="hiddenData">
+		<input type="hidden" id="category_id" name="category_id" value="${category_id}">
+		<input type="hidden" id="keyword" name="keyword" value="${keyword}">
 	</article>
 	
 	<section class="container_display">
@@ -189,7 +212,7 @@ body {
                     <p>
                         ${product.name}<br>
                         판매자 : ${product.slr_nickname}<br>
-                        <span class="pdt_FinalPrice">${product.price}원</span><br>
+                        <span class="pdt_FinalPrice"><fmt:formatNumber value="${product.price}" pattern="#,###"/>원</span><br>
                         
                         <!-- unit_price가 null이 아닐 때만 출력 -->
                         <c:choose>
@@ -226,20 +249,20 @@ body {
 	
 	</section>
 
-	<article class="pagination">
-	    <div class="pagination_buttons">
-	    	<a href="#" class="page_button active">1</a>
-	        <a href="#" class="page_button">2</a>
-	        <a href="#" class="page_button">3</a>
-	        <a href="#" class="page_button">4</a>
-	        <a href="#" class="page_button">5</a>
-	        <a href="#" class="page_button">6</a>
-	        <a href="#" class="page_button">7</a>
-	        <a href="#" class="page_button">8</a>
-	        <a href="#" class="page_button">9</a>
-	        <a href="#" class="page_button">10</a>
-	    </div>
-	</article>
+<!-- 	<article class="pagination"> -->
+<!-- 	    <div class="pagination_buttons"> -->
+<!-- 	    	<a href="#" class="page_button active">1</a> -->
+<!-- 	        <a href="#" class="page_button">2</a> -->
+<!-- 	        <a href="#" class="page_button">3</a> -->
+<!-- 	        <a href="#" class="page_button">4</a> -->
+<!-- 	        <a href="#" class="page_button">5</a> -->
+<!-- 	        <a href="#" class="page_button">6</a> -->
+<!-- 	        <a href="#" class="page_button">7</a> -->
+<!-- 	        <a href="#" class="page_button">8</a> -->
+<!-- 	        <a href="#" class="page_button">9</a> -->
+<!-- 	        <a href="#" class="page_button">10</a> -->
+<!-- 	    </div> -->
+<!-- 	</article> -->
 
 </main>
 </body>

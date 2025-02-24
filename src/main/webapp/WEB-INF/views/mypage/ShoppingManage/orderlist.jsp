@@ -81,7 +81,7 @@
 
                 <!-- 상품명과 옵션 -->
                 <td>
-                    <img src="${contextPath}/resources/images/Shopping/${order.pdt_name}.jpg" alt="${order.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                    <img src="${contextPath}/resources/images/${order.img_path}" alt="${order.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
                     ${order.pdt_name}
                 </td>
 
@@ -89,8 +89,19 @@
                 <td>${order.pdt_price}원 (${order.qty}개)</td>
 
                 <!-- 주문 상태 -->
-                <td>몰라</td>
-
+                <td>
+	                <c:choose> 
+	                	<c:when test="${order.ord_stat == 0}">결제 대기</c:when>
+				        <c:when test="${order.ord_stat == 1}">배송 준비중</c:when>
+				        <c:when test="${order.ord_stat == 2}">배송 중</c:when>
+				        <c:when test="${order.ord_stat == 3}">배송 완료</c:when>
+				        <c:when test="${order.ord_stat == 4}">구매 확정</c:when>
+				        <c:when test="${order.ord_stat == 5}">주문 취소</c:when>
+				        <c:when test="${order.ord_stat == 6}">반품</c:when>
+				        <c:otherwise>알 수 없음</c:otherwise>
+				    </c:choose>
+                </td>
+				<!-- 주문상태 하드코딩함. 나중에 주문 코드-설명 테이블 만들고 조인해서 갖고와 -->
                 <!-- 확인/리뷰 -->
                 <td>
                     <div class="d-flex flex-column gap-1">

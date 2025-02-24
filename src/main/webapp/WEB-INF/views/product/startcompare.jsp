@@ -88,6 +88,7 @@
 
 #wrap_cmp #cmp_pdt article div:nth-child(2) {
     font-weight: bold;
+    max-width: 60%;
 }
 
 #wrap_cmp #cmp_pdt article div:nth-child(3) {
@@ -112,6 +113,11 @@
 
 #wrap_cmp #cmp_pdt article div:nth-child(3) .pdt_Unit {
 	margin-right: 10px;
+}
+
+#wrap_cmp #cmp_pdt article div:nth-child(3) .pdt_UnitPrice {
+	font-size: 1.2rem;
+	color: black;
 }
 
 #wrap_cmp .pdt_chk {
@@ -161,6 +167,26 @@
 	width: 30px;
 }
 
+.sort_button {
+	width: 1200px;
+    display: flex;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    align-items: center; /* 세로 정렬 */
+}
+
+.sort_button .sort {
+    padding: 5px 10px 5px; /* 내부 여백 */
+    border: 1px solid #ccc; /* 외곽선 */
+    background-color: #f5f5f5; /* 입력창 배경색과 유사 */
+    font-family: 'Noto Sans KR', sans-serif; /* 한국어 폰트 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    cursor: pointer; /* 클릭 가능 표시 */
+    height: auto; /* 버튼 높이 설정 */
+    line-height: 30px; /* 텍스트 정렬 */
+    border-left: none; /* 왼쪽 외곽선 제거 */
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
 </style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -177,15 +203,16 @@ $(document).on('click', '.rcp_Mtrs', function() {
         method: 'GET',
         data: { category_id: categoryId },  // category_id를 GET 파라미터로 전달
         success: function(response) {
+        	$("#currentCategory_id").val(categoryId);  // 상품정렬버튼의 hidden input에 카테고리ID 넣어두고
 	        var products = response.products;  // 상품 목록 받기
 	        var productHtml = '';
 	
 	        products.forEach(function(product) {
 	        
-            productHtml += '<article class="pdt_row">' +
+            productHtml += '<article class="pdt_row">' +          
                 '<div>' +
 	                '<a href="' + contextPath + '/product/pdtdetail?pdt_id=' + product.pdt_id + '" target="_blank" rel="noopener noreferrer">' + 
-	                // target="_blank"랑 rel="noopener noreferrer" 속성이 보안에 도움된다고 합니다
+	                // rel="noopener noreferrer" 속성이 보안에 도움된다고 함. 새로 연 페이지에서 기존 페이지에 간섭 못하게 막는거. 
 	                
 		                '<img class="pdt_img" src="' + contextPath + '/resources/images/' + product.img_path + '">' +
 		            '</a>' +
@@ -198,11 +225,27 @@ $(document).on('click', '.rcp_Mtrs', function() {
                 '</div>' +
                 '<div>' +
                 	'<span class="pdt_Qty">' + product.qty + '</span>' + '<span class="pdt_Unit">' + product.unit + '</span>' +
-                	'<span class="pdt_Price">' + product.price + '</span>원 ' +
-                    '<button class="pdt_chk" data-category-id="' + product.category_id + '">담기</button>' +
-                '</div>' +
-            '</article>';
-            
+                	'<span class="pdt_Price" data-price="' + product.price + '">' + product.price.toLocaleString() + '</span>원 ';
+	      	if (product.unit === 'ml' || product.unit === 'g') {
+	      	    if (product.unit_price) {
+	      	        productHtml += '<br><span class="pdt_UnitPrice">100' + product.unit + '당 가격 : ' + Math.floor(product.unit_price * 100).toLocaleString() + '원</span><br>';
+	      	    }
+	      	} else if (product.unit === 'l') {
+	      	    if (product.unit_price) {
+	      	        productHtml += '<br><span class="pdt_UnitPrice">100ml당 가격 : ' + Math.floor(product.unit_price * 100).toLocaleString() + '원</span><br>';
+	      	    }
+	      	} else if (product.unit === 'kg') {
+	      	    if (product.unit_price) {
+	      	        productHtml += '<br><span class="pdt_UnitPrice">100g당 가격 : ' + Math.floor(product.unit_price * 100).toLocaleString() + '원</span><br>';
+	      	    }
+	      	} else {
+	      	    productHtml += '<br><span class="pdt_UnitPrice">1' + product.unit + '당 가격 : ' + Math.floor(product.unit_price || 0).toLocaleString() + '원</span><br>';
+	      	}
+	      	
+	      	productHtml += '<button class="pdt_chk" data-category-id="' + product.category_id + '">담기</button>' +
+				            '</div>' +
+				        '</article>';
+			
 	        });
 	
 	        $('#cmp_pdt').html(productHtml);  // 결과를 페이지에 반영
@@ -215,12 +258,95 @@ $(document).on('click', '.rcp_Mtrs', function() {
     });
 });
 
+
+// 상품 정렬 버튼 누르면 상품들 정렬해주는 스크립트
+$(document).on('click', '.sort', function() {
+	var categoryId = $('#currentCategory_id').val().trim(); // 올바르게 카테고리 ID 가져오기
+    var sortType = $(this).data('sort'); // data-sort 속성 값 가져오기
+    
+    console.log("Category ID:", categoryId);
+    console.log("Sort Type:", sortType);
+    // 정렬버튼과 같이있는 히든input에서 currentCategory_id 값 가져오기
+    if (!categoryId) {
+        alert("가격을 비교할 재료를 먼저 선택하세요.");
+        return;  // 여기서 함수 종료 -> ajax 요청 안 보냄
+    }
+    // 여기서 커런트카테고리ID가 null이면 한번 걸러야함. /////////////////////////////////////////
+    
+    $.ajax({
+        url: contextPath + '/product/categorycompare',  // 요청할 URL
+        method: 'GET',
+        data: { category_id: categoryId,
+        		sort: sortType
+        },  // category_id를 GET 파라미터로 전달
+     // 여기서 sort방식도 같이 줘야함. /////////////////////////////////////////
+     
+        success: function(response) {
+	        var products = response.products;  // 상품 목록 받기
+	        var productHtml = '';
+	
+	        products.forEach(function(product) {
+	        
+            productHtml += '<article class="pdt_row">' +          
+                '<div>' +
+	                '<a href="' + contextPath + '/product/pdtdetail?pdt_id=' + product.pdt_id + '" target="_blank" rel="noopener noreferrer">' + 
+	                // rel="noopener noreferrer" 속성이 보안에 도움된다고 함. 새로 연 페이지에서 기존 페이지에 간섭 못하게 막는거. 
+	                
+		                '<img class="pdt_img" src="' + contextPath + '/resources/images/' + product.img_path + '">' +
+		            '</a>' +
+                '</div>' +
+                '<div>' +
+                    '<span class="pdt_Name">' + product.name + '</span><br>' +
+                    '<span class="pdt_Selr">판매자 : ' + product.slr_nickname + '</span><br>' +
+                    '<span class="pdt_Id">상품번호 : ' + product.pdt_id + '</span><br>' +
+                    '<span class="pdt_Rank">' + '⭐⭐⭐⭐⭐' + '(후기 135)' + '</span><br>' +
+                '</div>' +
+                '<div>' +
+                	'<span class="pdt_Qty">' + product.qty + '</span>' + '<span class="pdt_Unit">' + product.unit + '</span>' +
+                	'<span class="pdt_Price" data-price="' + product.price + '">' + product.price.toLocaleString() + '</span>원 ';
+	      	if (product.unit === 'ml' || product.unit === 'g') {
+	      	    if (product.unit_price) {
+	      	        productHtml += '<br><span class="pdt_UnitPrice">100' + product.unit + '당 가격 : ' + Math.floor(product.unit_price * 100).toLocaleString() + '원</span><br>';
+	      	    }
+	      	} else if (product.unit === 'l') {
+	      	    if (product.unit_price) {
+	      	        productHtml += '<br><span class="pdt_UnitPrice">100ml당 가격 : ' + Math.floor(product.unit_price * 100).toLocaleString() + '원</span><br>';
+	      	    }
+	      	} else if (product.unit === 'kg') {
+	      	    if (product.unit_price) {
+	      	        productHtml += '<br><span class="pdt_UnitPrice">100g당 가격 : ' + Math.floor(product.unit_price * 100).toLocaleString() + '원</span><br>';
+	      	    }
+	      	} else {
+	      	    productHtml += '<br><span class="pdt_UnitPrice">1' + product.unit + '당 가격 : ' + Math.floor(product.unit_price || 0).toLocaleString() + '원</span><br>';
+	      	}
+	      	
+	      	productHtml += '<button class="pdt_chk" data-category-id="' + product.category_id + '">담기</button>' +
+				            '</div>' +
+				        '</article>';
+			
+	        });
+	
+	        $('#cmp_pdt').html(productHtml);  // 결과를 페이지에 반영
+            
+        } ,
+        error: function(xhr, status, error) {
+            console.error('AJAX 요청 실패', error);
+            alert('상품 비교 중 오류가 발생했습니다.');
+        }
+    });
+});
+
+
 // 담기 누르면 재료목록에 담는 기능
 $(document).on('click', '.pdt_chk', function() {
     var categoryId = $(this).data('category-id'); // 상품의 category_id 가져오기
     var productId = $(this).closest('.pdt_row').find('.pdt_Id').text().replace("상품번호 : ", "").trim();
     var productName = $(this).closest('.pdt_row').find('.pdt_Name').text(); // 상품 이름
-    var price = parseInt($(this).closest('.pdt_row').find('.pdt_Price').text().trim());
+    var price = parseInt($(this).closest('.pdt_row').find('.pdt_Price').data("price"));
+    
+    
+    console.log(price);
+    
     var productUnit = $(this).closest('.pdt_row').find('.pdt_Unit').text();
 
     var existingItem = $("#" + categoryId).find('.rcp_Mtrs_Product input[name="product-id"][value="' + productId + '"]').closest('.rcp_Mtrs_Product');
@@ -257,7 +383,7 @@ function updateTotalPrice(item, price) {
     var totalPriceElem = item.find('.total-price');
     var totalPrice = price * qty;
     
-    totalPriceElem.text(totalPrice + "원");
+    totalPriceElem.text(totalPrice.toLocaleString() + "원");
 
     // 전체 최종 가격 업데이트
     updateLastTotalPrice();
@@ -268,17 +394,19 @@ function updateLastTotalPrice() {
     var lastTotalPrice = 0;
 
     $(".rcp_Mtrs_Product").each(function() {
-        var totalPriceText = $(this).find('.total-price').text().replace("원", "").trim();
+        var totalPriceText = $(this).find('.total-price').text().replace(/,/g, "").replace("원", "").trim();
         lastTotalPrice += parseInt(totalPriceText);
     });
 
-    $("#last_total_price").text(lastTotalPrice);
+    // 천 단위마다 쉼표 추가 후 적용
+    $("#last_total_price").text(lastTotalPrice.toLocaleString());
 }
 
 // 수량 인풋 변경 시 총 가격 업데이트
 $(document).on('input', '.product-qty', function() {
     var item = $(this).closest('.rcp_Mtrs_Product');
-    var price = parseInt(item.find('input[name="price"]').val());
+    var price = parseInt(item.find('.pdt_Price').data("price"));
+
     updateTotalPrice(item, price);
 });
 
@@ -351,6 +479,16 @@ $(document).on("click", "#cart-button", function() {
 	<div class="section_container">
 		<section id="rcp_spread">
 		레시피 펼치기⏬ 이것도 나중에 만들어
+		</section>
+	</div>
+	
+	<div class="section_container">
+		<section class="sort_button">
+		    <a href="javascript:void(0)" class="sort" data-sort="price_asc">낮은 가격순</a>
+		    <a href="javascript:void(0)" class="sort" data-sort="price_desc">높은 가격순</a>
+		    <a href="javascript:void(0)" class="sort" data-sort="unitprice_asc">단위당 낮은 가격순</a>
+		    <a href="javascript:void(0)" class="sort" data-sort="unitprice_desc">단위당 높은 가격순</a>
+		    <input type="hidden" name="currentCategory_id" id="currentCategory_id" value="">
 		</section>
 	</div>
 

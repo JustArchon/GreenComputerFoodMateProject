@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
-import com.spring.FoodMate.order.dto.OrderDTO;
+import com.spring.FoodMate.order.dto.OrderDetailDTO;
 
 @Repository("mypageDAO")
 public class MypageDAO {
@@ -19,8 +19,12 @@ public class MypageDAO {
 		return list;
 	}
 	
-	public List<OrderDTO> getAllOrdByOrdIds(List<Integer> ord_idList) throws DataAccessException {
-	    List<OrderDTO> orderDetails = sqlSession.selectList("mapper.order.AllOrdByOrdIds", ord_idList);
+	public List<Integer> getOrdIdBySlrId(String id) throws DataAccessException{
+		return sqlSession.selectList("mapper.order.OrdIdBySlrId", id);
+	}
+	
+	public List<OrderDetailDTO> getAllOrdByOrdIds(List<Integer> ord_idList) throws DataAccessException {
+	    List<OrderDetailDTO> orderDetails = sqlSession.selectList("mapper.order.AllOrdByOrdIds", ord_idList);
 	    return orderDetails;
 	}
 	

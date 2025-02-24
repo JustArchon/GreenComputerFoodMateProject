@@ -53,14 +53,14 @@
         
         <h5>내 정보관리</h5>
         <ul>
-	        <li><a href="${contextPath}/mypage/myInfoManage/profileEditForm.do">프로필 수정</a></li>
-	        <li><a href="${contextPath}/mypage/myInfoManage/memberEditForm.do">회원정보 수정</a></li>
+	        <li><a href="${contextPath}/mypage/myInfoManage/profileEditForm">프로필 수정</a></li>
+	        <li><a href="${contextPath}/mypage/myInfoManage/memberEditForm">회원정보 수정</a></li>
         </ul>
         <hr>
         
         <h5>주문 관리</h5>
         <ul>
-	        <li><a href="#">주문목록</a></li>
+	        <li><a href="${contextPath}/mypage_seller/orderlist">주문목록</a></li>
 	        <li><a href="#">취소/반품/교환 내역</a></li>
 	        <li><a href="#">환불/입금 내역</a></li>
 	        <li><a href="#">매출 조회</a></li>
