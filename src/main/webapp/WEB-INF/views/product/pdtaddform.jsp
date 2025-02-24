@@ -76,8 +76,6 @@ $(document).ready(function() {
     }
 
     
-    
-    
     // 마지막 선택된 카테고리 ID 반환
     function getLastCategoryId() {
         return lastCategoryId;
@@ -164,7 +162,22 @@ $(document).ready(function() {
 				<label for="productDescription">상품 설명</label>
 				<textarea id="pdt_Dscrpt" name="description" placeholder="상품 설명을 입력하세요" rows="4" required></textarea>
 				</div>
-			 
+	
+				<div class="row">
+				<label for="category">카테고리</label>
+					<select name="category_1" id="category_1">
+					    <option value="" disabled selected>1단계분류</option>
+					    <c:forEach var="category" items="${categories}">
+					        <option value="${category.category_id}">${category.name}</option>
+					    </c:forEach>
+					</select>
+					&#8251;카테고리를 정확히 설정해야 구매자에게 상품이 노출될 확률이 올라갑니다.
+					<div id="category_container"></div> <!-- 자식 카테고리들을 넣을 div -->
+
+				</div>
+				<input type="hidden" id="category_id" name="category_id" value="">
+				<input type="hidden" id="status" name="status" value="Y">
+				
 				<div class="row">
 				<label for="productWeight">묶음당 수량 또는 무게</label>
 				<input type="number" id="pdt_Weight" name="qty" placeholder="예: 3(묶음), 600(g), 1000(ml)..." required>
@@ -173,28 +186,15 @@ $(document).ready(function() {
 				<div class="row">
 				<label for="unit">무게 또는 단위</label>
 				<input type="text" id="unit" name="unit" placeholder="예: 묶음, g, ml..." required>
+				&#8251;카테고리 선택 시 제공되는 단위를 사용해야 상품이 구매자에게 자주 노출됩니다.<br>
+				만약 정확한 카테고리가 없거나, 단위가 적절하지 않을 시 관리자에게 문의해 주세요.
 				</div>
 				
 				<div class="row">
 				<label for="stock">재고</label>
 				<input type="number" id="stock" name="stock" placeholder="예: 30" required>
 				</div>
-	
-				<div class="row">
-				<label for="category">카테고리</label>
-					&#8251;카테고리를 정확히 설정해야 구매자에게 상품이 노출될 확률이 올라갑니다.
-					<select name="category_1" id="category_1">
-					    <option value="" disabled selected>1단계분류</option>
-					    <c:forEach var="category" items="${categories}">
-					        <option value="${category.category_id}">${category.name}</option>
-					    </c:forEach>
-					</select>
-					
-					<div id="category_container"></div> <!-- 자식 카테고리들을 넣을 div -->
-
-				</div>
-				<input type="hidden" id="category_id" name="category_id" value="">
-				<input type="hidden" id="status" name="status" value="Y">
+				
 				
 			</div>
       

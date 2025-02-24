@@ -8,9 +8,9 @@ public class OrderDetailDTO {
 	private int pdt_price;		// 상품 가격
 	private int qty;			// 개수
 	
-	
 	private String img_path;
 	private String ord_stat;
+	
 	// 조인해서 가져올 짜바리들
 	
 	public int getOrd_detail_id() {
@@ -61,5 +61,4 @@ public class OrderDetailDTO {
 	public void setOrd_stat(String ord_stat) {
 		this.ord_stat = ord_stat;
 	}
-	
 }

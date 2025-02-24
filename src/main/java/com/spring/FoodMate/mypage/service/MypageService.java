@@ -26,4 +26,16 @@ public class MypageService {
 		return list_2;
 	}
 	
+	public List<OrderDetailDTO> getOrderBySlrId(String id) throws Exception {
+		List<Integer> list = mypageDAO.getOrdIdBySlrId(id);
+		
+		// 주문목록이 없을경우 빈리스트를 반환해서 페이지 500에러 방지
+		if (list == null || list.isEmpty()) {
+		    return new ArrayList<>(); // 빈 리스트 반환하여 SQL 오류 방지
+		}
+		
+		List<OrderDetailDTO> list_2 = mypageDAO.getAllOrdByOrdIds(list);
+		return list_2;
+	}
+	
 }

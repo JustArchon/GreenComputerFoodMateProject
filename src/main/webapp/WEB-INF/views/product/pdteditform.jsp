@@ -28,9 +28,9 @@ $(document).ready(function() {
         }
     });
 
-    // 하위 카테고리 로드 함수
+ 	// 하위 카테고리 로드 함수
     function loadSubCategories(parentCategoryId, level) {
-        var url = contextPath + '/getSubCategories/' + parentCategoryId;
+        var url = contextPath + '/product/getSubCategories/' + parentCategoryId;
         console.log(url);
 
         $.ajax({
@@ -57,6 +57,14 @@ $(document).ready(function() {
                             lastCategoryId = selectedSubCategory;
                             $('#category_' + (level + 1)).remove();
                             loadSubCategories(selectedSubCategory, level + 1);
+
+                            // 선택된 카테고리의 recommend_unit 찾기
+                            var selectedCategory = data.find(category => category.category_id == selectedSubCategory);
+                            if (selectedCategory && selectedCategory.recommend_unit) {
+                                $('#unit').val(selectedCategory.recommend_unit);
+                            } else {
+                                $('#unit').val(''); // 값이 없으면 초기화
+                            }
                         }
                     });
                 }
@@ -123,7 +131,23 @@ $(document).ready(function() {
 				<label for="productDescription">상품 설명</label>
 				<textarea id="pdt_Dscrpt" name="description" rows="4" required>${pdt.description}</textarea>
 				</div>
-			 
+	
+				<div class="row">
+				<label for="category">카테고리</label>
+					<select name="category_1" id="category_1">
+					    <option value="" disabled selected>1단계분류</option>
+					    <c:forEach var="category" items="${categories}">
+					        <option value="${category.category_id}">${category.name}</option>
+					    </c:forEach>
+					</select>
+					&#8251;카테고리를 정확히 설정해야 구매자에게 상품이 노출될 확률이 올라갑니다.
+					<div id="category_container"></div> <!-- 자식 카테고리들을 넣을 div -->
+
+				</div>
+				<input type="hidden" id="pdt_id" name="pdt_id" value="${pdt.pdt_id }">
+				<input type="hidden" id="category_id" name="category_id" value="${pdt.category_id}">
+				<input type="hidden" id="status" name="status" value="${pdt.status}">
+				
 				<div class="row">
 				<label for="productWeight">묶음당 수량 또는 무게</label>
 				<input type="number" id="pdt_Weight" name="qty" value="${pdt.qty}">
@@ -132,29 +156,14 @@ $(document).ready(function() {
 				<div class="row">
 				<label for="unit">무게 또는 단위</label>
 				<input type="text" id="unit" name="unit" value="${pdt.unit}">
+				&#8251;카테고리 선택 시 제공되는 단위를 사용해야 상품이 구매자에게 자주 노출됩니다.<br>
+				만약 정확한 카테고리가 없거나, 단위가 적절하지 않을 시 관리자에게 문의해 주세요.
 				</div>
 				
 				<div class="row">
 				<label for="stock">재고</label>
 				<input type="number" id="stock" name="stock" value="${pdt.stock}">
 				</div>
-	
-				<div class="row">
-				<label for="category">카테고리</label>
-					&#8251;카테고리를 정확히 설정해야 구매자에게 상품이 노출될 확률이 올라갑니다.
-					<select name="category_1" id="category_1">
-					    <option value="" disabled selected>1단계분류</option>
-					    <c:forEach var="category" items="${categories}">
-					        <option value="${category.category_id}">${category.name}</option>
-					    </c:forEach>
-					</select>
-					
-					<div id="category_container"></div> <!-- 자식 카테고리들을 넣을 div -->
-
-				</div>
-				<input type="hidden" id="pdt_id" name="pdt_id" value="${pdt.pdt_id }">
-				<input type="hidden" id="category_id" name="category_id" value="${pdt.category_id}">
-				<input type="hidden" id="status" name="status" value="${pdt.status}">
 				
 			</div>
       

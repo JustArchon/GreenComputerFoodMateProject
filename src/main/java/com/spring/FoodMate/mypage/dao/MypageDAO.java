@@ -16,8 +16,11 @@ public class MypageDAO {
 	
 	public List<Integer> getOrdIdById(String id) throws DataAccessException{
 		List<Integer> list = sqlSession.selectList("mapper.order.OrdIdById", id);
-		System.out.println(list.toString());
 		return list;
+	}
+	
+	public List<Integer> getOrdIdBySlrId(String id) throws DataAccessException{
+		return sqlSession.selectList("mapper.order.OrdIdBySlrId", id);
 	}
 	
 	public List<OrderDetailDTO> getAllOrdByOrdIds(List<Integer> ord_idList) throws DataAccessException {

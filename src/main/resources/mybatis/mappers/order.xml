@@ -44,6 +44,13 @@
 	    WHERE BYR_ID = #{id}
 	</select>
 	
+	<select id="OrdIdBySlrId" resultType="java.lang.Integer">
+	    SELECT ORD_ID
+	    FROM FOODMATE_ORDER
+	    WHERE SLR_ID = #{id}
+	</select>
+	
+	
 	<select id="selectOrdId" resultType="java.lang.Integer">
 	    SELECT ORD_ID
 	    FROM FOODMATE_ORDER

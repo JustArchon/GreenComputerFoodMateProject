@@ -183,6 +183,16 @@ public class MypageController {
 		    return mav;
 	}
 	
+	@RequestMapping(value="/mypage_seller/orderlist", method=RequestMethod.GET)
+	private ModelAndView slrOrderList(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		SessionDTO sessionDTO = (SessionDTO) session.getAttribute("sessionDTO");
+		// 아이디 꺼내와서
+		mav.addObject("orderList", mypageService.getOrderBySlrId(sessionDTO.getUserId()));
+		// orderLilst 속성으로 getOrderById에 Id 넣은걸 전달한다
+		return mav;
+	}
+	
 	@RequestMapping(value="/mypage_seller/mypage_sell_productamount", method=RequestMethod.GET)
 	private ModelAndView seller_Mypage_productAmount(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		
