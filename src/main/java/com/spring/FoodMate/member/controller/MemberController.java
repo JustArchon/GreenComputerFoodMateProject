@@ -9,8 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,15 +18,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.FoodMate.common.SessionDTO;
-import com.spring.FoodMate.common.UtilMethod;
 import com.spring.FoodMate.member.dto.BuyerDTO;
 import com.spring.FoodMate.member.dto.SellerDTO;
 import com.spring.FoodMate.member.service.MemberService;
-import com.spring.FoodMate.mypage.dto.ProfileDTO;
 import com.spring.FoodMate.mypage.service.ProfileService;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -36,7 +31,6 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 @Controller
 public class MemberController {
-	private static final Logger logger = LoggerFactory.getLogger(MemberController.class);
 	@Autowired
 	private MemberService memberService;
 	@Autowired
@@ -54,8 +48,6 @@ public class MemberController {
 	
 	@RequestMapping(value="/member/loginForm", method=RequestMethod.GET)
 	private ModelAndView Loginform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
-		String viewName = UtilMethod.getViewName(request);
-		HttpSession session = request.getSession();
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("kakao_API_key", KAKAO_API_KEY);
 		return mav;
@@ -84,8 +76,8 @@ public class MemberController {
 //				mav.setViewName("/member/loginForm");
 //			} else {
 				HttpSession session=request.getSession();
-				session=request.getSession();
-				
+				session.invalidate(); //한번 싹 지우고가자 
+				session = request.getSession();
 				SessionDTO sessionDTO = new SessionDTO();
 				sessionDTO.setUserId(buyerDTO.getByr_id());
 				sessionDTO.setUserRole("buyer");
@@ -321,7 +313,8 @@ public class MemberController {
 //				mav.setViewName("/member/loginForm");
 //			} else {
 				HttpSession session=request.getSession();
-				session=request.getSession();
+				session.invalidate(); //한번 싹 지우고가자
+				session = request.getSession();
 				session.setAttribute("isSellerLogOn", true);
 				session.setAttribute("sellerInfo",sellerDTO);
 				

@@ -261,13 +261,16 @@ $(document).on('click', '.rcp_Mtrs', function() {
 
 // 상품 정렬 버튼 누르면 상품들 정렬해주는 스크립트
 $(document).on('click', '.sort', function() {
-	var categoryId = $('#currentCategory_id').val(); // 올바르게 카테고리 ID 가져오기
+	var categoryId = $('#currentCategory_id').val().trim(); // 올바르게 카테고리 ID 가져오기
     var sortType = $(this).data('sort'); // data-sort 속성 값 가져오기
     
     console.log("Category ID:", categoryId);
     console.log("Sort Type:", sortType);
     // 정렬버튼과 같이있는 히든input에서 currentCategory_id 값 가져오기
-    
+    if (!categoryId) {
+        alert("가격을 비교할 재료를 먼저 선택하세요.");
+        return;  // 여기서 함수 종료 -> ajax 요청 안 보냄
+    }
     // 여기서 커런트카테고리ID가 null이면 한번 걸러야함. /////////////////////////////////////////
     
     $.ajax({

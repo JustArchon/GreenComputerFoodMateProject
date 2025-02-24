@@ -146,16 +146,12 @@ public class MypageController {
 	}
 	
 	@RequestMapping(value="/mypage/ShoppingManage/orderlist", method=RequestMethod.GET)
-	private ModelAndView orderlist(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	private ModelAndView orderlist(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
 		ModelAndView mav = new ModelAndView();
-		HttpSession session = request.getSession();
-		BuyerDTO memberVO = (BuyerDTO)session.getAttribute("buyerInfo");
-		String id = memberVO.getByr_id();
-		
-//		List<OrderDTO> orderList = mypageService.getOrderById(id);
-		
-		// 오더리스트 만든 후 아무 작업도 없길래 임시조치로 위쪽 코드랑 비슷하게 넣어서 보냄
-		mav.addObject("orderList", mypageService.getOrderById(id));
+		SessionDTO sessionDTO = (SessionDTO) session.getAttribute("sessionDTO");
+		// 아이디 꺼내와서
+		mav.addObject("orderList", mypageService.getOrderById(sessionDTO.getUserId()));
+		// orderLilst 속성으로 getOrderById에 Id 넣은걸 전달한다
 		return mav;
 	}
 	

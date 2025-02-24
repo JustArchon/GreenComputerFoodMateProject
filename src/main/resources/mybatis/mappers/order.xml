@@ -51,13 +51,18 @@
 	</select>
 	
 	<!-- AllOrdByOrdIds 쿼리: resultType을 orderDTO로 수정 -->
-	<select id="AllOrdByOrdIds" resultType="orderDTO">
-	    SELECT * 
-	    FROM FOODMATE_ORDER_DETAIL
-	    WHERE ORD_ID IN
+	<select id="AllOrdByOrdIds" resultType="orderDetailDTO">
+	    SELECT d.*, 
+		       p.img_path, 
+		       o.ord_stat
+		FROM foodmate_order_detail d
+		LEFT JOIN foodmate_order o ON d.ord_id = o.ord_id
+		LEFT JOIN foodmate_product p ON d.pdt_id = p.pdt_id
+	    WHERE d.ORD_ID IN
 	    <foreach item="id" collection="list" open="(" separator="," close=")">
 	        #{id}
 	    </foreach>
+	    order by ord_detail_id
 	</select>
 	
 	<insert id="insertOrderList" parameterType="orderDTO">
