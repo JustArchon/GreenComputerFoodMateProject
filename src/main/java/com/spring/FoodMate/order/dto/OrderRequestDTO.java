@@ -2,8 +2,11 @@ package com.spring.FoodMate.order.dto;
 
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Component("orderrequestDTO")
 public class OrderRequestDTO {
 	@JsonProperty("cartIds")
     private List<Integer> cartIds; // 상품 ID 리스트

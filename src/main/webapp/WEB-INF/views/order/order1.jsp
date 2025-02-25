@@ -70,7 +70,7 @@
             outline: none;
         }
 
-        .order-detail, .delivery-info, .orderer-info {
+        .order-detail, .delivery-info, .orderer-info, .payment-info{
             margin-bottom: 40px;
             background-color: #f9f9f9;
             padding: 20px;
@@ -277,6 +277,61 @@
 		    margin-bottom: 20px;
 		    text-align: left;  /* 제목 왼쪽 정렬 */
 		}
+		
+		.payment-info {
+		    display: flex;
+		    flex-direction: column;
+		    gap: 10px;
+		}
+		
+		.form-group-pay {
+		    display: flex;
+		    align-items: center;
+		    gap: 15px; /* 입력창과 라벨 간격 조정 */
+		}
+		
+		.point-container {
+		    display: flex;
+		    align-items: center;
+		    gap: 8px;
+		    flex-wrap: nowrap;
+		}
+		
+		.point-container input[type="text"] {
+		    width: 80px;  /* 입력창 크기 조정 */
+		    padding: 5px;
+		    text-align: right;
+		    height: 30px;
+		    border: 1px solid #ccc;
+		    border-radius: 5px;
+		}
+		
+		input[type="checkbox"] {
+		    width: 16px;
+		    height: 16px;
+		    margin: 0;
+		    vertical-align: middle;
+		}
+		
+		.currency {
+		    white-space: nowrap;
+		    font-size: 14px;
+		}
+		
+		.checkbox-label {
+		    cursor: pointer;
+		    white-space: nowrap;
+		    font-size: 14px;
+		    font-weight: bold;
+		    color: #333;
+		}
+		
+		.point-info {
+		    font-size: 14px;
+		    color: green;
+		    white-space: nowrap;
+		    font-weight: bold;
+		}
 		        
         #font {
          	font-weight: 800;
@@ -478,6 +533,21 @@ function execDaumPostcode() {
                 <input type="email" id="orderer-email" placeholder="이메일" value="${buyerInfo.email}">
             </div>
         </div>
+        
+        <!-- 포인트 및 추가결제 정보 -->
+		<div class="payment-info">
+		    <h2 class="section-title">추가 결제</h2> 
+		    <div class="form-group-pay">
+		        <label for="orderer-point">적립금 사용</label>
+		        <div class="point-container">
+		            <input type="text" id="orderer-point" placeholder="0">
+		            <span class="currency">원</span>
+		            <input type="checkbox" id="use-all-points">
+		            <label for="use-all-points" class="checkbox-label">전액 사용하기</label>
+		            <span class="point-info">(보유 적립금 : <span id="available-points">${buyerInfo.points}</span> 원)</span>
+		        </div>
+		    </div>
+		</div>
         
         <!-- 결제 정보  -->
 		<div class="payment-info-container">

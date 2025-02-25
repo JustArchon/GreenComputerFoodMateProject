@@ -1,5 +1,8 @@
 package com.spring.FoodMate.order.dto;
 
+import org.springframework.stereotype.Component;
+
+@Component("orderaddressDTO")
 public class OrderAddressDTO {
     private int ordId; // 주문 ID (기본키, 주문 테이블의 주문ID 외래키)
     private String postalCode; // 우편번호

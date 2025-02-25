@@ -14,11 +14,14 @@
 		<typeAlias type="com.spring.FoodMate.member.dto.AdminDTO" alias="adminDTO"/>
 		<typeAlias type="com.spring.FoodMate.mypage.dto.ProfileDTO" alias="profileDTO"/>
 		<typeAlias type="com.spring.FoodMate.mypage.dto.DeliveryDTO" alias="deliveryDTO"/>
+		<typeAlias type="com.spring.FoodMate.mypage.dto.PointDTO" alias="pointDTO"/>
 		<typeAlias type="com.spring.FoodMate.product.dto.ProductDTO" alias="productDTO"/>
 		<typeAlias type="com.spring.FoodMate.product.dto.CategoryDTO" alias="categoryDTO"/>
 		<typeAlias type="com.spring.FoodMate.cart.dto.CartDTO" alias="cartDTO"/>
 		<typeAlias type="com.spring.FoodMate.order.dto.OrderDTO" alias="orderDTO"/>
+		<typeAlias type="com.spring.FoodMate.order.dto.OrderDTOoutput" alias="orderDTOoutput"/>
 		<typeAlias type="com.spring.FoodMate.order.dto.OrderDetailDTO" alias="orderdetailDTO"/>
+		<typeAlias type="com.spring.FoodMate.order.dto.OrderDetailDTOoutput" alias="orderdetailDTOoutput"/>
 		<typeAlias type="com.spring.FoodMate.order.dto.OrderAddressDTO" alias="orderaddressDTO"/>
 		<typeAlias type="com.spring.FoodMate.order.dto.OrderPaymentDTO" alias="orderpaymentDTO"/>
 		<typeAlias type="com.spring.FoodMate.recipe.dto.RecipeDTO" alias="recipeDTO"/>

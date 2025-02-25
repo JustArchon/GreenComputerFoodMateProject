@@ -2,6 +2,9 @@ package com.spring.FoodMate.order.dto;
 
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+
+@Component("orderpaymentDTO")
 public class OrderPaymentDTO {
 	private int pay_id; // 결제 ID (기본키, 시퀀스 사용)
     private int ord_id; // 주문 ID (주문 테이블의 주문ID 외래키, 삭제 시 null)

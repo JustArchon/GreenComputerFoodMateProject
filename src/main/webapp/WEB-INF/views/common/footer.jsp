@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,7 +29,9 @@
         <div class="row align-items-center">
             <!-- 왼쪽: 로고와 설명 (내부 중앙 정렬) -->
             <div class="col-md-2 d-flex flex-column align-items-center text-center">
-                <img src="${contextPath}/resources/images/foodmatelogo.png" alt="Logo" class="mb-2" style="width: 160px; height: auto;">
+            	<a href="${contextPath}/admin/adminMain2.do">
+            		<img src="${contextPath}/resources/images/foodmatelogo.png" alt="Logo" class="mb-2" style="width: 160px; height: auto;">
+            	</a>
                 <p class="mb-0">
                     <strong>FoodMate</strong><br>
                     레시피 공유 및 식재료<br>
