@@ -71,7 +71,7 @@
         <hr>
         <h5>고객센터</h5>
         <ul>
-	        <li><a href="${contextPath}/mypage/customerManage/inquiryListForm.do">1:1 문의</a></li>
+	        <li><a href="${contextPath}/support/inquiryLists">1:1 문의</a></li>
 	        <li><a href="${contextPath}/mypage/customerManage/cancleAccountForm.do">회원 탈퇴</a></li>
         </ul>
     </div>

@@ -77,7 +77,7 @@
         <c:forEach var="order" items="${orderList}">
             <tr>
                 <!-- 주문 날짜 및 주문번호 -->
-                <td>${order.create_Date}(${order.ord_code})</td>
+                <td>${order.create_Date}(${order.ord_id})</td>
 
                 <!-- 상품명과 옵션 -->
                 <td>

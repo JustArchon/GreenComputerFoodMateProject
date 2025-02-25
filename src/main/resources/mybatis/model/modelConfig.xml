@@ -14,6 +14,7 @@
 		<typeAlias type="com.spring.FoodMate.member.dto.AdminDTO" alias="adminDTO"/>
 		<typeAlias type="com.spring.FoodMate.mypage.dto.ProfileDTO" alias="profileDTO"/>
 		<typeAlias type="com.spring.FoodMate.mypage.dto.DeliveryDTO" alias="deliveryDTO"/>
+		<typeAlias type="com.spring.FoodMate.mypage.dto.PointDTO" alias="pointDTO"/>
 		<typeAlias type="com.spring.FoodMate.product.dto.ProductDTO" alias="productDTO"/>
 		<typeAlias type="com.spring.FoodMate.product.dto.CategoryDTO" alias="categoryDTO"/>
 		<typeAlias type="com.spring.FoodMate.cart.dto.CartDTO" alias="cartDTO"/>

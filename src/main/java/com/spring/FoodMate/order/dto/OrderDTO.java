@@ -3,6 +3,9 @@ package com.spring.FoodMate.order.dto;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import org.springframework.stereotype.Component;
+
+@Component("orderDTO")
 public class OrderDTO {
 	private String ord_code; // 주문번호
     private String byr_id; // 구매자 ID

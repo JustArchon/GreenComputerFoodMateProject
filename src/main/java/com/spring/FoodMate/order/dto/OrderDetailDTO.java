@@ -1,5 +1,8 @@
 package com.spring.FoodMate.order.dto;
 
+import org.springframework.stereotype.Component;
+
+@Component("orderdetailDTO")
 public class OrderDetailDTO {
 	private int ord_detail_id;	// 상세고유id[시퀀스]
 	private int ord_id;			// 주문id[부모키]
