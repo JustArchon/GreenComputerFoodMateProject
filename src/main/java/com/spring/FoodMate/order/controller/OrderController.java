@@ -97,8 +97,6 @@ public class OrderController {
 	    Map<String, List<CartDTO>> groupedBySeller = cartItems.stream()
 	    	    .collect(Collectors.groupingBy(cart -> cart.getSlr_id()));
 	    
-	    System.out.println(groupedBySeller);
-	    
 	    List<OrderDTO> orderList = new ArrayList<>();
 	    List<Integer> orderNumberList = new ArrayList<>();
 	    

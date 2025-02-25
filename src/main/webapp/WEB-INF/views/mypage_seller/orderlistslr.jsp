@@ -87,7 +87,7 @@
             <tr>
                 <!-- 주문 날짜 및 주문번호 -->
                 <td>${order.create_date}</td>
-				<td>${order.ord_code}</td>
+				<td>${order.ord_id}</td>
                 <td class="ImgAndName">
                     <a href=${contextPath}/product/pdtdetail?pdt_id=${order.pdt_id}>
 	                    <img src="${contextPath}/resources/images/${order.img_path}" alt="${order.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
@@ -100,19 +100,9 @@
 
                 <!-- 주문 상태 -->
                 <td>
-	                <c:choose> 
-	                	<c:when test="${order.ord_stat == 0}">결제 대기</c:when>
-				        <c:when test="${order.ord_stat == 1}">배송 준비중</c:when>
-				        <c:when test="${order.ord_stat == 2}">배송 중</c:when>
-				        <c:when test="${order.ord_stat == 3}">배송 완료</c:when>
-				        <c:when test="${order.ord_stat == 4}">구매 확정</c:when>
-				        <c:when test="${order.ord_stat == 5}">주문 취소</c:when>
-				        <c:when test="${order.ord_stat == 6}">반품</c:when>
-				        <c:otherwise>알 수 없음</c:otherwise>
-				    </c:choose>
+	                ${order.ord_stat_msg}
                 </td>
-				<!-- 주문상태 하드코딩함. 나중에 주문 코드-설명 테이블 만들고 조인해서 갖고와 -->
-                <!-- 확인/리뷰 -->
+				
                 <td><button class="btn btn-outline-secondary btn-sm" disabled>배송지정보 조회</button></td>
                 
                 <td>

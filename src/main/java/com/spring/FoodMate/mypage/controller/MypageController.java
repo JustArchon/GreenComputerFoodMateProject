@@ -183,7 +183,7 @@ public class MypageController {
 		    return mav;
 	}
 	
-	@RequestMapping(value="/mypage_seller/orderlist", method=RequestMethod.GET)
+	@RequestMapping(value="/mypage_seller/orderlistslr", method=RequestMethod.GET)
 	private ModelAndView slrOrderList(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
 		ModelAndView mav = new ModelAndView();
 		SessionDTO sessionDTO = (SessionDTO) session.getAttribute("sessionDTO");
