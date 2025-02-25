@@ -1,8 +1,5 @@
 package com.spring.FoodMate.order.dto;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-
 public class OrderDetailDTO {
 	private int ord_detail_id;	// 상세고유id[시퀀스]
 	private int ord_id;			// 주문id[부모키]
@@ -10,13 +7,6 @@ public class OrderDetailDTO {
 	private String pdt_name;	// 상품 이름
 	private int pdt_price;		// 상품 가격
 	private int qty;			// 개수
-	
-	private String img_path;
-	private String ord_stat;
-	private String create_date;
-	
-	private String ord_code;
-	// 조인해서 가져올 짜바리들
 	
 	// create_date를 String형으로 지정해도 되나? 얘는 출력용이라 ㄱㅊ을듯?
 	
@@ -32,27 +22,4 @@ public class OrderDetailDTO {
 	public void setPdt_price(int pdt_price) {		this.pdt_price = pdt_price;	}
 	public int getQty() {		return qty;	}
 	public void setQty(int qty) {		this.qty = qty;	}
-	public String getImg_path() {		return img_path;	}
-	public void setImg_path(String img_path) {		this.img_path = img_path;	}
-	public String getOrd_stat() {		return ord_stat;	}
-	public void setOrd_stat(String ord_stat) {		this.ord_stat = ord_stat;	}	
-	public String getCreate_date() { // 기존 메서드 수정
-	    return create_date != null ? create_date.substring(0, 10) : ""; // "yyyy-MM-dd" 형식만 반환
-	}
-	public void setCreate_date(String create_date) {		this.create_date = create_date;	}
-	public String getOrd_code() {		return ord_code;	}
-	public void setOrd_code(String ord_code) {		this.ord_code = ord_code;	}
-	public String getOrd_stat_msg() { // 나중에 규모 커지면 이렇게하지말고 데이터베이스에서 관리하기
-		switch (ord_stat) {
-        case "0": return "결제 대기";
-        case "1": return "배송 준비중";
-        case "2": return "배송 중";
-        case "3": return "배송 완료";
-        case "4": return "구매 확정";
-        case "5": return "주문 취소";
-        case "6": return "반품";
-        default: return "상태 불명";
-		}		
-	}
-	
 }
