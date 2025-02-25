@@ -5,9 +5,9 @@
 
 	<mapper namespace="mapper.point">
 	
-	<select id="getdeliveryList" parameterType="String" resultType="deliveryDTO">
+	<select id="getpointLogList" parameterType="String" resultType="pointDTO">
 		<![CDATA[
-			select * from FOODMATE_BUYER_ADDRESS where byr_id = #{byr_id}
+			select * from FOODMATE_POINT_HISTORY where byr_id = #{byr_id}
 		]]>
 	</select>
 	

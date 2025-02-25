@@ -42,6 +42,7 @@
 	</div>
 	
 	<c:forEach var="order" items="${orderList}">
+	<c:forEach var="detail" items="${order.orderDetails}">
     	<table class="table table-hover table-custom">
         <thead class="table-header table-secondary">
         <tr>
@@ -78,12 +79,12 @@
 
                 <!-- 상품명과 옵션 -->
                 <td>
-                    <img src="${contextPath}/resources/images/${order.img_path}" alt="${order.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
-                    ${order.pdt_name}
+                    <img src="${contextPath}/resources/images/${order.img_path}" alt="${detail.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                    ${detail.pdt_name}
                 </td>
 
                 <!-- 상품 금액 및 수량 -->
-                <td>${order.pdt_price}원 (${order.qty}개)</td>
+                <td>${detail.pdt_price}원 (${detail.qty}개)</td>
 
                 <!-- 주문 상태 -->
                 <td>
@@ -112,17 +113,17 @@
             </tr>
         </thead>
         <tbody>
-            <c:forEach var="detail" items="${order.orderDetails}">
+            
                 <tr>
                     <td>${detail.pdt_name}</td>
                     <td>${detail.pdt_price}</td>
                     <td>${detail.qty}</td>
                 </tr>
-            </c:forEach>
         </tbody>
         </table>
         <div style="border:3px solid black; width:100%; margin-bottom: 10px;"></div>
         <!-- 임시 구분선 -->
+    </c:forEach>
     </c:forEach>
 	
 	

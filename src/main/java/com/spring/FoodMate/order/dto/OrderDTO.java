@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component("orderDTO")
 public class OrderDTO {
+	private String ord_id;
 	private String ord_code; // 주문번호
     private String byr_id; // 구매자 ID
     private String slr_id; // 판매자 ID
@@ -24,9 +25,10 @@ public class OrderDTO {
     public OrderDTO() {}
 
     // 전체 필드를 포함한 생성자
-    public OrderDTO(String ord_code, String byrId, String slrId, int totPdtPrice, int shipFee, char ordStat, LocalDateTime createDate,
+    public OrderDTO(String ord_id, String ord_code, String byrId, String slrId, int totPdtPrice, int shipFee, char ordStat, LocalDateTime createDate,
                     String delCode, String waybillNum) {
-        this.ord_code = ord_code;
+        this.ord_id = ord_id;
+    	this.ord_code = ord_code;
     	this.byr_id = byrId;
         this.slr_id = slrId;
         this.tot_Pdt_Price = totPdtPrice;
@@ -38,6 +40,13 @@ public class OrderDTO {
     }
 
     // Getter 및 Setter
+	public String getOrd_id() {
+		return ord_id;
+	}
+
+	public void setOrd_id(String ord_id) {
+		this.ord_id = ord_id;
+	}
     
 	public String getOrd_code() {
 		return ord_code;

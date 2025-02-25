@@ -29,6 +29,67 @@
 	      text-align: center;
 	    }
 </style>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const buttons = document.querySelectorAll(".btn-group button");
+    const startDateInput = document.getElementById("start-date");
+    const endDateInput = document.getElementById("end-date");
+
+    function updateDates(days) {
+        const today = new Date();
+        const startDate = new Date(today); // 오늘 날짜 복사
+
+        // 선택한 일 수만큼 과거로 이동
+        startDate.setDate(today.getDate() - days);
+
+        // 날짜를 YYYY-MM-DD 형식으로 변환하는 함수
+        function formatDate(date) {
+            if (!(date instanceof Date) || isNaN(date.getTime())) {
+                return ""; // 빈 값 방지
+            }
+            let year = date.getFullYear();
+            let month = String(date.getMonth() + 1).padStart(2, "0"); // 두 자리 유지
+            let day = String(date.getDate()).padStart(2, "0"); // 두 자리 유지
+            return `${year}-${month}-${day}`;
+        }
+
+        // 날짜 값이 즉시 반영되도록 `setTimeout` 사용
+        const formattedToday = formatDate(today);
+        const formattedStartDate = formatDate(startDate);
+
+        if (formattedToday.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            setTimeout(() => {
+                endDateInput.value = formattedToday;
+            }, 10);
+        }
+
+        if (formattedStartDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            setTimeout(() => {
+                startDateInput.value = formattedStartDate;
+            }, 10);
+        }
+    }
+
+    // 초기 설정: "오늘" 버튼을 클릭한 상태로 시작
+    updateDates(0);
+
+    buttons.forEach(button => {
+        button.addEventListener("click", function () {
+            // 모든 버튼에서 active 제거 후 클릭한 버튼에 active 추가
+            buttons.forEach(btn => btn.classList.remove("active"));
+            this.classList.add("active");
+
+            // data-days 속성 값을 가져와 숫자로 변환
+            const days = parseInt(this.getAttribute("data-days"), 10);
+            updateDates(days);
+        });
+    });
+});
+</script>
+
+
+
+
 </head>
 <body>
 <div class="container mt-1">
@@ -48,9 +109,9 @@
     		</div>
     		
     		<div class="d-flex align-items-center gap-2">
-    			<input type="date" id="start-date" class="form-control w-auto" value="2025-01-06" />
+    			<input type="date" id="start-date" class="form-control w-auto"/>
         		<span>~</span>
-        		<input type="date" id="end-date" class="form-control w-auto" value="2025-01-13" />
+        		<input type="date" id="end-date" class="form-control w-auto"/>
     		
     			<!-- Search Button -->
       			<button type="button" class="btn btn-success">조회</button>
@@ -68,20 +129,15 @@
 			</tr>
 		</thead>
       	<tbody>
-      	<tr>
-      	  <td>2024-07-31</td>
-          <td>상품 구매</td>
-          <td>[2025설날] 2025 명란시대 짜지않고 맛있는 명품 선동명란 명란젓 선물세트 350g/800g 1개 구매</td>
-          <td>2025-03-12일 까지</td>
-          <td>1,500원</td>
-        </tr>
-        <tr>
-          <td>2024-08-31</td>
-          <td>상품 구매</td>
-          <td>파커아사히 항균도마 셰프 프로 블랙 중/대 1개 구매</td>
-          <td>2025-03-12일 까지</td>
-          <td>3,000원</td>
-        </tr>
+      	<c:forEach var="pointlog" items="${pointLogList}">
+	      	<tr>
+	      	  <td>${pointlog.created_at}</td>
+	          <td>${pointlog.point_type}</td>
+	          <td>${pointlog.description}</td>
+	          <td>${pointlog.valid_until} 까지</td>
+	          <td>${pointlog.amount}원</td>
+	        </tr>
+        </c:forEach>
 		</tbody>
 	</table>
 	<nav aria-label="Page navigation">

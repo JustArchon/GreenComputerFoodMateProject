@@ -29,12 +29,8 @@ public class PointDAO {
 		sqlSession.update("mapper.point.usePoint", point);
 	}
 	
-	public void deletedelivery(int addr_id) throws DataAccessException{
-		sqlSession.delete("mapper.delivery.deletedelivery", addr_id);
-	}
-	
-	public void updatedelivery(DeliveryDTO deliveryDTO) throws DataAccessException{
-		sqlSession.update("mapper.delivery.updatedelivery", deliveryDTO);
-	}
+    public List<PointDTO> getpointLogList(String id) {
+        return sqlSession.selectList("mapper.point.getpointLogList", id);
+    }
 
 }

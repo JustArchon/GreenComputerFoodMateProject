@@ -1,6 +1,7 @@
 package com.spring.FoodMate.mypage.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,10 @@ public class PointService {
 		pointMap.put("amount", pointDTO.getAmount());
 		pointDAO.usePoint(pointMap);
 	}
+	
+	public List<PointDTO> getpointLogList(String id) {
+        return pointDAO.getpointLogList(id);
+    }
 	
 		
 //		// 주문목록이 없을경우 빈리스트를 반환해서 페이지 500에러 방지

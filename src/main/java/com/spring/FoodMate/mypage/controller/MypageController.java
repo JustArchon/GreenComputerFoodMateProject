@@ -18,6 +18,7 @@ import com.spring.FoodMate.member.dto.BuyerDTO;
 import com.spring.FoodMate.mypage.dto.ProfileDTO;
 import com.spring.FoodMate.mypage.service.DeliveryService;
 import com.spring.FoodMate.mypage.service.MypageService;
+import com.spring.FoodMate.mypage.service.PointService;
 import com.spring.FoodMate.mypage.service.ProfileService;
 import com.spring.FoodMate.order.dto.OrderDTOoutput;
 import com.spring.FoodMate.order.dto.OrderDetailDTOoutput;
@@ -41,6 +42,8 @@ public class MypageController {
 	private OrderService orderService;
 	@Autowired
 	private DeliveryService deliveryService;
+	@Autowired
+	private PointService pointService;
 	
 	@RequestMapping(value="/mypage/mypageForm", method=RequestMethod.GET)
 	private ModelAndView mypageform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -61,7 +64,7 @@ public class MypageController {
 		
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("myrecipeList", recipeService.selectRecipeListByrID(byr_id)); //서비스에 selectRecipeList메소드있어야함
-		mav.addObject("orderList", "fuck");
+		mav.addObject("orderList", orderService.getOrdersByByrId(byr_id));
 		mav.addObject("profile", profileDTO);
 		return mav;
 	}
@@ -132,9 +135,24 @@ public class MypageController {
 	}
 	
 	@RequestMapping(value="/mypage/pointManage/*Form", method=RequestMethod.GET)
-	private ModelAndView pointManageform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
+	private ModelAndView PManageform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HttpSession session = request.getSession();
 		session.setAttribute("action", action);
+		return new ModelAndView();
+	}
+	
+	@RequestMapping(value="/mypage/pointManage/pointManageForm", method=RequestMethod.GET)
+	private ModelAndView pointManageform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		HttpSession session = request.getSession();
+		BuyerDTO buyerInfo = (BuyerDTO) session.getAttribute("buyerInfo"); // 세션에서 buyerInfo 가져오기
+		String byr_id = null;
+
+		if (buyerInfo != null) {
+		    byr_id = buyerInfo.getByr_id(); // byr_id 값 추출
+		}
+		session.setAttribute("action", action);
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("pointLogList", pointService.getpointLogList(byr_id));
 		return new ModelAndView();
 	}
 	
