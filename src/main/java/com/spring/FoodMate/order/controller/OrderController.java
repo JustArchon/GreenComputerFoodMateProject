@@ -18,19 +18,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.spring.FoodMate.cart.dto.CartDTO;
 import com.spring.FoodMate.cart.service.CartService;
+import com.spring.FoodMate.common.SessionDTO;
 import com.spring.FoodMate.common.UtilMethod;
+import com.spring.FoodMate.common.exception.UnauthorizedException;
 import com.spring.FoodMate.member.dto.BuyerDTO;
 import com.spring.FoodMate.mypage.service.DeliveryService;
 import com.spring.FoodMate.order.dto.OrderAddressDTO;
 import com.spring.FoodMate.order.dto.OrderDTO;
+import com.spring.FoodMate.order.dto.OrderDTOoutput;
 import com.spring.FoodMate.order.dto.OrderDetailDTO;
 import com.spring.FoodMate.order.dto.OrderPaymentDTO;
 import com.spring.FoodMate.order.dto.OrderRequestDTO;
+import com.spring.FoodMate.order.exception.OrderException;
 import com.spring.FoodMate.order.service.OrderService;
 
 import io.github.cdimascio.dotenv.Dotenv;
@@ -83,7 +89,7 @@ public class OrderController {
 	}
 	
 	@RequestMapping("/order/setOrderItems")
-	public String setOrderItems(@RequestBody OrderRequestDTO orderRequestDTO, HttpSession session) {
+	public String setOrderItems(@RequestBody OrderRequestDTO orderRequestDTO, HttpSession session) throws Exception {
 		
 //		 System.out.println("받은 주문 ID 리스트: " + cartIds); // 디버깅용
 		BuyerDTO buyerInfo = (BuyerDTO) session.getAttribute("buyerInfo");
@@ -96,8 +102,6 @@ public class OrderController {
 	    
 	    Map<String, List<CartDTO>> groupedBySeller = cartItems.stream()
 	    	    .collect(Collectors.groupingBy(cart -> cart.getSlr_id()));
-	    
-	    System.out.println(groupedBySeller);
 	    
 	    List<OrderDTO> orderList = new ArrayList<>();
 	    List<Integer> orderNumberList = new ArrayList<>();
@@ -198,4 +202,40 @@ public class OrderController {
 		return mav;
 	}
 	
+	@RequestMapping(value="/order/getAddress", method = RequestMethod.POST)
+	@ResponseBody
+    public Map<String, Object> getOrderAddress(@RequestParam("ord_id") int ord_id, HttpSession session) throws Exception {
+        Map<String, Object> result = new HashMap<>();
+        System.out.println("나실행되는중 ㅇㅇ");
+        // 현재 로그인한 이용자 정보 가져오기
+        SessionDTO userInfo = (SessionDTO) session.getAttribute("sessionDTO");
+        String userId = userInfo.getUserId();
+        String userRole = userInfo.getUserRole();
+        
+        // 버튼이 준 ord_id로 주문 테이블에서 모든 정보를 가져옴
+        OrderDTOoutput order = orderService.getOrderByOrdId(ord_id);
+        
+        // 주문정보가 없으면 주문없음 예외 보내기
+        if (order == null) {throw new OrderException(101);}
+        
+        // 주문 정보 조회 (유저 권한 검증)
+        if(userRole.equals("buyer")) { // 구매자로 로그인했을 때는
+            if(!order.getByr_id().equals(userId)) {throw new UnauthorizedException(106);}
+            // 니 ID가 주문테이블에서 가져온 주문의 구매자 id와 다르면 접근권한없음 오류 던지기
+        } else if(userRole.equals("seller")) { // 판매자로 로그인했을 때는
+        	if(!order.getSlr_id().equals(userId)) {throw new UnauthorizedException(106);}
+        	// 니 ID가 주문테이블에서 가져온 주문의 판매자 id와 다르면 접근권한없음 오류 던지기
+        }
+
+        // 배송지 정보 조회
+        OrderAddressDTO address = orderService.getOrderAddressByOrdId(ord_id);
+        if (address != null) {
+            result.put("status", "success");
+            result.put("data", address);
+        } else {
+            result.put("status", "error");
+            result.put("message", "배송지 정보가 없습니다.");
+        }
+        return result;
+    }	
 }

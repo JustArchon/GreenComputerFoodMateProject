@@ -8,31 +8,7 @@
 <meta charset="UTF-8">
 <title>주문목록/배송조회</title>
 <link href="<c:url value="/resources/css/tablepage.css" />" rel="stylesheet">
-<style>
-		.table-custom {
-		    border-top: 2px solid #b5b6b7 !important;
-	 	 }
-		/* 헤더 배경색 */
-	    .table-header {
-		  background-color: #f8f9fa;
-	      text-align: center;
-	      font-weight: bold;
-	      min-width: 20%;
-	    }
-	    .table td:last-child {
-		  min-width: 100px; /* 최소 너비 지정 */
-		  text-align: center; /* 텍스트 중앙 정렬 */
-		}
-	    /* 내용 텍스트 정렬 */
-	    .table tbody td {
-	      vertical-align: middle;
-	      text-align: center;
-	    }
-	    
-	    th:first-child, td:first-child {
-		    width: 10%; /* 첫 번째 열의 폭을 15%로 설정 */
-		}
-</style>
+
 </head>
 <body>
 <main>
@@ -40,6 +16,8 @@
 	<div class="d-flex align-items-center border-bottom pb-2 mb-3">
       		<h5 class="mb-0 fw-bold">주문목록/배송조회</h5>
     </div>
+    
+    
     <div class="border p-4 rounded mb-3" style="margin: 0 auto;">
     	<div class="d-flex align-items-center gap-3 flex-wrap">
     		<p class="mb-0 align-self-center">조회기간</p>
@@ -62,19 +40,38 @@
     		</div>
     	</div>
 	</div>
-	<table class="table table-hover table-custom">
-    <thead class="table-header table-secondary">
+	
+	<c:forEach var="order" items="${orderList}">
+    	<table class="table table-hover table-custom">
+        <thead class="table-header table-secondary">
         <tr>
-            <td>날짜/주문번호</td>
-            <td>상품명/옵션</td>
-            <td>상품금액/수량</td>
-            <td>주문상태</td>
-            <td>확인/리뷰</td>
+        <th>주문 번호</th>
+        <th>주문한 날짜</th>
+        <th>총 상품 금액</th>
+        <th>배송비</th>
+        <th>최종 금액</th>
+        <th>주문 상태</th>
+        
+        <!-- 여기서도 주문지 확인할수있도록 작업할것 -->
+        
+        <th>운송장 번호</th>
         </tr>
-    </thead>
-    
-    <tbody>
-        <c:forEach var="order" items="${orderList}">
+        </thead>
+        <tbody>
+        	<tr>
+        		<td>${order.ord_id}</td>
+        		<td>${order.create_Date}</td>
+        		<td>${order.tot_Pdt_Price}</td>
+        		<td>${order.ship_Fee}</td>
+        		<td>${order.tot_Pdt_Price + order.ship_Fee}</td>
+        		<td>${order.ord_stat_msg}</td>
+        		<td>${order.del_Code}, ${order.waybill_Num}</td>
+        	</tr>
+        </tbody>
+		</table>
+		
+        <table class="table table-hover table-custom">
+        <thead class="table-header table-secondary">
             <tr>
                 <!-- 주문 날짜 및 주문번호 -->
                 <td>${order.create_Date}(${order.ord_id})</td>
@@ -109,11 +106,71 @@
                         <button class="btn btn-outline-success btn-sm" disabled>리뷰하기</button>
                     </div>
                 </td>
+                <th>상품명</th>
+                <th>상품 가격</th>
+                <th>수량</th>
             </tr>
-        </c:forEach>
-    </tbody>
+        </thead>
+        <tbody>
+            <c:forEach var="detail" items="${order.orderDetails}">
+                <tr>
+                    <td>${detail.pdt_name}</td>
+                    <td>${detail.pdt_price}</td>
+                    <td>${detail.qty}</td>
+                </tr>
+            </c:forEach>
+        </tbody>
+        </table>
+        <div style="border:3px solid black; width:100%; margin-bottom: 10px;"></div>
+        <!-- 임시 구분선 -->
+    </c:forEach>
+	
+	
+<!-- 	<table class="table table-hover table-custom"> -->
+<!--     <thead class="table-header table-secondary"> -->
+<!--         <tr> -->
+<!--             <td>날짜/주문번호</td> -->
+<!--             <td>상품명/옵션</td> -->
+<!--             <td>상품금액/수량</td> -->
+<!--             <td>주문상태</td> -->
+<!--             <td>확인/리뷰</td> -->
+<!--         </tr> -->
+<!--     </thead> -->
     
-</table>
+<!--     <tbody> -->
+<%--         <c:forEach var="order" items="${orderList}"> --%>
+<!--             <tr> -->
+<!--                 주문 날짜 및 주문번호 -->
+<%--                 <td>${order.create_date}(${order.ord_code})</td> --%>
+
+<!--                 상품명과 옵션 -->
+<!--                 <td> -->
+<!--                 	<a href=${contextPath}/product/pdtdetail?pdt_id=${order.pdt_id}> -->
+<%-- 	                    <img src="${contextPath}/resources/images/${order.img_path}" alt="${order.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;"> --%>
+<%-- 	                    ${order.pdt_name} --%>
+<!--                     </a> -->
+<!--                 </td> -->
+
+<!--                 상품 금액 및 수량 -->
+<%--                 <td>${order.pdt_price}원 (${order.qty}개)</td> --%>
+
+<!--                 주문 상태 -->
+<!--                 <td> -->
+<%-- 	                ${order.ord_stat} --%>
+<!--                 </td> -->
+<!-- 				주문상태 하드코딩함. 나중에 주문 코드-설명 테이블 만들고 조인해서 갖고와 -->
+<!--                 확인/리뷰 -->
+<!--                 <td> -->
+<!--                     <div class="d-flex flex-column gap-1"> -->
+<!--                         <button class="btn btn-outline-secondary btn-sm" disabled>배송조회</button> -->
+<!--                         <button class="btn btn-outline-success btn-sm" disabled>리뷰하기</button> -->
+<!--                     </div> -->
+<!--                 </td> -->
+<!--             </tr> -->
+<%--         </c:forEach> --%>
+<!--     </tbody> -->
+    
+<!-- </table> -->
 
 	<nav aria-label="Page navigation">
 	  <ul class="pagination justify-content-center">
