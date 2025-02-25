@@ -1,7 +1,6 @@
 package com.spring.FoodMate.order.dto;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 public class OrderDTO {
 	private String ord_code; // 주문번호

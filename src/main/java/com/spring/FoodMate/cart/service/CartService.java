@@ -48,7 +48,7 @@ public class CartService {
             List<CartDTO> cartList = cartDAO.getCartListById(byr_id);
             // cartDAO에 구매자ID를 주면서 구매자의 cartDTO 리스트를 요청한다.            
             Map<String, List<CartDTO>> groupedCart = new LinkedHashMap<>();
-            // 링크드 해시맵? 으로 판매자 별명별로 상품 그룹지을 준비            
+            // 링크드 해시맵으로 판매자 별명별로 상품 그룹지을 준비            
             for (CartDTO cart : cartList) {    
                 groupedCart.computeIfAbsent(cart.getNickname(), k -> new ArrayList<>()).add(cart);
                 // 판매자 별명 기준으로 그룹화

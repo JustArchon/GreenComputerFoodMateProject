@@ -19,9 +19,9 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.FoodMate.cart.dto.CartDTO;
 import com.spring.FoodMate.cart.exception.CartException;
 import com.spring.FoodMate.cart.service.CartService;
+import com.spring.FoodMate.common.SessionDTO;
 import com.spring.FoodMate.common.UtilMethod;
 import com.spring.FoodMate.common.exception.UnhandledException;
-import com.spring.FoodMate.member.dto.BuyerDTO;
 
 @Controller
 public class CartControllerImpl implements CartController {
@@ -32,8 +32,8 @@ public class CartControllerImpl implements CartController {
     @RequestMapping(value="/cart/cartlist", method=RequestMethod.GET)
     public ModelAndView cartlist(HttpServletRequest request, HttpSession session) {
         try {
-            BuyerDTO buyerInfo = (BuyerDTO) session.getAttribute("buyerInfo");
-            Map<String, List<CartDTO>> groupedCart = cartService.getGroupedCartList(buyerInfo.getByr_id());
+        	SessionDTO userInfo = (SessionDTO) session.getAttribute("sessionDTO");
+            Map<String, List<CartDTO>> groupedCart = cartService.getGroupedCartList(userInfo.getUserId());
             ModelAndView mav = new ModelAndView();
             mav.setViewName("common/layout");
             mav.addObject("title", "FoodMate - 장바구니");
@@ -55,8 +55,8 @@ public class CartControllerImpl implements CartController {
                                          @RequestParam("quantity") int qty,
                                          HttpSession session) {
         try {
-            BuyerDTO buyerInfo = (BuyerDTO) session.getAttribute("buyerInfo");
-            boolean isAdded = cartService.addToCart(pdt_id, qty, buyerInfo.getByr_id());
+        	SessionDTO userInfo = (SessionDTO) session.getAttribute("sessionDTO");
+            boolean isAdded = cartService.addToCart(pdt_id, qty, userInfo.getUserId());
             Map<String, Object> response = new HashMap<>();
             response.put("success", isAdded);
             response.put("message", isAdded ? "장바구니에 상품을 " + qty + "개 담았습니다. 계속 쇼핑하시겠습니까?" : "장바구니에 상품을 추가 중 오류가 발생했습니다. 잠시 후 다시 시도해 보세요.");
@@ -74,13 +74,13 @@ public class CartControllerImpl implements CartController {
         Map<String, Object> response = new HashMap<>();
         
         try {
-        	BuyerDTO buyerInfo = (BuyerDTO) session.getAttribute("buyerInfo");
+        	SessionDTO userInfo = (SessionDTO) session.getAttribute("sessionDTO");
             boolean allAdded = true;
             for (Map<String, Object> product : productList) {
             	int pdt_id = Integer.parseInt(String.valueOf(product.get("pdt_id")));
             	int qty = Integer.parseInt(String.valueOf(product.get("qty")));
 
-                boolean isAdded = cartService.addToCart(pdt_id, qty, buyerInfo.getByr_id());
+                boolean isAdded = cartService.addToCart(pdt_id, qty, userInfo.getUserId());
                 if (!isAdded) {
                     allAdded = false;
                 }
