@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 <!DOCTYPE html>
 <html>
@@ -30,66 +31,51 @@
 	    }
 </style>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const buttons = document.querySelectorAll(".btn-group button");
-    const startDateInput = document.getElementById("start-date");
-    const endDateInput = document.getElementById("end-date");
+document.addEventListener("DOMContentLoaded", function() {
+  const endDateInput = document.getElementById('end-date');
+  const startDateInput = document.getElementById('start-date');
+  const buttons = document.querySelectorAll('.btn-group button');
 
-    function updateDates(days) {
-        const today = new Date();
-        const startDate = new Date(today); // 오늘 날짜 복사
+  // 오늘 날짜를 "yyyy-MM-dd" 형식으로 리턴하는 함수
+  function getTodayFormatted() {
+    return new Date().toISOString().substring(0, 10);
+  }
 
-        // 선택한 일 수만큼 과거로 이동
-        startDate.setDate(today.getDate() - days);
+  // 페이지 로드 시 end-date에 오늘 날짜 설정
+  endDateInput.value = getTodayFormatted();
 
-        // 날짜를 YYYY-MM-DD 형식으로 변환하는 함수
-        function formatDate(date) {
-            if (!(date instanceof Date) || isNaN(date.getTime())) {
-                return ""; // 빈 값 방지
-            }
-            let year = date.getFullYear();
-            let month = String(date.getMonth() + 1).padStart(2, "0"); // 두 자리 유지
-            let day = String(date.getDate()).padStart(2, "0"); // 두 자리 유지
-            return `${year}-${month}-${day}`;
-        }
+  // 버튼에 설정된 일수만큼 이전 날짜를 계산하여 start-date에 반영
+  function updateStartDate(days) {
+    const endDate = new Date(endDateInput.value);
+    endDate.setDate(endDate.getDate() - days);
+    startDateInput.value = endDate.toISOString().substring(0, 10);
+  }
 
-        // 날짜 값이 즉시 반영되도록 `setTimeout` 사용
-        const formattedToday = formatDate(today);
-        const formattedStartDate = formatDate(startDate);
+  // 기본으로 "오늘" 버튼 (data-days="0")에 따라 start-date 설정
+  updateStartDate(0);
 
-        if (formattedToday.match(/^\d{4}-\d{2}-\d{2}$/)) {
-            setTimeout(() => {
-                endDateInput.value = formattedToday;
-            }, 10);
-        }
+  // 각 버튼 클릭 이벤트 처리
+  buttons.forEach(button => {
+    button.addEventListener('click', function() {
+      // 모든 버튼에서 active 클래스 제거 후, 클릭한 버튼에 active 추가
+      buttons.forEach(btn => btn.classList.remove('active'));
+      this.classList.add('active');
 
-        if (formattedStartDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-            setTimeout(() => {
-                startDateInput.value = formattedStartDate;
-            }, 10);
-        }
-    }
-
-    // 초기 설정: "오늘" 버튼을 클릭한 상태로 시작
-    updateDates(0);
-
-    buttons.forEach(button => {
-        button.addEventListener("click", function () {
-            // 모든 버튼에서 active 제거 후 클릭한 버튼에 active 추가
-            buttons.forEach(btn => btn.classList.remove("active"));
-            this.classList.add("active");
-
-            // data-days 속성 값을 가져와 숫자로 변환
-            const days = parseInt(this.getAttribute("data-days"), 10);
-            updateDates(days);
-        });
+      const days = parseInt(this.getAttribute('data-days'), 10);
+      updateStartDate(days);
     });
+  });
 });
 </script>
+<%-- 현재 페이지 정보 가져오기 (기본값: 1페이지) --%>
+<c:set var="currentPage" value="${param.page != null ? param.page : 1}" />
+<c:set var="itemsPerPage" value="6" />
+<c:set var="startIndex" value="${(currentPage - 1) * itemsPerPage}" />
+<c:set var="endIndex" value="${currentPage * itemsPerPage}" />
 
-
-
-
+<%-- 전체 데이터 개수 구하기 --%>
+<c:set var="totalItems" value="${fn:length(pointLogList)}" />
+<c:set var="totalPages" value="${(totalItems + itemsPerPage - 1) / itemsPerPage}" />
 </head>
 <body>
 <div class="container mt-1">
@@ -140,31 +126,27 @@ document.addEventListener("DOMContentLoaded", function () {
         </c:forEach>
 		</tbody>
 	</table>
-	<nav aria-label="Page navigation">
-	  <ul class="pagination justify-content-center">
-	    <li class="page-item">
-	      <a class="page-link" href="#" aria-label="Previous">
-	        <span aria-hidden="true">Prev</span>
-	      </a>
-	    </li>
-	    <li class="page-item active" aria-current="page">
-	      <a class="page-link" href="#">1</a>
-	    </li>
-	    <li class="page-item"><a class="page-link" href="#">2</a></li>
-	    <li class="page-item"><a class="page-link" href="#">3</a></li>
-	    <li class="page-item"><a class="page-link" href="#">4</a></li>
-	    <li class="page-item"><a class="page-link" href="#">5</a></li>
-	    <li class="page-item"><a class="page-link" href="#">6</a></li>
-	    <li class="page-item"><a class="page-link" href="#">7</a></li>
-	    <li class="page-item"><a class="page-link" href="#">8</a></li>
-	    <li class="page-item"><a class="page-link" href="#">9</a></li>
-	    <li class="page-item"><a class="page-link" href="#">10</a></li>
-	    <li class="page-item">
-	      <a class="page-link" href="#" aria-label="Next">
-	        <span aria-hidden="true">Next</span>
-	      </a>
-	    </li>
-	  </ul>
+	<%-- 페이지네이션 --%>
+	<nav>
+	    <ul class="pagination justify-content-center">
+	        <c:if test="${currentPage > 1}">
+	            <li class="page-item">
+	                <a class="page-link" href="?page=${currentPage - 1}">Prev</a>
+	            </li>
+	        </c:if>
+	
+	        <c:forEach var="i" begin="1" end="${totalPages}">
+	            <li class="page-item ${i == currentPage ? 'active' : ''}">
+	                <a class="page-link" href="?page=${i}">${i}</a>
+	            </li>
+	        </c:forEach>
+	
+	        <c:if test="${currentPage < totalPages}">
+	            <li class="page-item">
+	                <a class="page-link" href="?page=${currentPage + 1}">Next</a>
+	            </li>
+	        </c:if>
+	    </ul>
 	</nav>
 </div>
 </body>
