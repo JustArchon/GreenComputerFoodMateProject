@@ -16,7 +16,7 @@ public class DeliveryDAO {
 	@Autowired
 	private SqlSession sqlSession;	
 	
-    public List<DeliveryDAO> getdeliveryList(String id) {
+    public List<DeliveryDTO> getdeliveryList(String id) {
         return sqlSession.selectList("mapper.delivery.getdeliveryList", id);
     }
 	

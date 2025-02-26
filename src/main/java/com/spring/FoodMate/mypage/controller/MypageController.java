@@ -16,10 +16,12 @@ import org.springframework.web.servlet.ModelAndView;
 import com.spring.FoodMate.common.SessionDTO;
 import com.spring.FoodMate.member.dto.BuyerDTO;
 import com.spring.FoodMate.mypage.dto.ProfileDTO;
+import com.spring.FoodMate.mypage.dto.WishDTO;
 import com.spring.FoodMate.mypage.service.DeliveryService;
 import com.spring.FoodMate.mypage.service.MypageService;
 import com.spring.FoodMate.mypage.service.PointService;
 import com.spring.FoodMate.mypage.service.ProfileService;
+import com.spring.FoodMate.mypage.service.WishlistService;
 import com.spring.FoodMate.order.dto.OrderDTOoutput;
 import com.spring.FoodMate.order.dto.OrderDetailDTOoutput;
 import com.spring.FoodMate.order.service.OrderService;
@@ -44,6 +46,8 @@ public class MypageController {
 	private DeliveryService deliveryService;
 	@Autowired
 	private PointService pointService;
+	@Autowired
+	private WishlistService wishlistService;
 	
 	@RequestMapping(value="/mypage/mypageForm", method=RequestMethod.GET)
 	private ModelAndView mypageform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -134,14 +138,14 @@ public class MypageController {
 		return mav;
 	}
 	
-	@RequestMapping(value="/mypage/pointManage/*Form", method=RequestMethod.GET)
+	@RequestMapping(value="/mypage/rewardManage/*Form", method=RequestMethod.GET)
 	private ModelAndView PManageform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HttpSession session = request.getSession();
 		session.setAttribute("action", action);
 		return new ModelAndView();
 	}
 	
-	@RequestMapping(value="/mypage/pointManage/pointManageForm", method=RequestMethod.GET)
+	@RequestMapping(value="/mypage/rewardManage/pointManageForm", method=RequestMethod.GET)
 	private ModelAndView pointManageform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
 		HttpSession session = request.getSession();
 		BuyerDTO buyerInfo = (BuyerDTO) session.getAttribute("buyerInfo"); // 세션에서 buyerInfo 가져오기
@@ -180,6 +184,20 @@ public class MypageController {
             //orderDTOoutput에 그 리스트 저장함
         }
 		mav.addObject("orderList", orders);
+		// orderLilst 속성으로 그 긴거 전달
+		return mav;
+	}
+	
+	@RequestMapping(value="/mypage/ShoppingManage/wishlistManageForm", method=RequestMethod.GET)
+	private ModelAndView wishlistManageForm(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		SessionDTO sessionDTO = (SessionDTO) session.getAttribute("sessionDTO");
+		// 아이디 꺼내와서
+		
+		List<WishDTO> wishlist = wishlistService.getwishList(sessionDTO.getUserId());
+		// 아이디 넣어서 오더들 output전용으로 가져오기
+//
+		mav.addObject("wishList", wishlist);
 		// orderLilst 속성으로 그 긴거 전달
 		return mav;
 	}

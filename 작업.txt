@@ -1,6 +1,9 @@
 -> 포인트 or 찜 -> 회원 탈퇴 -> 쇼핑관리 or 리뷰보기 -> 최근본 상품
--> 어드민 페이지
+-> 어드민 페이지, 결제 포인트 사용 반영
 -> 쿠폰 날짜선택 로그확인
+
+찜목록
+
 
 바로구매
 
@@ -121,3 +124,64 @@ inicis~1111
 	    } else {
 	    	hiddenSexInput.value = (sex === "1" || sex === "2") ? sex : "1"; // 기존 값 유지, 기본값 1
 	    }
+
+$(document).ready(function() {
+    $("#btn-add-selected-cart").click(function() {
+        let selectedIds = getSelectedProductIds();
+        if (selectedIds.length === 0) {
+            alert("장바구니로 옮길 상품을 선택하세요.");
+            return;
+        }
+
+        $.ajax({
+            url: "addSelectedToCart",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ productIds: selectedIds }),
+            success: function(response) {
+                alert("선택한 상품이 장바구니로 이동되었습니다.");
+                $(".wish-checkbox:checked").closest("tr").remove(); // 위시리스트에서 삭제
+            },
+            error: function() {
+                alert("장바구니 이동에 실패했습니다.");
+            }
+        });
+    });
+});
+
+$(document).ready(function() {
+    $("#btn-delete-selected").click(function() {
+        let selectedIds = getSelectedProductIds();
+        if (selectedIds.length === 0) {
+            alert("삭제할 상품을 선택하세요.");
+            return;
+        }
+
+        if (!confirm("선택한 상품을 삭제하시겠습니까?")) return;
+
+        $.ajax({
+            url: "deleteSelectedWishlist",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ productIds: selectedIds }),
+            success: function(response) {
+                alert("선택한 상품이 삭제되었습니다.");
+                $(".wish-checkbox:checked").closest("tr").remove(); // UI에서도 삭제
+            },
+            error: function() {
+                alert("삭제에 실패했습니다.");
+            }
+        });
+    });
+});
+
+function getSelectedProductIds() {
+    let selectedIds = [];
+    $(".wish-checkbox:checked").each(function() {
+        let productId = $(this).closest("tr").data("id");
+        if (productId) {
+            selectedIds.push(productId);
+        }
+    });
+    return selectedIds;
+}

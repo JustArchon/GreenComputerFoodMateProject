@@ -16,7 +16,7 @@ public class DeliveryService {
 	@Autowired
 	private DeliveryDAO deliveryDAO;
 	
-	public List<DeliveryDAO> getdeliveryList(String id) throws Exception {
+	public List<DeliveryDTO> getdeliveryList(String id) throws Exception {
 		return deliveryDAO.getdeliveryList(id);
 	}
 	

@@ -5,57 +5,52 @@
 
 	<mapper namespace="mapper.wishlist">
 	
-	<select id="getpointLogList" parameterType="String" resultType="pointDTO">
+	<select id="getwishList" parameterType="String" resultType="wishDTO">
 		<![CDATA[
-			select * from FOODMATE_POINT_HISTORY where byr_id = #{byr_id}
+			SELECT 
+		        w.*,  -- FOODMATE_WISHLIST의 모든 컬럼
+		        p.name, 
+		        p.img_path,
+		        p.price
+		    FROM FOODMATE_WISHLIST w
+		    LEFT JOIN FOODMATE_PRODUCT p ON w.pdt_id = p.pdt_id
+		    WHERE w.byr_id = #{byr_id}
 		]]>
 	</select>
 	
-	<insert id="addPointlog" parameterType="pointDTO">
+	<insert id="addWishProduct" parameterType="wishDTO">
 		<![CDATA[
-			insert into FOODMATE_POINT_HISTORY(
-					POINT_ID,
+			insert into FOODMATE_WISHLIST(
+					WISHLIST_ID,
 					BYR_ID, 
-			        POINT_TYPE, 
-			        DESCRIPTION, 
-			        AMOUNT,
-			        VALID_UNTIL,
+			        PDT_ID, 
+			        QTY, 
 			        CREATED_AT
 		        )values(
-		        	FOODMATE_POINT_SEQ.NEXTVAL,
+		        	FOODMATE_WISH_SEQ.NEXTVAL,
 			        #{byr_id}, 
-			        #{point_type}, 
-			        #{description},
-			        #{amount},
-			        ADD_MONTHS(SYSDATE, 12),  -- 현재 날짜(SYSDATE)에 12개월(1년) 추가
+			        #{pdt_id}, 
+			        #{qty},
 			        SYSDATE
 		        )
 		]]>
 	</insert>
 	
-	<update id="plusPoint" parameterType="map">
-	    UPDATE FOODMATE_BUYER
-	    SET POINTS = NVL(POINTS, 0) + #{amount}
-	    WHERE byr_id = #{byr_id}
-	</update>
+	<select id="isInMyWish" parameterType="wishDTO" resultType="wishDTO">
+	    SELECT *
+	    FROM FOODMATE_WISHLIST
+	    WHERE byr_id = #{byr_id} AND pdt_id = #{pdt_id}
+	</select>
 	
-	<update id="usePoint" parameterType="map">
-	    UPDATE FOODMATE_BUYER
-	    SET POINTS = NVL(POINTS, 0) - #{amount}
-	    WHERE byr_id = #{byr_id}
-	</update>
-	
-	<delete id="deletedelivery" parameterType="int">
-	    DELETE FROM FOODMATE_BUYER_ADDRESS WHERE ADDR_ID = #{addr_id}
+	<delete id="deleteWishItem" parameterType="int">
+	    DELETE FROM FOODMATE_WISHLIST WHERE WISHLIST_ID = #{wishlist_id}
 	</delete>
-
-	<update id="updatedelivery" parameterType="deliveryDTO">
-	    UPDATE FOODMATE_BUYER_ADDRESS
-	    SET 
-	        ADDR_NICKNAME = #{addr_Nickname}, POSTAL_CODE = #{postal_Code}, ADDR = #{addr}, 
-	        ADDR_DETAIL = #{addr_Detail}, TO_NAME = #{to_Name}, TO_PHONE_NUM = #{to_Phone_Num}, IS_BASE_ADDR = #{is_Base_Addr}
-	    WHERE ADDR_ID = #{addr_id}
-	</update>
+	
+	<update id="updateWishQuantity" parameterType="map">
+        UPDATE FOODMATE_WISHLIST
+        SET qty = #{qty}
+        WHERE WISHLIST_ID = #{wishlist_id}
+    </update>
 	
 	
 </mapper>

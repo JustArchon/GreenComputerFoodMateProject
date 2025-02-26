@@ -7,7 +7,7 @@
 <head>
 <link href="<c:url value="/resources/css/pdtdetail.css" />" rel="stylesheet">
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <script>
 
@@ -43,6 +43,44 @@ function addToCart() {
             } else { 
                 // 그 외의 에러 발생 시 기본적인 오류 메시지 출력
                 alert("장바구니에 담는 중 오류가 발생했습니다.");
+            }
+        }
+    });
+
+}
+
+function addToWish() {
+    var productId = $("#pdt_ID").text();
+    var quantity = $("#quantity").text();
+    var contextPath = "${contextPath}";
+
+    $.ajax({
+        type: "POST",
+        url: contextPath + "/wishProductAdd",
+        data: {
+            "productId": productId,
+            "quantity": quantity
+        },
+        success: function(response) {
+            if (response.success) {
+                var continueShopping = confirm(response.message);
+                if (!continueShopping) {
+                    window.location.href = contextPath + "/mypage/ShoppingManage/wishlistManageForm";
+                }
+            }
+        },
+        error: function(jqXHR) { // 요청이 실패했을 때 실행
+            if (jqXHR.status === 401 && jqXHR.responseJSON) { 
+                // 401(Unauthorized) 상태 코드이며 JSON 응답이 존재할 경우
+                var loginToShopping = confirm(jqXHR.responseJSON.alertMsg); 
+                // 로그인 필요 메시지를 확인 창으로 띄움
+                if (loginToShopping) { 
+                    // "예" 선택 시 로그인 페이지로 이동
+                    window.location.href = contextPath + "/member/loginForm";
+                }
+            } else { 
+                // 그 외의 에러 발생 시 기본적인 오류 메시지 출력
+                alert("찜 작업 중 오류가 발생했습니다.");
             }
         }
     });
@@ -140,11 +178,12 @@ function addToCart() {
 			    <span id="quantity">1</span>
 			    <button id="btn_increase">+</button>
 			</div>
-			<div id="price_final">총 <span id="final_price">${product.price}</span> 원</div>
+			<div id="price_final">총 <span id="final_price"><fmt:formatNumber value="${product.price}" type="number" groupingUsed="true" /></span>원</div>
 		</div>
 		<div class="info5">
 			<button id="btn_buy" onclick="window.location.href='${contextPath}/order/order1'">바로구매</button>
 			<button id="btn_cart" onclick="addToCart()">장바구니 담기</button>
+			<button id="btn_cart" onclick="addToWish()">찜 하기</button>
 		</div>
 	</div>
 </article>
