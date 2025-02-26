@@ -79,7 +79,7 @@
 
                 <!-- 상품명과 옵션 -->
                 <td>
-                    <img src="${contextPath}/resources/images/${order.img_path}" alt="${detail.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                    <img src="${contextPath}/resources/images/${detail.img_path}" alt="${detail.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
                     ${detail.pdt_name}
                 </td>
 

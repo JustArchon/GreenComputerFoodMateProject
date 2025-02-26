@@ -9,6 +9,7 @@ public class OrderDetailDTOoutput {
 	private int qty;			// 개수
 	
 	private String slr_nickname; // 조인해서 가져올 판매자 상점 별명
+	private String img_path; // 조인해서 가져올 상품 이미지 경로
 	
 	
 	public int getOrd_detail_id() {		return ord_detail_id;	}
@@ -23,7 +24,8 @@ public class OrderDetailDTOoutput {
 	public void setPdt_price(int pdt_price) {		this.pdt_price = pdt_price;	}
 	public int getQty() {		return qty;	}
 	public void setQty(int qty) {		this.qty = qty;	}
-	
-	
-	
+	public String getSlr_nickname() {		return slr_nickname;	}
+	public void setSlr_nickname(String slr_nickname) {		this.slr_nickname = slr_nickname;	}
+	public String getImg_path() {		return img_path;	}
+	public void setImg_path(String img_path) {		this.img_path = img_path;	}
 }

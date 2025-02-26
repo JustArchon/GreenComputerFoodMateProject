@@ -91,7 +91,10 @@
 
     <!-- 주문 상세 조회 -->
     <select id="findOrderDetailsByOrderId" parameterType="int" resultType="OrderDetailDTOoutput">
-        SELECT * FROM FOODMATE_ORDER_DETAIL WHERE ORD_ID = #{ord_id}
+    	SELECT o.*, p.img_path
+		FROM FOODMATE_ORDER_DETAIL o
+		LEFT JOIN FOODMATE_PRODUCT p ON o.pdt_id = p.pdt_id
+		WHERE o.ORD_ID = #{ord_id} 
     </select>
     
     <!-- 주문번호로 주문 조회 -->

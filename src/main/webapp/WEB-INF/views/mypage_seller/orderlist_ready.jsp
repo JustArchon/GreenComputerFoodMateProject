@@ -12,7 +12,13 @@
 <title>배송대기중인 주문</title>
 <link href="<c:url value="/resources/css/tablepage.css" />" rel="stylesheet">
 
-<style></style>
+<style>
+.productImg {
+	width: 40px;
+	height: 40px;
+}
+
+</style>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -126,7 +132,7 @@ $(document).ready(function(){ //페이지가 준비되면
         <tbody>
             <c:forEach var="detail" items="${order.orderDetails}">
                 <tr>
-                    <td>${detail.pdt_name}</td>
+                    <td><img class="productImg" src=${contextPath}/resources/images/${detail.img_path}>${detail.pdt_name}</td>
                     <td>${detail.pdt_price}</td>
                     <td>${detail.qty}</td>
                 </tr>

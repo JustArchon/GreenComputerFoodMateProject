@@ -366,14 +366,14 @@ $(document).on('click', '.pdt_chk', function() {
 	            <div class="rcp_Mtrs_Cart_Amount">
 	                <input type="number" class="product-qty" value="1" min="1">
 	                <button class="remove-item">X</button>
-	                <div class="total-price">` + price + `원</div>
+	                <div class="total-price">` + price.toLocaleString() + `원</div>
 	            </div>
 	            <input type="hidden" name="product-id" value='` + productId + `'>
 	            <input type="hidden" name="price" value='` + price + `'>
             </div>
         `;
         $("#" + categoryId).append(newItem);
-    }
+    }updateTotalPrice(existingItem, price);
     updateLastTotalPrice();
 });
 
@@ -405,7 +405,7 @@ function updateLastTotalPrice() {
 // 수량 인풋 변경 시 총 가격 업데이트
 $(document).on('input', '.product-qty', function() {
     var item = $(this).closest('.rcp_Mtrs_Product');
-    var price = parseInt(item.find('.pdt_Price').data("price"));
+    var price = parseInt(item.find('input[name="price"]').val());  // hidden input의 value 가져오기
 
     updateTotalPrice(item, price);
 });
