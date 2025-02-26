@@ -68,6 +68,37 @@ public class CartControllerImpl implements CartController {
         }
     }
     
+    @RequestMapping(value = "/cart/addtocartmultiple", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> addToCartMultipe(@RequestBody List<Map<String, Integer>> products, HttpSession session) {
+        
+    	Map<String, Object> response = new HashMap<>();
+    	try {
+        	SessionDTO userInfo = (SessionDTO) session.getAttribute("sessionDTO");
+        	boolean allSuccess = true;
+        	int allqty = 0;
+            
+            for (Map<String, Integer> product : products) {
+                int pdt_id = product.get("productId");
+                int qty = product.get("quantity");
+                allqty += qty;
+
+                boolean isAdded = cartService.addToCart(pdt_id, qty, userInfo.getUserId());
+                if (!isAdded) {
+                    allSuccess = false;
+                }
+            }
+            
+            response.put("success", allSuccess);
+            response.put("message", allSuccess ? "장바구니에 상품을 " + allqty + "개 담았습니다. 계속 쇼핑하시겠습니까?" : "장바구니에 상품을 추가 중 오류가 발생했습니다. 잠시 후 다시 시도해 보세요.");
+            return response;
+        } catch (CartException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new UnhandledException("장바구니에 상품을 담는 중에 오류가 발생했습니다.", e);
+        }
+    }
+    
     @RequestMapping(value = "/cart/compareaddtocart", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> compareAddToCart(@RequestBody List<Map<String, Object>> productList, HttpSession session) {

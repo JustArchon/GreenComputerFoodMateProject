@@ -49,13 +49,22 @@
 }
 
 .recipe-card {
-    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+    margin-bottom:20px;
 }
 
 .recipe-title {
     font-size: 1.2rem;
     font-weight: bold;
-    color:#333;
+    color: #333;
+    white-space: nowrap;      /* 텍스트가 한 줄로 유지되도록 */
+    overflow: hidden;         /* 넘치는 텍스트는 잘리게 */
+    text-overflow: ellipsis;  /* 잘린 텍스트에 '...' */
+    width: 100%;              
+    display: inline-block;    
+    max-width: 100%;          /* 텍스트가 일정 범위를 넘지 않도록  */
 }
 
 .recipe-info {
@@ -106,6 +115,27 @@
 .pagination {
     justify-content: center;
     margin-top: 20px;
+}
+
+
+.btn {
+    background-color: #f39c12;
+    border:none;
+    color: white;
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 18px;
+    text-decoration: none; 
+    display: inline-block;
+}
+
+.btn:hover {
+    background-color: #e67e22;
+}
+
+.btn:active {
+    background-color: #e67e22 !important; 
+    border-color: #e67e22 !important;
 }
 
 
@@ -224,14 +254,19 @@
     .category-category {
         text-align: left;
     }
-
-    .category-category h6 {
-        font-size: 1.2rem;
-        font-weight: 800;
-        color: #f39c12;
-        margin-bottom: 10px;
-        text-transform: uppercase;
+    
+    .category-category h6 a {
+		color: #f39c12;
+		font-size: 1.2rem;
+		font-weight: 800;
+		margin-bottom: 10px;
+		text-decoration:none;
+		text-transform: uppercase;
     }
+    
+    .category-category a:hover {
+            color: #d57e13;
+        }
 
     .category-category ul {
         list-style-type: none;
@@ -328,12 +363,10 @@
                     <ul>
                         <li><a href="${contextPath}/recipe/recipe_list?categoryId=22&parent_Id=3">회</a></li> <!-- 카테고리 ID = 22, 부모 ID = 3 -->
                         <li><a href="${contextPath}/recipe/recipe_list?categoryId=23&parent_Id=3">스시</a></li> <!-- 카테고리 ID = 23, 부모 ID = 3 -->
-                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=24&parent_Id=3">덮밥</a></li> <!-- 카테고리 ID = 24, 부모 ID = 3 -->
-                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=25&parent_Id=3">초밥</a></li> <!-- 카테고리 ID = 25, 부모 ID = 3 -->
-                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=26&parent_Id=3">오야꼬동</a></li> <!-- 카테고리 ID = 26, 부모 ID = 3 -->
-                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=27&parent_Id=3">튀김</a></li> <!-- 카테고리 ID = 27, 부모 ID = 3 -->
-                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=28&parent_Id=3">찜</a></li> <!-- 카테고리 ID = 28, 부모 ID = 3 -->
-                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=29&parent_Id=3">야끼소바</a></li> <!-- 카테고리 ID = 29, 부모 ID = 3 -->
+                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=24&parent_Id=3">라멘</a></li> <!-- 카테고리 ID = 24, 부모 ID = 3 -->
+                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=25&parent_Id=3">전골</a></li> <!-- 카테고리 ID = 25, 부모 ID = 3 -->
+                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=26&parent_Id=3">튀김</a></li> <!-- 카테고리 ID = 26, 부모 ID = 3 -->
+                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=27&parent_Id=3">덮밥</a></li> <!-- 카테고리 ID = 27, 부모 ID = 3 -->
                     </ul>
                 </div>
 
@@ -341,11 +374,10 @@
                 <div class="category-category">
                     <h6><a href="${contextPath}/recipe/recipe_list?categoryId=4">🍜중식</a></h6> <!-- 대분류 ID = 4 -->
                     <ul>
-                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=30&parent_Id=4">짜장면</a></li> <!-- 카테고리 ID = 30, 부모 ID = 4 -->
-                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=31&parent_Id=4">짬뽕</a></li> <!-- 카테고리 ID = 31, 부모 ID = 4 -->
-                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=32&parent_Id=4">탕수육</a></li> <!-- 카테고리 ID = 32, 부모 ID = 4 -->
-                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=33&parent_Id=4">볶음밥</a></li> <!-- 카테고리 ID = 33, 부모 ID = 4 -->
-                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=34&parent_Id=4">만두</a></li> <!-- 카테고리 ID = 34, 부모 ID = 4 -->
+                    	<li><a href="${contextPath}/recipe/recipe_list?categoryId=28&parent_Id=4">볶음밥</a></li> <!-- 카테고리 ID = 28, 부모 ID = 3 -->
+                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=29&parent_Id=4">딤섬</a></li> <!-- 카테고리 ID = 29, 부모 ID = 3 -->
+                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=30&parent_Id=4">해물</a></li> <!-- 카테고리 ID = 30, 부모 ID = 4 -->
+                        <li><a href="${contextPath}/recipe/recipe_list?categoryId=31&parent_Id=4">육류</a></li> <!-- 카테고리 ID = 31, 부모 ID = 4 -->
                     </ul>
                 </div>
             </div>
@@ -355,8 +387,8 @@
 
 <div class="container mt-4">
     <div class="mb-3 text-end">
-        <button class="btn btn-outline-primary me-2">최신순</button>
-        <button class="btn btn-outline-primary">평점순</button>
+		<a href="${pageContext.request.contextPath}/recipe/recipe_list" class="btn btn-outline-primary me-2">최신순</a>
+		<a href="#" class="btn btn-outline-primary me-2">평점순</a>
     </div>
 
     <div class="row">
@@ -373,11 +405,19 @@
                             
                             <h5 class="recipe-title">${recipe.title}</h5>
                             <p class="recipe-info">
-                                <!-- 작성자는 byrId로 수정 -->
-                                작성자: ${recipe.byr_id} <br>                                
-                               <!--  평점: 4.7 (참여: 16명) 추후테이블 생기고 반영--> <br> 
-                                조리시간: ${recipe.req_time}
-                            </p>
+							    <!-- 작성자 -->
+							    작성자: ${recipe.nickname} <br>                                
+							    <c:choose>
+							        <c:when test="${recipe.rating > 0}">
+							            평점: ${recipe.rating}
+							        </c:when>
+							        <c:otherwise>
+							            미등록
+							        </c:otherwise>
+							    </c:choose>
+							    <br> 
+							    조리시간: ${recipe.req_time}
+							</p>
                         </div>
                     </div>
                 </a>
@@ -456,6 +496,7 @@ const swiper = new Swiper(".swiper-container", {
 if (document.querySelectorAll('.swiper-slide').length === 1) {
     const swiperContainer = document.querySelector('.swiper-container');
     swiperContainer.style.justifyContent = 'center'; // 중앙 정렬
+    swiperContainer.style.display = 'flex'; // flexbox로 설정하여 중앙 정렬
 }
 </script>
 

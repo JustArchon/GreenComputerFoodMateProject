@@ -29,6 +29,10 @@
         <typeAlias type="com.spring.FoodMate.recipe.dto.RecipeIngredientDTO" alias="recipeIngredientDTO"/>
         <typeAlias type="com.spring.FoodMate.recipe.dto.RecipeStepDTO" alias="recipeStepDTO"/>
         <typeAlias type="com.spring.FoodMate.recipe.dto.RecipeCategoryDTO" alias="recipeCategoryDTO"/>
+        <typeAlias type="com.spring.FoodMate.recipe.dto.RecipeRatingDTO" alias="RecipeRatingDTO"/>
+        
+        <typeAlias type="com.spring.FoodMate.product.dto.CategoryDTO" alias="ProductCategoryDTO"/>
+        
 	</typeAliases>
 	
 </configuration>

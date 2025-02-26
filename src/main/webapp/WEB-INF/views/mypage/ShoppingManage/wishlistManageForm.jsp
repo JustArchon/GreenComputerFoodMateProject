@@ -67,13 +67,13 @@ $(document).ready(function() {
             },
             success: function(response) {
                 if (response.success) {
-                    alert(response.message); // 성공 메시지 표시
                  // 장바구니 추가 시 찜 목록에서도 제거
                     $.ajax({
                         url: contextPath + "/wishlist/remove",
                         type: "POST",
                         data: { "wishlistId": wishlistId },
                         success: function(removeResponse) {
+                        		alert("장바구니 추가에 성공했습니다!");
                                 row.remove(); // UI에서도 삭제
                                 location.reload(true);
                         }
@@ -85,6 +85,59 @@ $(document).ready(function() {
             },
             error: function() {
                 alert("장바구니 추가 중 오류가 발생했습니다.");
+            }
+        });
+    });
+ 
+    // 선택한 상품 장바구니에 추가
+    $("#add-selected-to-cart").on("click", function() {
+        let selectedItems = []; // 선택된 상품 ID 저장
+        let wishlistIds = [];  // 찜목록에서 삭제할 ID 저장
+
+        $(".wish-checkbox:checked").each(function() {
+            let row = $(this).closest("tr");
+            var wishlistId = row.attr("data-wishid");
+            var productId = row.attr("data-id");
+            var quantity = row.attr("data-qty");
+
+            selectedItems.push({
+            	"productId": productId,
+                "quantity": quantity
+            });
+            wishlistIds.push(wishlistId); // 삭제할 찜 상품 ID 추가
+        });
+
+        if (selectedItems.length === 0) {
+            alert("선택된 상품이 없습니다.");
+            return;
+        }
+
+        // AJAX로 서버에 데이터 전송
+        $.ajax({
+            type: "POST",
+            url: contextPath + "/cart/addtocartmultiple",  // 서버의 장바구니 추가 URL
+            contentType: "application/json",
+            data: JSON.stringify(selectedItems),
+            success: function(response) {
+            	if (response.success) {
+                    // 장바구니 추가 시 찜 목록에서도 제거
+                       $.ajax({
+                           url: contextPath + "/wishlist/removeMultiple",
+                           type: "POST",
+                           contentType: "application/json",
+                           data: JSON.stringify(wishlistIds),
+                           success: function(removeResponse) {
+                        	   	   alert("장바구니 추가에 성공했습니다!");
+                                   location.reload(true);
+                           }
+                       });
+                       
+                   } else {
+                       alert("장바구니 추가에 실패했습니다. 다시 시도해주세요.");
+                   }
+            },
+            error: function(xhr, status, error) {
+                alert("장바구니 추가에 실패했습니다.");
             }
         });
     });
@@ -106,6 +159,32 @@ $(document).ready(function() {
             },
             error: function() {
                 alert("찜 상품을 삭제 실패했습니다.");
+            }
+        });
+    });
+    
+    $("#del-selected-wishlist").click(function() {
+        if (!confirm("정말로 찜 상품들을 삭제하시겠습니까?")) return;
+
+        let wishlistIds = [];  // 찜목록에서 삭제할 ID 저장
+
+        $(".wish-checkbox:checked").each(function() {
+            let row = $(this).closest("tr");
+            var wishlistId = row.attr("data-wishid");
+            wishlistIds.push(wishlistId); // 삭제할 찜 상품 ID 추가
+        });
+
+        $.ajax({
+            url: contextPath + "/wishlist/removeMultiple", // 위시리스트에서 삭제 요청을 보낼 서블릿
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(wishlistIds),
+            success: function(response) {
+                alert("성공적으로 찜 상품들을 삭제했습니다.");
+                location.reload(true);
+            },
+            error: function() {
+                alert("찜 상품들을 삭제 실패했습니다.");
             }
         });
     });
@@ -153,8 +232,8 @@ $(document).ready(function() {
 		</tbody>
 	</table>
 	<div class="text-start mb-1">
-		<button class="btn btn-outline-danger btn-sm">선택 상품 삭제</button>
-		<button class="btn btn-outline-success btn-sm">선택 상품 장바구니</button>
+		<button id="del-selected-wishlist" class="btn btn-outline-danger btn-sm">선택 상품 삭제</button>
+		<button id="add-selected-to-cart" class="btn btn-outline-success btn-sm">선택 상품 장바구니</button>
 	</div>
 	<%-- 페이지네이션 --%>
 	<nav>

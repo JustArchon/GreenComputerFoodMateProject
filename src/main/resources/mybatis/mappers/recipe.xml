@@ -28,15 +28,14 @@
     </insert>
 
     <!-- 생성된 RCP_ID 값을 반환하는 SELECT 쿼리 -->
-    <!-- 이건 왜 쓰는거지? -->
     <select id="selectLastInsertedRecipeId" resultType="int">
         SELECT FOODMATE_RECIPE_SEQ.CURRVAL FROM DUAL
     </select>
 
     <!-- 재료 배치 삽입 -->
 	<insert id="insertRecipeIngredients" parameterType="recipeIngredientDTO">
-	    INSERT INTO FOODMATE_RECIPE_INGREDIENT (RCP_ID, INGRD_NAME, INGRD_QTY, UNIT)
-	    VALUES (#{rcp_id}, #{ingrd_name}, #{ingrd_qty}, #{unit})
+	    INSERT INTO FOODMATE_RECIPE_INGREDIENT (RCP_ID, INGRD_NAME, INGRD_QTY, UNIT, CATEGORY_ID)
+	    VALUES (#{rcp_id}, #{ingrd_name}, #{ingrd_qty}, #{unit}, #{category_id})
 	</insert>
 	
 	<!-- 단계별 조리법 배치 삽입 -->
@@ -46,12 +45,13 @@
 	</insert>
 	
 	
-	 <!-- 레시피 조회 -->
-    <select id="selectRecipeList" resultType="recipeDTO"> <!-- View가 확정되면 view로변경할것 그냥 이대로 조인해서 쓰세요 -->
+
+    <!-- 레시피 조회 -->
+	<select id="selectRecipeList" resultType="recipeDTO">
 	    SELECT 
 	        R.RCP_ID, 
 	        R.BYR_ID, 
-	        BP.NICKNAME,  <!-- 닉네임 추가 -->
+	        BP.NICKNAME,  -- 닉네임 추가
 	        R.CATEGORY_ID, 
 	        R.TITLE, 
 	        R.MAINIMG_PATH, 
@@ -59,11 +59,19 @@
 	        R.REQ_TIME, 
 	        R.DESCRIPTION, 
 	        R.STATUS, 
-	        R.CREATE_DATE
+	        R.CREATE_DATE,
+	       ROUND(COALESCE(AVG(RR.RATING), 0), 1) AS RATING <!-- 평점이 없으면 0을 대신하고, 평균 평점 계산 (소수 첫째 자리에서 둘째자리를 기준 반올림)-->
 	    FROM FOODMATE_RECIPE R
-	    LEFT JOIN FOODMATE_BUYER_PROFILE BP ON R.BYR_ID = BP.BYR_ID  <!-- JOIN 조건, LEFT JOIN으로 바꿔서 닉네임 없을때도 표시하게 바꿈 -->
+	    LEFT JOIN FOODMATE_BUYER_PROFILE BP ON R.BYR_ID = BP.BYR_ID  -- 닉네임 조인
+	    LEFT JOIN FOODMATE_RECIPE_RATING RR ON R.RCP_ID = RR.RCP_ID  -- 평점 조인
 	    WHERE R.STATUS = 'Y'
+	    GROUP BY 
+	        R.RCP_ID, R.BYR_ID, BP.NICKNAME, R.CATEGORY_ID, R.TITLE, 
+	        R.MAINIMG_PATH, R.FOOD_NAME, R.REQ_TIME, R.DESCRIPTION, 
+	        R.STATUS, R.CREATE_DATE
+	    ORDER BY R.CREATE_DATE DESC -- 최신순 정렬
 	</select>
+
 	
 	<!-- 레시피, 재료, 조리법 상세 조회 -->
 	<select id="selectRecipeListByrID" resultType="recipeDTO" parameterType="String">
@@ -84,23 +92,13 @@
 	    WHERE R.BYR_ID = #{byr_id}
 	</select>
     
-	<!-- 레시피, 재료, 조리법 상세 조회 -->
-	<select id="selectRecipeDetail" resultType="recipeDTO" parameterType="int">
-        SELECT 
-	        R.RCP_ID, 
-	        R.BYR_ID, 
-	        BP.NICKNAME,  <!-- 닉네임 추가 -->
-	        R.CATEGORY_ID, 
-	        R.TITLE, 
-	        R.MAINIMG_PATH, 
-	        R.FOOD_NAME, 
-	        R.REQ_TIME, 
-	        R.DESCRIPTION, 
-	        R.STATUS, 
-	        R.CREATE_DATE
+	<!-- 레시피, 재료, 조리법 상세 조회  + 닉네임 구매자 프로필 테이블에서 가져옴-->
+	<select id="selectRecipeDetail" resultType="recipeDTO" parameterType="String">
+	    SELECT R.*, BP.NICKNAME
 	    FROM FOODMATE_RECIPE R
-	    LEFT JOIN FOODMATE_BUYER_PROFILE BP ON R.BYR_ID = BP.BYR_ID
-        WHERE RCP_ID = #{rcp_id}
+	    LEFT JOIN FOODMATE_BUYER_PROFILE BP
+	    ON R.BYR_ID = BP.BYR_ID
+	    WHERE R.RCP_ID = #{rcp_id}
 	</select>
     
    	<select id="selectIngredientDetail" resultType="recipeIngredientDTO" parameterType="String">
@@ -138,5 +136,74 @@
 	    CONNECT BY PRIOR PARENT_ID = CATEGORY_ID
 	    ORDER BY LEVEL DESC
 	</select>
+	
+		<!-- 재료 카테고리 최상위만 가져오기 -->
+	<select id="select_all_IngrdCategory" resultType="ProductCategoryDTO">
+	    SELECT CATEGORY_ID, NAME, PARENT_ID
+	    FROM FOODMATE_PRODUCT_category
+	    WHERE PARENT_ID IS NULL
+	</select>
+	
+	<!-- 카테고리를 선택하면 그거에 해당하는 직계자식 카테고리만 가져온다. 상품등록할때 필요 -->
+	<select id="select_Child_IngrdCategory" resultType="ProductCategoryDTO" parameterType="java.lang.Integer">
+		SELECT CATEGORY_ID, NAME, PARENT_ID
+	    FROM FOODMATE_PRODUCT_CATEGORY
+	    WHERE PARENT_ID = #{parentCategoryId}
+	</select>
+	
+	<!-- 레시피 별점 및 후기 추가 -->
+    <insert id="insertRecipeRating" parameterType="RecipeRatingDTO">
+        INSERT INTO FOODMATE_RECIPE_RATING
+        (CMT_RCP_RATING_ID, RCP_ID, BYR_ID, RATING, COMMENTS, CREATE_DATE)
+        VALUES
+        (FOODMATE_RECIPE_RATING_SEQ.NEXTVAL, 
+        #{rcp_id}, 
+        #{byr_id}, 
+        #{rating}, 
+        #{comments}, 
+        SYSDATE)
+    </insert>
+    
+    
+    <resultMap id="RecipeRatingMap" type="RecipeRatingDTO">
+	    <result property="cmt_rcp_rating_id" column="CMT_RCP_RATING_ID"/>
+	    <result property="rcp_id" column="RCP_ID"/>
+	    <result property="byr_id" column="BYR_ID"/>
+	    <result property="rating" column="RATING"/>
+	    <result property="comments" column="COMMENTS"/>
+	    <result property="create_date" column="CREATE_DATE"/>
+	    <result property="nickname" column="NICKNAME"/>
+	    <result property="img_path" column="IMG_PATH"/>
+	</resultMap>
+	
+    <!-- 레시피에 해당하는 모든 후기 조회 -->
+    <select id="getRatingsByRecipeId" resultMap="RecipeRatingMap">
+    SELECT 
+        rr.CMT_RCP_RATING_ID,  
+        rr.RCP_ID,
+        rr.BYR_ID,
+        rr.RATING,
+        rr.COMMENTS,
+        rr.CREATE_DATE,
+        rr.UPDATE_DATE,  
+        bp.NICKNAME,
+        bp.IMG_PATH
+    FROM FOODMATE_RECIPE_RATING rr
+    JOIN FOODMATE_BUYER_PROFILE bp 
+    ON rr.BYR_ID = bp.BYR_ID
+    WHERE rr.RCP_ID = #{rcp_id}
+    ORDER BY rr.CREATE_DATE DESC
+	</select>
+	
+	<!-- 레시피 후기 수정-->
+	<update id="updateRecipeRating" parameterType="RecipeRatingDTO">>
+    UPDATE FOODMATE_RECIPE_RATING
+    SET 
+        RATING = #{rating}, 
+        COMMENTS = #{comments},
+        UPDATE_DATE = SYSDATE
+    WHERE CMT_RCP_RATING_ID = #{cmt_rcp_rating_id}
+	</update>
+
 
 </mapper>
