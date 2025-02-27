@@ -15,6 +15,7 @@ public class OrderDTOoutput {
     private String create_Date; // 생성 날짜
     private String del_Code; // 배송 코드
     private String waybill_Num; // 운송장 번호
+    
     private List<OrderDetailDTOoutput> orderDetails;
 
     // 기본 생성자
@@ -48,6 +49,18 @@ public class OrderDTOoutput {
 		this.orderDetails = orderDetails;
 	}
 	
+	public String getDel_company_name() {
+		if(getDel_Code() == null) { return "없음"; }
+		else {
+			switch(getDel_Code()) {
+			case "kr.cjlogistics" : return "CJ대한통운";
+			case "kr.lotte" : return "롯데택배";
+			case "kr.hanjin" : return "한진택배";
+			default: return "불명";
+			}			
+		}
+	}
+
 	public String getOrd_stat_msg() {
 		switch(getOrd_stat()) {
 		case '0' : return "결제 대기";

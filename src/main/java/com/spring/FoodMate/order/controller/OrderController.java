@@ -206,7 +206,6 @@ public class OrderController {
 	@ResponseBody
     public Map<String, Object> getOrderAddress(@RequestParam("ord_id") int ord_id, HttpSession session) throws Exception {
         Map<String, Object> result = new HashMap<>();
-        System.out.println("나실행되는중 ㅇㅇ");
         // 현재 로그인한 이용자 정보 가져오기
         SessionDTO userInfo = (SessionDTO) session.getAttribute("sessionDTO");
         String userId = userInfo.getUserId();
@@ -237,5 +236,23 @@ public class OrderController {
             result.put("message", "배송지 정보가 없습니다.");
         }
         return result;
-    }	
+    }
+	
+	// 판매자의 운송장번호 저장
+	@RequestMapping(value="/order/updateWaybill", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> updateWaybill(@RequestParam("ord_id") int ordId,
+	                                         @RequestParam("del_code") String delCode,
+	                                         @RequestParam("waybill_num") String waybillNum) {
+	    Map<String, Object> result = new HashMap<>();
+	    try {
+	        orderService.updateWaybill(ordId, delCode, waybillNum);
+	        result.put("success", true);
+	    } catch (Exception e) {
+	        result.put("success", false);
+	        result.put("message", e.getMessage());
+	    }
+	    return result;
+	}
+	
 }

@@ -83,15 +83,36 @@
 	<select id="findOrdersByBuyer" parameterType="string" resultType="OrderDTOoutput">
         SELECT * FROM FOODMATE_ORDER WHERE BYR_ID = #{byr_id}
     </select>
+    
+    <!-- 구매자 마이페이지 메인에서 쓰는 출력 전용, 10개까지만 출력 -->
+    <select id="findOrderDetailsByBuyer" parameterType="string" resultType="OrderDetailDTOoutput">
+    	<![CDATA[
+    	SELECT *
+	    FROM (
+	        SELECT o.*, d.ord_detail_id, d.pdt_id, d.pdt_name, d.pdt_price, d.qty, p.img_path
+	        FROM foodmate_order o
+	        LEFT JOIN foodmate_order_detail d ON d.ord_id = o.ord_id
+	        LEFT JOIN foodmate_product p ON p.pdt_id = d.pdt_id
+	        WHERE BYR_ID = #{byr_id}
+	        ORDER BY o.ord_id DESC
+	    )
+	    WHERE ROWNUM <= 10
+	    ]]>
+	</select>
+
+	
 
     <!-- 판매자 기준 주문 목록 조회 -->
-    <select id="findOrdersBySeller" parameterType="string" resultType="OrderDTOoutput">
-        SELECT * FROM FOODMATE_ORDER WHERE SLR_ID = #{slr_id}
+    <select id="findOrdersBySeller" parameterType="map" resultType="OrderDTOoutput">
+        SELECT * FROM FOODMATE_ORDER WHERE SLR_ID = #{slr_id} AND ORD_STAT = #{ord_stat}
     </select>
 
     <!-- 주문 상세 조회 -->
     <select id="findOrderDetailsByOrderId" parameterType="int" resultType="OrderDetailDTOoutput">
-        SELECT * FROM FOODMATE_ORDER_DETAIL WHERE ORD_ID = #{ord_id}
+    	SELECT o.*, p.img_path
+		FROM FOODMATE_ORDER_DETAIL o
+		LEFT JOIN FOODMATE_PRODUCT p ON o.pdt_id = p.pdt_id
+		WHERE o.ORD_ID = #{ord_id} 
     </select>
     
     <!-- 주문번호로 주문 조회 -->
@@ -120,5 +141,16 @@
         WHERE 
             o.byr_id = #{buyerId}
     </select>
+	
+	<!-- 운송장번호 입력하며 배송시작으로 변경 -->
+	<update id="updateWaybill" parameterType="map">
+	    UPDATE foodmate_order
+	    SET del_code = #{del_code},
+	        waybill_num = #{waybill_num},
+	        ord_stat = 2
+	    WHERE ord_id = #{ord_id}
+	</update>
+	
+	
 	
 </mapper>

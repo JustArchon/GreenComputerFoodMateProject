@@ -1,5 +1,6 @@
 package com.spring.FoodMate.order.dao;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,9 +52,16 @@ public class OrderDAO {
     public List<OrderDTOoutput> findOrdersByBuyer(String byr_id) throws DataAccessException {
         return sqlSession.selectList("mapper.order.findOrdersByBuyer", byr_id);
     }
+    
+    public List<OrderDetailDTOoutput> findOrderDetailsByBuyer(String byr_id) throws DataAccessException {
+    	return sqlSession.selectList("mapper.order.findOrderDetailsByBuyer", byr_id);
+    }
 
-    public List<OrderDTOoutput> findOrdersBySeller(String slr_id) throws DataAccessException {
-        return sqlSession.selectList("mapper.order.findOrdersBySeller", slr_id);
+    public List<OrderDTOoutput> findOrdersBySeller(String slr_id, int ord_stat) throws DataAccessException {
+    	Map<String, Object> params = new HashMap<>();
+        params.put("slr_id", slr_id);
+        params.put("ord_stat", ord_stat);
+        return sqlSession.selectList("mapper.order.findOrdersBySeller", params);
     }
 
     public List<OrderDetailDTOoutput> findOrderDetailsByOrderId(int ord_id) throws DataAccessException {
@@ -68,6 +76,13 @@ public class OrderDAO {
     	return sqlSession.selectOne("mapper.order.findAddressByOrderId", ord_id);
     }
     
+    public void updateWaybill(int ord_id, String del_code, String waybill_num) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("ord_id", ord_id);
+        params.put("del_code", del_code);
+        params.put("waybill_num", waybill_num);
+        sqlSession.update("mapper.order.updateWaybill", params);
+      
     public List<ProductDTO> getOrderedProductsByBuyerId(String buyerId) {
         return sqlSession.selectList("mapper.order.getOrderedProductsByBuyerId", buyerId);
     }

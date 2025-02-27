@@ -7,7 +7,92 @@
 <head>
 <meta charset="UTF-8">
 <title>주문목록/배송조회</title>
-<link href="<c:url value="/resources/css/tablepage.css" />" rel="stylesheet">
+
+<style>
+.pagination .page-item .page-link {
+	color: black; /* 기본 글자 색상 */
+	border: 1px solid #ddd; /* 기본 테두리 */
+}
+		
+.pagination .page-item.active .page-link {
+	color: red; /* 활성화된 페이지 색상 */
+	background-color: #fff; /* 배경색 */
+	border-color: red; /* 활성화된 테두리 색상 */
+}
+		
+.pagination .page-item .page-link:hover {
+	background-color: #f8f9fa; /* 마우스 오버 배경색 */
+	color: red; /* 마우스 오버 글자 색상 */
+}
+
+.text-truncate-multiline {
+	display: -webkit-box; /* Flexbox로 텍스트 블록 설정 */
+	-webkit-line-clamp: 2; /* 최대 두 줄까지 표시 */
+	-webkit-box-orient: vertical; /* 수직 방향 박스 설정 */
+	overflow: hidden; /* 넘치는 텍스트 숨기기 */
+	text-overflow: ellipsis; /* 말줄임표 표시 */
+	max-height: 3em; /* 최대 높이 (2줄 기준, line-height와 조정) */
+	line-height: 1.5em; /* 줄 간격 */
+}
+		
+.review-cell {
+	position: relative;
+}
+		
+.review-cell img {
+	float: left; /* 이미지를 왼쪽으로 정렬 */
+	margin-right: 10px; /* 텍스트와 이미지 간의 간격 */
+	width: 50px;
+	height: 50px;
+	object-fit: cover;
+	border-radius: 5px;
+}
+		
+.review-cell {
+	overflow: hidden; /* 셀 높이를 텍스트와 이미지에 맞게 조정 */
+}
+
+.productImg {
+	width: 40px;
+	height: 40px;
+}
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+
+var contextPath = "${contextPath}";
+$(document).ready(function(){ //페이지가 준비되면
+    $(".view-address-button").click(function(){ //.view-address-btn 클래스가 클릭되면
+    	console.log("버튼클릭");
+        let ordId = $(this).data("ord-id"); // 버튼에서 ord_id 가져오기
+
+        $.ajax({
+            type: "POST",
+            url: contextPath + "/order/getAddress",
+            data: { ord_id: ordId },
+            success: function(response) {
+                if (response.status === "success") {
+                    $("#toName").text(response.data.toName);
+                    $("#toPhoneNum").text(response.data.toPhoneNum);
+                    $("#addr").text(response.data.addr);
+                    $("#addrDetail").text(response.data.addrDetail);
+                    $("#delivMessage").text(response.data.toName);
+                    $("#addressModal").modal("show"); // 모달 띄우기
+                } else if (response.status === "error") {
+                    alert(response.message); // 이렇게 해도 되나? response.message가 있는지부터 확인해야하나?
+                } else {
+                	alert("알 수 없는 오류가 발생했습니다.")
+                }
+            },
+            error: function() {
+                alert("서버 오류 발생.");
+            }
+        });
+    }); 
+});
+
+</script>
 
 </head>
 <body>
@@ -42,7 +127,6 @@
 	</div>
 	
 	<c:forEach var="order" items="${orderList}">
-	<c:forEach var="detail" items="${order.orderDetails}">
     	<table class="table table-hover table-custom">
         <thead class="table-header table-secondary">
         <tr>
@@ -52,10 +136,8 @@
         <th>배송비</th>
         <th>최종 금액</th>
         <th>주문 상태</th>
-        
-        <!-- 여기서도 주문지 확인할수있도록 작업할것 -->
-        
-        <th>운송장 번호</th>
+        <th>배송지 조회</th>
+        <th>배송조회</th>
         </tr>
         </thead>
         <tbody>
@@ -66,7 +148,10 @@
         		<td>${order.ship_Fee}</td>
         		<td>${order.tot_Pdt_Price + order.ship_Fee}</td>
         		<td>${order.ord_stat_msg}</td>
-        		<td>${order.del_Code}, ${order.waybill_Num}</td>
+        		<td><button class="btn btn-outline-secondary btn-sm view-address-button" data-ord-id="${order.ord_id}">
+        		배송지 확인</button></td>
+        		<td><button class="btn btn-outline-secondary btn-sm view-shipping-button" data-ord-id="${order.ord_id}">
+        		배송상태조회</button></td>
         	</tr>
         </tbody>
 		</table>
@@ -74,105 +159,48 @@
         <table class="table table-hover table-custom">
         <thead class="table-header table-secondary">
             <tr>
-                <!-- 주문 날짜 및 주문번호 -->
-                <td>${order.create_Date}(${order.ord_id})</td>
-
-                <!-- 상품명과 옵션 -->
-                <td>
-                    <img src="${contextPath}/resources/images/${order.img_path}" alt="${detail.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
-                    ${detail.pdt_name}
-                </td>
-
-                <!-- 상품 금액 및 수량 -->
-                <td>${detail.pdt_price}원 (${detail.qty}개)</td>
-
-                <!-- 주문 상태 -->
-                <td>
-	                <c:choose> 
-	                	<c:when test="${order.ord_stat == 0}">결제 대기</c:when>
-				        <c:when test="${order.ord_stat == 1}">배송 준비중</c:when>
-				        <c:when test="${order.ord_stat == 2}">배송 중</c:when>
-				        <c:when test="${order.ord_stat == 3}">배송 완료</c:when>
-				        <c:when test="${order.ord_stat == 4}">구매 확정</c:when>
-				        <c:when test="${order.ord_stat == 5}">주문 취소</c:when>
-				        <c:when test="${order.ord_stat == 6}">반품</c:when>
-				        <c:otherwise>알 수 없음</c:otherwise>
-				    </c:choose>
-                </td>
-				<!-- 주문상태 하드코딩함. 나중에 주문 코드-설명 테이블 만들고 조인해서 갖고와 -->
-                <!-- 확인/리뷰 -->
-                <td>
-                    <div class="d-flex flex-column gap-1">
-                        <button class="btn btn-outline-secondary btn-sm" disabled>배송조회</button>
-                        <button class="btn btn-outline-success btn-sm" disabled>리뷰하기</button>
-                    </div>
-                </td>
                 <th>상품명</th>
                 <th>상품 가격</th>
                 <th>수량</th>
             </tr>
         </thead>
         <tbody>
-            
+            <c:forEach var="detail" items="${order.orderDetails}">
                 <tr>
-                    <td>${detail.pdt_name}</td>
+                    <td><img class="productImg" src=${contextPath}/resources/images/${detail.img_path}>${detail.pdt_name}</td>
                     <td>${detail.pdt_price}</td>
                     <td>${detail.qty}</td>
                 </tr>
+            </c:forEach>
         </tbody>
         </table>
         <div style="border:3px solid black; width:100%; margin-bottom: 10px;"></div>
         <!-- 임시 구분선 -->
     </c:forEach>
-    </c:forEach>
 	
 	
-<!-- 	<table class="table table-hover table-custom"> -->
-<!--     <thead class="table-header table-secondary"> -->
-<!--         <tr> -->
-<!--             <td>날짜/주문번호</td> -->
-<!--             <td>상품명/옵션</td> -->
-<!--             <td>상품금액/수량</td> -->
-<!--             <td>주문상태</td> -->
-<!--             <td>확인/리뷰</td> -->
-<!--         </tr> -->
-<!--     </thead> -->
-    
-<!--     <tbody> -->
-<%--         <c:forEach var="order" items="${orderList}"> --%>
-<!--             <tr> -->
-<!--                 주문 날짜 및 주문번호 -->
-<%--                 <td>${order.create_date}(${order.ord_code})</td> --%>
-
-<!--                 상품명과 옵션 -->
-<!--                 <td> -->
-<!--                 	<a href=${contextPath}/product/pdtdetail?pdt_id=${order.pdt_id}> -->
-<%-- 	                    <img src="${contextPath}/resources/images/${order.img_path}" alt="${order.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;"> --%>
-<%-- 	                    ${order.pdt_name} --%>
-<!--                     </a> -->
-<!--                 </td> -->
-
-<!--                 상품 금액 및 수량 -->
-<%--                 <td>${order.pdt_price}원 (${order.qty}개)</td> --%>
-
-<!--                 주문 상태 -->
-<!--                 <td> -->
-<%-- 	                ${order.ord_stat} --%>
-<!--                 </td> -->
-<!-- 				주문상태 하드코딩함. 나중에 주문 코드-설명 테이블 만들고 조인해서 갖고와 -->
-<!--                 확인/리뷰 -->
-<!--                 <td> -->
-<!--                     <div class="d-flex flex-column gap-1"> -->
-<!--                         <button class="btn btn-outline-secondary btn-sm" disabled>배송조회</button> -->
-<!--                         <button class="btn btn-outline-success btn-sm" disabled>리뷰하기</button> -->
-<!--                     </div> -->
-<!--                 </td> -->
-<!--             </tr> -->
-<%--         </c:forEach> --%>
-<!--     </tbody> -->
-    
-<!-- </table> -->
-
+<!-- 배송주소 보는 모달 창 -->
+<div id="addressModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">배송지 정보</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p><strong>수령인 : </strong> <span id="toName"></span></p>
+                <p><strong>수령인 전화번호 : </strong> <span id="toPhoneNum"></span></p>
+                <p><strong>배송지 주소 : </strong> <span id="addr"></span></p>
+                <p><strong>배송지 상세주소 : </strong> <span id="addrDetail"></span></p>
+                <p><strong>배송 메시지 : </strong> <span id="delivMessage"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+	
 	<nav aria-label="Page navigation">
 	  <ul class="pagination justify-content-center">
 	    <li class="page-item">

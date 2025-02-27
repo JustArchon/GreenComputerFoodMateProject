@@ -52,9 +52,13 @@ public class OrderService {
     public List<OrderDTOoutput> getOrdersByByrId(String byr_id) throws Exception {
         return orderDAO.findOrdersByBuyer(byr_id);
     }
+    
+    public List<OrderDetailDTOoutput> getOrderDetailsByByrId(String byr_id) throws Exception {
+    	return orderDAO.findOrderDetailsByBuyer(byr_id);
+    }
 
-    public List<OrderDTOoutput> getOrdersBySlrId(String slr_id) throws Exception {
-        return orderDAO.findOrdersBySeller(slr_id);
+    public List<OrderDTOoutput> getOrdersBySlrId(String slr_id, int ord_stat) throws Exception {
+        return orderDAO.findOrdersBySeller(slr_id, ord_stat);
     }
 
     public List<OrderDetailDTOoutput> getOrderDetailsByOrderId(int ord_id) throws Exception {
@@ -69,6 +73,11 @@ public class OrderService {
     
     public OrderAddressDTO getOrderAddressByOrdId(int ord_id) {
     	return orderDAO.getOrderAddressByOrdId(ord_id);
+    }
+    
+    // 판매자의 운송장번호 업데이트에 쓰는거
+    public void updateWaybill(int ord_id, String del_code, String waybill_num) {
+        orderDAO.updateWaybill(ord_id, del_code, waybill_num);
     }
     
         // 사용자가 주문한 상품 목록을 가져오는 메소드

@@ -113,7 +113,8 @@
 			<tr>
 				<td>주문번호</td>
 				<td>주문일자</td>
-				<td>주문상품</td>
+				<td>상품</td>
+				<td>수량</td>
 				<td>주문상태</td>
 				<td>확인/리뷰</td>
 			</tr>
@@ -123,10 +124,11 @@
 	            <tr>
 	                <!-- 주문 날짜 및 주문번호 -->
 	                <td>(${order.ord_id})</td>
+	                
+	                <td>${order.create_Date}</td>
 	
-	                <!-- 상품명과 옵션 -->
 	                <td>
-	                    <img src="${contextPath}/resources/images/Shopping/${order.pdt_name}.jpg" alt="${order.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+	                    <img src="${contextPath}/resources/images/${order.img_path}" alt="${order.pdt_name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
 	                    ${order.pdt_name}
 	                </td>
 	
@@ -134,14 +136,26 @@
 	                <td>${order.pdt_price}원 (${order.qty}개)</td>
 	
 	                <!-- 주문 상태 -->
-	                <td>몰라</td>
+	                <td>${order.ord_stat_msg}</td>
 	
 	                <!-- 확인/리뷰 -->
 	                <td>
 	                    <div class="d-flex flex-column gap-1">
-	                        <button class="btn btn-outline-secondary btn-sm" disabled>배송조회</button>
-	                        <button class="btn btn-outline-success btn-sm" disabled>리뷰하기</button>
-	                    </div>
+						    <c:choose>
+						        <c:when test="${order.ord_stat == 1}">
+						            <button class="btn btn-outline-danger btn-sm">주문취소</button>
+						        </c:when>
+						        <c:when test="${order.ord_stat == 2}">
+						            <button class="btn btn-outline-secondary btn-sm">배송조회</button>
+						        </c:when>
+						        <c:when test="${order.ord_stat == 3}">
+						            <button class="btn btn-outline-primary btn-sm">구매확정</button>
+						        </c:when>
+						        <c:when test="${order.ord_stat == 4}">
+						            <button class="btn btn-outline-success btn-sm">리뷰하기</button>
+						        </c:when>
+						    </c:choose>
+						</div>
 	                </td>
 	            </tr>
 	        </c:forEach>
