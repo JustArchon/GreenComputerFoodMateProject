@@ -69,6 +69,7 @@ public class MypageController {
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("myrecipeList", recipeService.selectRecipeListByrID(byr_id)); //서비스에 selectRecipeList메소드있어야함
 		mav.addObject("orderList", orderService.getOrderDetailsByByrId(byr_id));
+		mav.addObject("wishList", wishlistService.getwishList(byr_id));
 		mav.addObject("profile", profileDTO);
 		return mav;
 	}

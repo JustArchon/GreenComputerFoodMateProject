@@ -1,6 +1,12 @@
--> 회원 탈퇴 -> 쇼핑관리 or 리뷰보기 or 주문현황 롤백 -> 최근본 상품, 바로구매
--> 어드민 페이지, 결제 포인트 사용 반영
--> 쿠폰 날짜선택 로그확인
+어드민 페이지, 결제 포인트 사용 반영 -> 쇼핑관리 or 리뷰보기 -> 최근본 상품, 바로구매
+-> 메인페이지 선택시 active변경, 레시피,식재료 평균레이팅 표시
+-> 쿠폰 날짜선택 로그확인, 레시피칸에서는 레시피검색 활성화, 식재료는 재료검색활성화, 
+
+마이페이지 픽스내용
+내 레시피탭 6개표시 다음이전 표시
+레시피 리뷰 연동
+주문목록/배송조회 조회기간 구현
+포인트 테스트
 
 바로구매
 
@@ -182,3 +188,27 @@ function getSelectedProductIds() {
     });
     return selectedIds;
 }
+
+.sidebar {
+  width: 250px; /* 사이드바 너비 */
+  height: 100vh; /* 화면 높이에 맞게 설정 */
+  
+  background-color: #f4f4f4;
+  padding: 20px;
+}
+
+
+-- 기타 문의 이미지 테이블
+CREATE TABLE GEN_INQUIRY_IMAGES (
+    GEN_INQ_IMG_ID NUMBER(10) PRIMARY KEY,         -- 기타 문의 이미지 ID
+    GEN_INQ_ID NUMBER(10) NOT NULL,                -- 기타 문의 ID (외래키)
+    IMAGE_PATH VARCHAR2(255) NOT NULL,             -- 이미지 경로
+    CRE_DATE DATE DEFAULT SYSDATE,                 -- 이미지 업로드일
+    FOREIGN KEY (GEN_INQ_ID) REFERENCES GEN_INQUIRIES(GEN_INQ_ID) -- 기타 문의 테이블 외래키
+);
+
+CREATE SEQUENCE gen_inquiry_img_seq
+START WITH 1
+INCREMENT BY 1
+NOCACHE
+NOCYCLE;

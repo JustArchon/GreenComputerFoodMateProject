@@ -1,4 +1,4 @@
-package com.spring.FoodMate.admin;
+package com.spring.FoodMate.admin.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

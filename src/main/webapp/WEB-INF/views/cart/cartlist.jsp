@@ -264,8 +264,8 @@ $(document).ready(function() {
 <body>
 <div class="container mt-1">	
 <h3>장바구니</h3>
-<button class="btn btn-secondary btn-sm" id="checkAll">전체 선택</button>
-<button class="btn btn-danger btn-sm" id="deleteSelected">선택 삭제</button>
+<button class="btn btn-secondary btn-sm mb-1" id="checkAll">전체 선택</button>
+<button class="btn btn-danger btn-sm mb-1" id="deleteSelected">선택 삭제</button>
 
 <table class="table table-hover table-custom">
     <thead class="table-header table-primary">
