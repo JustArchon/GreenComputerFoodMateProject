@@ -12,7 +12,8 @@ public class RecipeRatingDTO {
     private Date update_date;  // 수정일
     
 	private String nickname;     // JOIN을 통해 가져온 NICKNAME
-    private String img_path;      // JOIN을 통해 가져온 IMG_PATH
+    private String mainimg_path;      
+    private String img_path; // JOIN을 통해 가져온 프로파일 IMG_PATH
     
     public String getNickname() {
 		return nickname;
@@ -20,16 +21,17 @@ public class RecipeRatingDTO {
 	public void setNickname(String nickname) {
 		this.nickname = nickname;
 	}
-	public String getImg_path() {
-		return img_path;
-	}
-	public void setImg_path(String img_path) {
-		this.img_path = img_path;
-	}
+	
 	
 	
 
-    public int getCmt_rcp_rating_id() {
+    public String getMainimg_path() {
+		return mainimg_path;
+	}
+	public void setMainimg_path(String mainimg_path) {
+		this.mainimg_path = mainimg_path;
+	}
+	public int getCmt_rcp_rating_id() {
 		return cmt_rcp_rating_id;
 	}
 	public void setCmt_rcp_rating_id(int cmt_rcp_rating_id) {
@@ -71,5 +73,12 @@ public class RecipeRatingDTO {
 	public void setUpdate_date(Date update_date) {
 		this.update_date = update_date;
 	}
+	public String getImg_path() {
+		return img_path;
+	}
+	public void setImg_path(String img_path) {
+		this.img_path = img_path;
+	}
+	
 	
 }

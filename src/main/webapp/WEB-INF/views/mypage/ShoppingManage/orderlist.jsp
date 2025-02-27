@@ -60,15 +60,26 @@
 }
 </style>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
 
 var contextPath = "${contextPath}";
 $(document).ready(function(){ //페이지가 준비되면
+	let orderList = [
+	    <c:forEach var="order" items="${orderList}" varStatus="loop">
+	        {
+	            ord_id: "${order.ord_id}",
+	            create_Date: "${order.create_Date}",
+	            tot_Pdt_Price: parseFloat("${order.tot_Pdt_Price}"),
+	            ship_Fee: parseFloat("${order.ship_Fee}"),
+	            total: parseFloat("${order.tot_Pdt_Price}") + parseFloat("${order.ship_Fee}"),
+	            ord_stat_msg: "${order.ord_stat_msg}"
+	        }<c:if test="${!loop.last}">,</c:if>
+	    </c:forEach>
+	];
     $(".view-address-button").click(function(){ //.view-address-btn 클래스가 클릭되면
-    	console.log("버튼클릭");
         let ordId = $(this).data("ord-id"); // 버튼에서 ord_id 가져오기
-
+		
         $.ajax({
             type: "POST",
             url: contextPath + "/order/getAddress",
@@ -127,44 +138,50 @@ $(document).ready(function(){ //페이지가 준비되면
 	    });
 	  });
 	  
-	  function renderTable(data) {
-	        let tbody = $("#point-log-body");
-	        tbody.empty(); // 기존 데이터 삭제
+	  function renderTable(data) { 
+		    let tbody = $("#order-list-body");
+		    tbody.empty(); // 기존 데이터 삭제
 
-	        data.forEach(item => {
-	            tbody.append(`
-	                <tr>
-	                    <td>${item.created_at}</td>
-	                    <td>${item.point_type}</td>
-	                    <td>${item.description}</td>
-	                    <td>${item.valid_until} 까지</td>
-	                    <td>${item.amount}원</td>
-	                </tr>
-	            `);
-	        });
-	    }
+		    data.forEach(item => {
+		        tbody.append(`
+		            <tr>
+		                <td>${item.ord_id}</td>
+		                <td>${item.create_Date}</td>
+		                <td>${item.tot_Pdt_Price}</td>
+		                <td>${item.ship_Fee}</td>
+		                <td>${item.total}</td>
+		                <td>${item.ord_stat_msg}</td>
+		                <td><button class="btn btn-outline-secondary btn-sm view-address-button" data-ord-id="${item.ord_id}">
+		                배송지 확인</button></td>
+		                <td><button class="btn btn-outline-secondary btn-sm view-shipping-button" data-ord-id="${item.ord_id}">
+		                배송상태조회</button></td>
+		            </tr>
+		        `);
+		    });
+		}
 
-	    function filterByDate() {
-	        let startDate = $("#start-date").val();
-	        let endDate = $("#end-date").val();
+	  function filterByDate() {
+		    let startDate = $("#start-date").val();
+		    let endDate = $("#end-date").val();
 
-	        if (!startDate || !endDate) {
-	            alert("시작 날짜와 종료 날짜를 선택하세요.");
-	            return;
-	        }
+		    if (!startDate || !endDate) {
+		        alert("시작 날짜와 종료 날짜를 선택하세요.");
+		        return;
+		    }
 
-	        let filteredData = pointLogList.filter(item => {
-	            return item.created_at >= startDate && item.created_at <= endDate;
-	        });
-	        renderTable(filteredData);
-	    }
+		    let filteredData = orderList.filter(item => {
+		        let orderDate = new Date(item.create_Date);
+		        
+		        return orderDate >= new Date(startDate) && orderDate <= new Date(endDate);
+		    });
+
+		    renderTable(filteredData);
+		}
 
 	    $(document).ready(function () {
-	        // 초기 데이터 렌더링
-	        renderTable(pointLogList);
 
 	        // 조회 버튼 클릭 이벤트
-	        $("#search-date").on("click", filterByDate);
+	        $("#search-date").on("click", );
 	    });
 });
 
@@ -206,7 +223,7 @@ $(document).ready(function(){ //페이지가 준비되면
         		<input type="date" id="end-date" class="form-control w-auto" value="2025-01-13" />
     		
     			<!-- Search Button -->
-      			<button type="button" class="btn btn-success">조회</button>
+      			<button type="button" id="search-date" class="btn btn-success">조회</button>
     		</div>
     	</div>
 	</div>
@@ -226,18 +243,20 @@ $(document).ready(function(){ //페이지가 준비되면
         <th>배송조회</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="order-list-body">
         	<tr>
         		<td>${order.ord_id}</td>
         		<td>${order.create_Date}</td>
-        		<td>${order.tot_Pdt_Price}</td>
-        		<td>${order.ship_Fee}</td>
-        		<td>${order.tot_Pdt_Price + order.ship_Fee}</td>
+        		<td><fmt:formatNumber value="${order.tot_Pdt_Price}" type="number" groupingUsed="true" />원</td>
+        		<td><fmt:formatNumber value="${order.ship_Fee}" type="number" groupingUsed="true" />원</td>
+        		<td><fmt:formatNumber value="${order.tot_Pdt_Price + order.ship_Fee}" type="number" groupingUsed="true" />원</td>
         		<td>${order.ord_stat_msg}</td>
         		<td><button class="btn btn-outline-secondary btn-sm view-address-button" data-ord-id="${order.ord_id}">
         		배송지 확인</button></td>
         		<td><button class="btn btn-outline-secondary btn-sm view-shipping-button" data-ord-id="${order.ord_id}">
-        		배송상태조회</button></td>
+        		배송상태조회</button>
+        		<button class="btn btn-outline-success btn-sm confirm-order-button" data-ord-id="${order.ord_id}">
+        		구매확정</button></td>
         	</tr>
         </tbody>
 		</table>
@@ -254,7 +273,7 @@ $(document).ready(function(){ //페이지가 준비되면
             <c:forEach var="detail" items="${order.orderDetails}">
                 <tr>
                     <td><img class="productImg" src=${contextPath}/resources/images/${detail.img_path}>${detail.pdt_name}</td>
-                    <td>${detail.pdt_price}</td>
+                    <td><fmt:formatNumber value="${detail.pdt_price}" type="number" groupingUsed="true" />원</td>
                     <td>${detail.qty}</td>
                 </tr>
             </c:forEach>

@@ -186,4 +186,9 @@ public class RecipeServiceImpl implements RecipeService {
     public void updateRecipeRating(RecipeRatingDTO ratingDTO) {
         recipeDAO.updateRecipeRating(ratingDTO);
     }
+    
+    // 레시피 정보 가져오기
+    public List<RecipeRatingDTO> selectRecipeReviewByrIDList(String byr_id) throws Exception {
+        return recipeDAO.selectRecipeReviewByrIDList(byr_id);  // 레시피 목록 조회
+    }
 }

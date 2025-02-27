@@ -118,7 +118,7 @@
 	        renderTable(pointLogList);
 
 	        // 조회 버튼 클릭 이벤트
-	        $("#search-date").on("click", filterByDate);
+	        $("#search-date").on("click", );
 	    });
 	});
 </script>
