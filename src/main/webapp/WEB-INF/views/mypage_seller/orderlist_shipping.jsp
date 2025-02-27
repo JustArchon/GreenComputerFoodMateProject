@@ -103,7 +103,7 @@ $(document).on("click", "#saveWaybill", function() {
 <main>
 <div class="container mt-1">
 	<div class="d-flex align-items-center border-bottom pb-2 mb-3">
-      		<h5 class="mb-0 fw-bold">배송 대기중인 주문</h5>
+      		<h5 class="mb-0 fw-bold">배송 중인 주문</h5>
     </div>
 <!--     <div class="border p-4 rounded mb-3" style="margin: 0 auto;"> -->
 <!--     	<div class="d-flex align-items-center gap-3 flex-wrap"> -->
@@ -157,8 +157,9 @@ $(document).on("click", "#saveWaybill", function() {
         		<!-- data-ord-id에 ord_id 넣어서 제이쿼리로 이 버튼 클릭할때 바로 ord_id 가져갈수있게할거임 -->
         		</td>
         		<td>
+        		${order.del_company_name}, ${order.waybill_Num}<br>
         		<button class="btn btn-outline-secondary btn-sm waybill-button" data-ord-id="${order.ord_id}">
-        		운송장번호 입력</button>
+        		운송장번호 수정</button>
         		</td>
         	</tr>
         </tbody>

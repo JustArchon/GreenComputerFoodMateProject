@@ -85,8 +85,8 @@
     </select>
 
     <!-- 판매자 기준 주문 목록 조회 -->
-    <select id="findOrdersBySeller" parameterType="string" resultType="OrderDTOoutput">
-        SELECT * FROM FOODMATE_ORDER WHERE SLR_ID = #{slr_id}
+    <select id="findOrdersBySeller" parameterType="map" resultType="OrderDTOoutput">
+        SELECT * FROM FOODMATE_ORDER WHERE SLR_ID = #{slr_id} AND ORD_STAT = #{ord_stat}
     </select>
 
     <!-- 주문 상세 조회 -->
@@ -106,5 +106,14 @@
     	SELECT * FROM FOODMATE_ORDER_ADDRESS
     	WHERE ORD_ID = #{ord_id}
     </select>
+	
+	<!-- 운송장번호 입력하며 배송시작으로 변경 -->
+	<update id="updateWaybill" parameterType="map">
+	    UPDATE foodmate_order
+	    SET del_code = #{del_code},
+	        waybill_num = #{waybill_num},
+	        ord_stat = 2
+	    WHERE ord_id = #{ord_id}
+	</update>
 	
 </mapper>

@@ -202,15 +202,15 @@ public class MypageController {
 		return mav;
 	}
 	
-	// 판매자의 주문내역 확인
+	// 판매자의 배송대기 주문내역 확인
 	@RequestMapping(value="/mypage_seller/orderlist_ready", method=RequestMethod.GET)
-	private ModelAndView slrOrderList(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+	private ModelAndView orderList_ready(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
 		ModelAndView mav = new ModelAndView();
 		SessionDTO sessionDTO = (SessionDTO) session.getAttribute("sessionDTO");
 		// 아이디 꺼내올준비
 		
-		List<OrderDTOoutput> orders = orderService.getOrdersBySlrId(sessionDTO.getUserId());
-		// 아이디 넣어서 오더들 output전용으로 가져오기
+		List<OrderDTOoutput> orders = orderService.getOrdersBySlrId(sessionDTO.getUserId(), 1);
+		// 아이디 넣어서 오더들 output전용으로 가져오기, 상태가 1(결제완료, 배송대기) 인 주문만 표시
 
 		for (OrderDTOoutput order : orders) { // List인 orders에서 하나씩 OrderDTOoutput을 꺼내서 order에 저장, 자동반복
             List<OrderDetailDTOoutput> orderDetails = orderService.getOrderDetailsByOrderId(order.getOrd_id());
@@ -223,6 +223,28 @@ public class MypageController {
 		// orderLilst 속성으로 그 긴거 전달
 		return mav;
 	}
+	
+	@RequestMapping(value="/mypage_seller/orderlist_shipping", method=RequestMethod.GET)
+	private ModelAndView orderList_shipping(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+		ModelAndView mav = new ModelAndView();
+		SessionDTO sessionDTO = (SessionDTO) session.getAttribute("sessionDTO");
+		// 아이디 꺼내올준비
+		
+		List<OrderDTOoutput> orders = orderService.getOrdersBySlrId(sessionDTO.getUserId(), 2);
+		// 아이디 넣어서 오더들 output전용으로 가져오기, 상태가 2(배송중) 인 주문만 표시
+
+		for (OrderDTOoutput order : orders) { // List인 orders에서 하나씩 OrderDTOoutput을 꺼내서 order에 저장, 자동반복
+            List<OrderDetailDTOoutput> orderDetails = orderService.getOrderDetailsByOrderId(order.getOrd_id());
+            // 현재 ord_id 갖고와서 orderService의 그 긴거 메서드로 주문상세정보 리스트로 가져옴
+            order.setOrderDetails(orderDetails);
+            //orderDTOoutput에 그 리스트 저장함
+        }
+		mav.addObject("title", "FoodMate - 배송중인 주문");
+		mav.addObject("orderList", orders);
+		// orderLilst 속성으로 그 긴거 전달
+		return mav;
+	}
+	
 	
 	@RequestMapping(value="/mypage/customerManage/*Form", method=RequestMethod.GET)
 	private ModelAndView customerManageform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
