@@ -154,13 +154,22 @@
     	]]>
 	</update>
 	
-		<update id="updateResetSellerPW" parameterType="sellerDTO">
+	<update id="updateResetSellerPW" parameterType="sellerDTO">
 	    <![CDATA[
 			update foodmate_seller
 			       set pw=#{password}
 		 	       where slr_id=#{slr_id}
 			        and name=#{name}
 			        and email=#{email}
+    	]]>
+	</update>
+	
+	<update id="updateMemberdeleting" parameterType="buyerDTO">
+	    <![CDATA[
+			update foodmate_buyer
+			       set status= 'DELETING'
+		 	       where byr_id=#{byr_id}
+			        and pw=#{pw}
     	]]>
 	</update>
 	
