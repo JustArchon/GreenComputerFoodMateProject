@@ -51,6 +51,10 @@ public class OrderDAO {
     public List<OrderDTOoutput> findOrdersByBuyer(String byr_id) throws DataAccessException {
         return sqlSession.selectList("mapper.order.findOrdersByBuyer", byr_id);
     }
+    
+    public List<OrderDetailDTOoutput> findOrderDetailsByBuyer(String byr_id) throws DataAccessException {
+    	return sqlSession.selectList("mapper.order.findOrderDetailsByBuyer", byr_id);
+    }
 
     public List<OrderDTOoutput> findOrdersBySeller(String slr_id, int ord_stat) throws DataAccessException {
     	Map<String, Object> params = new HashMap<>();

@@ -15,6 +15,7 @@ public class OrderDTOoutput {
     private String create_Date; // 생성 날짜
     private String del_Code; // 배송 코드
     private String waybill_Num; // 운송장 번호
+    
     private List<OrderDetailDTOoutput> orderDetails;
 
     // 기본 생성자

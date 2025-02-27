@@ -51,6 +51,10 @@ public class OrderService {
     public List<OrderDTOoutput> getOrdersByByrId(String byr_id) throws Exception {
         return orderDAO.findOrdersByBuyer(byr_id);
     }
+    
+    public List<OrderDetailDTOoutput> getOrderDetailsByByrId(String byr_id) throws Exception {
+    	return orderDAO.findOrderDetailsByBuyer(byr_id);
+    }
 
     public List<OrderDTOoutput> getOrdersBySlrId(String slr_id, int ord_stat) throws Exception {
         return orderDAO.findOrdersBySeller(slr_id, ord_stat);
