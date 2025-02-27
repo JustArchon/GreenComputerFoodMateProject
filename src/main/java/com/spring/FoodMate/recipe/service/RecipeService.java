@@ -1,11 +1,14 @@
 package com.spring.FoodMate.recipe.service;
 
 import java.util.List;
+
 import java.util.Map;
 
+import com.spring.FoodMate.product.dto.CategoryDTO;
 import com.spring.FoodMate.recipe.dto.RecipeCategoryDTO;
 import com.spring.FoodMate.recipe.dto.RecipeDTO;
 import com.spring.FoodMate.recipe.dto.RecipeIngredientDTO;
+import com.spring.FoodMate.recipe.dto.RecipeRatingDTO;
 import com.spring.FoodMate.recipe.dto.RecipeStepDTO;
 
 public interface RecipeService {
@@ -35,13 +38,24 @@ public interface RecipeService {
     List<RecipeStepDTO> recipeSteps(int rcp_id) throws Exception;
     
     //레시피 상세 조회에 필요한 모든 데이터 쌈싸주기
-    Map<String, Object> selectRecipeDetail(int rcp_id) throws Exception;
-    
     List<RecipeIngredientDTO> getRecipeIngrd(int rcp_id);
+    Map<String, Object> selectRecipeDetail(int rcp_id) throws Exception;
     
     List<RecipeCategoryDTO> getGrandCategoryList();
 	
 	List<RecipeCategoryDTO> getChildCategoryList(int category_id);
 	
 	List<RecipeCategoryDTO> categoryStep(int category_id);
+	
+	
+	
+
+    List<CategoryDTO> select_all_IngrdCategory();
+    List<CategoryDTO> select_Child_IngrdCategory(int ingrd_category_id);
+    
+    public void addRecipeRating(RecipeRatingDTO ratingDTO) throws Exception;
+    
+    public List<RecipeRatingDTO> getRatingsByRecipeId(int rcp_id) throws Exception;
+    
+    public void updateRecipeRating(RecipeRatingDTO ratingDTO);
 }

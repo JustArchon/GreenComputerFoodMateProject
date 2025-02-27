@@ -8,9 +8,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import com.spring.FoodMate.common.exception.DBException;
+import com.spring.FoodMate.product.dto.CategoryDTO;
 import com.spring.FoodMate.recipe.dto.RecipeCategoryDTO;
 import com.spring.FoodMate.recipe.dto.RecipeDTO;
 import com.spring.FoodMate.recipe.dto.RecipeIngredientDTO;
+import com.spring.FoodMate.recipe.dto.RecipeRatingDTO;
 import com.spring.FoodMate.recipe.dto.RecipeStepDTO;
 
 @Repository
@@ -62,17 +64,16 @@ public class RecipeDAOImpl implements RecipeDAO {
     	return recipeDTO;
     }
 	
-    // 레시피 id 넣으면 해당하는 레시피재표 테이블의 모든 행 DTO에 넣어서 리스트로 반환
 	@Override
 	public List<RecipeIngredientDTO> selectIngredientDetail(int rcp_id) throws DataAccessException {
-		List<RecipeIngredientDTO> ingredientDTO = sqlSession.selectList("mapper.recipe.selectIngredientDetail", rcp_id);
-		return ingredientDTO;
+		List<RecipeIngredientDTO> ingredientVO = sqlSession.selectList("mapper.recipe.selectIngredientDetail",rcp_id);
+		return ingredientVO;
 	}
 	
 	@Override
 	public List<RecipeStepDTO> selectStepDetail(int rcp_id) throws DataAccessException {
-		List<RecipeStepDTO> stepDTO = sqlSession.selectList("mapper.recipe.selectStepDetail", rcp_id);
-		return stepDTO;
+		List<RecipeStepDTO> stepVO = sqlSession.selectList("mapper.recipe.selectStepDetail",rcp_id);
+		return stepVO;
 	}
     
 	@Override
@@ -104,4 +105,41 @@ public class RecipeDAOImpl implements RecipeDAO {
 			throw new DBException("RecipeDAOImpl.getCategoryStep 에러! category_id = '" + category_id + "'", e);
 		}
 	}
+	
+	@Override
+	public List<CategoryDTO> select_all_IngrdCategory() {
+		try {
+			List<CategoryDTO> ProductCategoryList = sqlSession.selectList("mapper.recipe.select_all_IngrdCategory");
+			return ProductCategoryList;
+		} catch (DataAccessException e) {
+			throw new DBException("RecipeDAOImpl.select_all_IngrdCategory() 에러!", e);
+		}
+	}
+	
+	@Override
+	public List<CategoryDTO> select_Child_IngrdCategory(int parentIngrdCategoryId) {
+		try {
+			List<CategoryDTO> ProductSubCategoryList = sqlSession.selectList("mapper.recipe.select_Child_IngrdCategory", parentIngrdCategoryId);
+			return ProductSubCategoryList;
+		} catch (DataAccessException e) {
+			throw new DBException("RecipeDAOImpl.select_Child_IngrdCategory 에러! parentIngrdCategoryId = '" + parentIngrdCategoryId + "'", e);
+		}
+	}
+	
+	@Override
+	public void insertRecipeRating(RecipeRatingDTO ratingDTO) throws Exception {
+        sqlSession.insert("mapper.recipe.insertRecipeRating", ratingDTO); 
+    }
+	
+	@Override
+	public List<RecipeRatingDTO> getRatingsByRecipeId(int rcp_id) throws Exception {
+        return sqlSession.selectList("mapper.recipe.getRatingsByRecipeId", rcp_id);
+    }
+	
+	@Override
+	public void updateRecipeRating(RecipeRatingDTO ratingDTO) {
+	    sqlSession.update("mapper.recipe.updateRecipeRating", ratingDTO);
+	}
+	
+	
 }

@@ -2,6 +2,7 @@ package com.spring.FoodMate.mypage.controller;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -86,4 +88,19 @@ public class WishlistController {
             throw new UnhandledException("찜 상품을 제거하는 도중에 오류가 발생했습니다.", e);
         }
     }
+	
+	@RequestMapping(value = "/wishlist/removeMultiple", method = RequestMethod.POST)
+	@ResponseBody
+	public void removeWishProducts(@RequestBody List<Integer> wishlistIds, HttpSession session) {
+	    try {
+	        for (int wishlistId : wishlistIds) {
+	            wishlistService.deleteWishItem(wishlistId);
+	        }
+        } catch (CartException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new UnhandledException("찜 상품을 제거하는 도중에 오류가 발생했습니다.", e);
+        }
+	}
+
 }

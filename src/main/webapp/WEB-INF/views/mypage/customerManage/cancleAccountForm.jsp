@@ -27,16 +27,16 @@
 			<div class="row justify-content-start">
 				<div class="d-flex flex-column align-items-center mb-3">
 				    <!-- 닉네임 입력 -->
-				    <div class="text-center" style="width: 100%; max-width: 300px;">
+				    <div class="text-center" style="width: 100%; max-width: 400px;">
 				    	<h5>회원 탈퇴</h5>
-				    	<p>정말로 회원을 탈퇴하시겠습니까? 탈퇴시 모든 포인트 및 쿠폰은 즉시 삭제되며 현재 아이디는 로그인이 불가해집니다. 탈퇴를 원한다면 비밀번호를 입력후 회원탈퇴를 누르십시오.</p>
+				    	<p>정말로 회원을 탈퇴하시겠습니까? <br>탈퇴시 모든 포인트 및 쿠폰은 즉시 삭제되며 현재 아이디는 로그인이 불가해집니다. <br>탈퇴를 원한다면 비밀번호를 입력 후 <br>회원탈퇴를 누르십시오.</p>
 				        <label class="form-label">비밀번호 입력</label>
 				        <input name="password" type="password" class="form-control" placeholder="password">
 				    </div>
 				    <div class="mt-3 row">
 						<div class="col-12 text-center">
 							<input type="submit" class="btn btn-danger" value="회원탈퇴">
-							<input type="reset" class="btn btn-secondary" value="취소">
+							<input type="reset" class="btn btn-secondary" onclick="location.href='${contextPath}/mypage/mypageForm';" value="취소">
 						</div>
 					</div>
 				</div>

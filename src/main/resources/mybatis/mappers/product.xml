@@ -159,4 +159,39 @@
 	    WHERE PDT_ID = #{pdt_id}
 	</delete>
 	
+<!-- 	<insert id="insertProductRating" parameterType="ProductRatingDTO">
+    INSERT INTO FOODMATE_PRODUCT_RATING (CMT_PDT_RATING_ID, PDT_ID, BYR_ID, RATING, COMMENTS, CREATE_DATE)
+    VALUES (FOODMATE_PRODUCT_RATING_SEQ.NEXTVAL, #{pdt_id}, #{byr_id}, #{rating}, #{comments}, SYSDATE)
+</insert>
+	
+	<select id="getProductRatings" resultType="ProductRatingDTO" parameterType="int">
+    SELECT CMT_PDT_RATING_ID, PDT_ID, BYR_ID, RATING, COMMENTS, CREATE_DATE
+    FROM FOODMATE_PRODUCT_RATING
+    WHERE PDT_ID = #{pdt_id}
+</select>
+	
+	<delete id="deleteProductRating" parameterType="int">
+    DELETE FROM FOODMATE_PRODUCT_RATING
+    WHERE CMT_PDT_RATING_ID = #{cmt_pdt_rating_id}
+</delete>
+	
+	
+	<insert id="insertProductQna" parameterType="ProductQnaDTO">
+    INSERT INTO FOODMATE_PRODUCT_QNA (CMT_PDT_QNA_ID, PDT_ID, USER_ID, COMMENTS, PARENT_ID, CREATE_DATE)
+    VALUES (FOODMATE_PRODUCT_QNA_SEQ.NEXTVAL, #{pdt_id}, #{user_id}, #{comments}, #{parent_id}, SYSDATE)
+</insert>
+	
+	<select id="getProductQna" resultType="ProductQnaDTO" parameterType="int">
+    SELECT CMT_PDT_QNA_ID, PDT_ID, USER_ID, COMMENTS, PARENT_ID, CREATE_DATE
+    FROM FOODMATE_PRODUCT_QNA
+    WHERE PDT_ID = #{pdt_id}
+    ORDER BY CREATE_DATE
+</select>
+	
+	<delete id="deleteProductQna" parameterType="int">
+    DELETE FROM FOODMATE_PRODUCT_QNA
+    WHERE CMT_PDT_QNA_ID = #{cmt_pdt_qna_id}
+</delete>
+	 -->
+	
 </mapper>

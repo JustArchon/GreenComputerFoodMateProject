@@ -14,6 +14,7 @@ import com.spring.FoodMate.order.dto.OrderDTOoutput;
 import com.spring.FoodMate.order.dto.OrderDetailDTO;
 import com.spring.FoodMate.order.dto.OrderDetailDTOoutput;
 import com.spring.FoodMate.order.dto.OrderPaymentDTO;
+import com.spring.FoodMate.product.dto.ProductDTO;
 
 @Service("OrderService")
 public class OrderService {		
@@ -79,4 +80,8 @@ public class OrderService {
         orderDAO.updateWaybill(ord_id, del_code, waybill_num);
     }
     
+        // 사용자가 주문한 상품 목록을 가져오는 메소드
+    public List<ProductDTO> getOrderedProducts(String buyerId) {
+        return orderDAO.getOrderedProductsByBuyerId(buyerId);  // OrderDAO에서 가져오는 메소드
+    }
 }

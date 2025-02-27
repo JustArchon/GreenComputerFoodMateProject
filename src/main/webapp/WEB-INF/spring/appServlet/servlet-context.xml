@@ -43,6 +43,8 @@
             <mvc:mapping path="/cart/**"/>
             <mvc:mapping path="/mypage/**"/>
             <mvc:mapping path="/product/startcompare"/>
+            <mvc:mapping path="/recipe/recipe_Add"/>
+            <mvc:mapping path="/recipe/addRecipeRating"/>
         	<beans:ref bean="BuyerInterceptor"/>    
         </mvc:interceptor>
         <mvc:interceptor>

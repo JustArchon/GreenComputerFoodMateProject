@@ -16,6 +16,7 @@ import com.spring.FoodMate.order.dto.OrderDTOoutput;
 import com.spring.FoodMate.order.dto.OrderDetailDTO;
 import com.spring.FoodMate.order.dto.OrderDetailDTOoutput;
 import com.spring.FoodMate.order.dto.OrderPaymentDTO;
+import com.spring.FoodMate.product.dto.ProductDTO;
 
 @Repository("orderDAO")
 public class OrderDAO {
@@ -81,5 +82,8 @@ public class OrderDAO {
         params.put("del_code", del_code);
         params.put("waybill_num", waybill_num);
         sqlSession.update("mapper.order.updateWaybill", params);
+      
+    public List<ProductDTO> getOrderedProductsByBuyerId(String buyerId) {
+        return sqlSession.selectList("mapper.order.getOrderedProductsByBuyerId", buyerId);
     }
 }

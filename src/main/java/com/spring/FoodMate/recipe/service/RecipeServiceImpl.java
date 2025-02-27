@@ -9,10 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.spring.FoodMate.common.exception.DBException;
+import com.spring.FoodMate.product.dto.CategoryDTO;
 import com.spring.FoodMate.recipe.dao.RecipeDAO;
 import com.spring.FoodMate.recipe.dto.RecipeCategoryDTO;
 import com.spring.FoodMate.recipe.dto.RecipeDTO;
 import com.spring.FoodMate.recipe.dto.RecipeIngredientDTO;
+import com.spring.FoodMate.recipe.dto.RecipeRatingDTO;
 import com.spring.FoodMate.recipe.dto.RecipeStepDTO;
 import com.spring.FoodMate.recipe.exception.RecipeException;
 
@@ -49,7 +51,7 @@ public class RecipeServiceImpl implements RecipeService {
             recipeDAO.insertRecipeSteps(step);  // 단계 삽입
         }
     }
-   
+
     // 레시피 목록 조회
     @Override
     public List<RecipeDTO> selectRecipeList() throws Exception {
@@ -60,7 +62,6 @@ public class RecipeServiceImpl implements RecipeService {
     public List<RecipeDTO> selectRecipeListByrID(String byr_id) throws Exception {
         return recipeDAO.selectRecipeListByrID(byr_id);  // 레시피 목록 조회
     }
-
     // 레시피 하나 조회
     @Override
     public RecipeDTO recipe(int rcp_id) throws Exception {
@@ -73,6 +74,7 @@ public class RecipeServiceImpl implements RecipeService {
     	return recipeDAO.selectIngredientDetail(rcp_id);
     }
     
+ 
     // 레시피 하나에 대한 순서도만 조회
     @Override
     public List<RecipeStepDTO> recipeSteps(int rcp_id) throws Exception {
@@ -86,6 +88,14 @@ public class RecipeServiceImpl implements RecipeService {
         recipeDetail.put("recipe", recipe(rcp_id));
         recipeDetail.put("ingredients", recipeIngrds(rcp_id));
         recipeDetail.put("steps", recipeSteps(rcp_id));
+        RecipeDTO recipe = recipeDAO.selectRecipeDetail(rcp_id);
+        recipeDetail.put("recipe", recipe);
+
+        List<RecipeIngredientDTO> ingredientList = recipeDAO.selectIngredientDetail(rcp_id);
+        recipeDetail.put("ingredients", ingredientList);
+
+        List<RecipeStepDTO> stepList = recipeDAO.selectStepDetail(rcp_id);
+        recipeDetail.put("steps", stepList);
         return recipeDetail;
     }
     
@@ -100,7 +110,6 @@ public class RecipeServiceImpl implements RecipeService {
     		throw new RecipeException("RecipeServiceImpl.getRecipeIngrd 에러!", e);
     	}
     }
-    
     // 레시피카테고리 최상위만 가져옴(처음에 보여줄 카테고리 처리용)
     @Override
     public List<RecipeCategoryDTO> getGrandCategoryList() {
@@ -137,4 +146,44 @@ public class RecipeServiceImpl implements RecipeService {
 			throw new RecipeException("RecipeServiceImpl.categoryStep 에러! category_id = '" + category_id + "'", e);
 		}
 	}   
+    
+ // 재료 카테고리 최상위만 가져옴(처음에 보여줄 카테고리 처리용)
+    @Override
+    public List<CategoryDTO> select_all_IngrdCategory() {
+		try {
+			return recipeDAO.select_all_IngrdCategory();
+		} catch (DBException e) {
+			throw new RecipeException("RecipeServiceImpl에서 DB예외 전달.", e);
+		} catch (Exception e) {
+			throw new RecipeException("RecipeServiceImpl.getGrandCategoryList 에러!", e);
+		}
+	}
+    
+ // 재료 카테고리 자식만 가져옴(카테고리 선택시 ajax 로 자식카테고리 가져오는거임)
+    @Override
+	public List<CategoryDTO> select_Child_IngrdCategory(int ingrd_category_id) {
+		try {
+			return recipeDAO.select_Child_IngrdCategory(ingrd_category_id);
+		} catch (DBException e) {
+			throw new RecipeException("RecipeServiceImpl에서 DB예외 전달.", e);
+		} catch (Exception e) {
+			throw new RecipeException("RecipeServiceImpl.select_Child_IngrdCategory 에러! category_id = '" + ingrd_category_id + "'", e);
+		}
+	}
+    
+	//후기 저장
+    @Override
+    public void addRecipeRating(RecipeRatingDTO ratingDTO) throws Exception {
+        recipeDAO.insertRecipeRating(ratingDTO);  // 후기를 DB에 저장
+    }
+    
+    @Override
+    public List<RecipeRatingDTO> getRatingsByRecipeId(int rcp_id) throws Exception {
+        return recipeDAO.getRatingsByRecipeId(rcp_id);
+    }
+    
+    @Override
+    public void updateRecipeRating(RecipeRatingDTO ratingDTO) {
+        recipeDAO.updateRecipeRating(ratingDTO);
+    }
 }

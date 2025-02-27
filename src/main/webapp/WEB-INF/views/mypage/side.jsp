@@ -39,40 +39,40 @@
     </style>
 <body>
     <div class="col-12 sidebar">
-        <h3><a href="${contextPath}/mypage/mypageForm.do">마이페이지</a></h3>
+        <h3><a href="${contextPath}/mypage/mypageForm">마이페이지</a></h3>
         <hr>
         <h5>메이트관리</h5>
         <ul>
-	        <li><a href="${contextPath}/mypage/mateManage/myrecipeForm.do">내 레시피</a></li>
-	        <li><a href="${contextPath}/mypage/mateManage/myrecipereviewForm.do">레시피 리뷰</a></li>	
-	        <li><a href="${contextPath}/mypage/mateManage/myShoppingReviewForm.do">쇼핑 리뷰</a></li>
+	        <li><a href="${contextPath}/mypage/mateManage/myrecipeForm">내 레시피</a></li>
+	        <li><a href="${contextPath}/mypage/mateManage/myrecipereviewForm">레시피 리뷰</a></li>	
+	        <li><a href="${contextPath}/mypage/mateManage/myShoppingReviewForm">쇼핑 리뷰</a></li>
         </ul>
         <hr>
         <h5>내 정보관리</h5>
         <ul>
-	        <li><a href="${contextPath}/mypage/myInfoManage/profileEditForm.do">프로필 수정</a></li>
-	        <li><a href="${contextPath}/mypage/myInfoManage/memberEditForm.do">회원정보 수정</a></li>
-	        <li><a href="${contextPath}/mypage/myInfoManage/deliveryManageForm.do">배송지 관리</a>
+	        <li><a href="${contextPath}/mypage/myInfoManage/profileEditForm">프로필 수정</a></li>
+	        <li><a href="${contextPath}/mypage/myInfoManage/memberEditForm">회원정보 수정</a></li>
+	        <li><a href="${contextPath}/mypage/myInfoManage/deliveryManageForm">배송지 관리</a>
         </ul>
         <hr>
         <h5>쇼핑 관리</h5>
         <ul>
 	        <li><a href="${contextPath}/mypage/ShoppingManage/orderlist">주문목록/배송조회</a></li>
-	        <li><a href="${contextPath}/mypage/ShoppingManage/canclelistManageForm.do">취소/반품/교환 내역</a></li>
-	        <li><a href="${contextPath}/mypage/ShoppingManage/refundManageForm.do">환불/입금 내역</a></li>
-	        <li><a href="${contextPath}/mypage/ShoppingManage/wishlistManageForm.do">찜 리스트</a></li>
+	        <li><a href="${contextPath}/mypage/ShoppingManage/canclelistManageForm">취소/반품/교환 내역</a></li>
+	        <li><a href="${contextPath}/mypage/ShoppingManage/refundManageForm">환불/입금 내역</a></li>
+	        <li><a href="${contextPath}/mypage/ShoppingManage/wishlistManageForm">찜 리스트</a></li>
         </ul>
         <hr>
         <h5>혜택관리</h5>
         <ul>
 	        <li><a href="#" onclick="alert('서비스 준비 중입니다.'); return false;">쿠폰</a></li>
-	        <li><a href="${contextPath}/mypage/rewardManage/pointManageForm.do">포인트</a></li>
+	        <li><a href="${contextPath}/mypage/rewardManage/pointManageForm">포인트</a></li>
         </ul>
         <hr>
         <h5>고객센터</h5>
         <ul>
 	        <li><a href="${contextPath}/support/inquiryLists">1:1 문의</a></li>
-	        <li><a href="${contextPath}/mypage/customerManage/cancleAccountForm.do">회원 탈퇴</a></li>
+	        <li><a href="${contextPath}/mypage/customerManage/cancleAccountForm">회원 탈퇴</a></li>
         </ul>
     </div>
 </body>
