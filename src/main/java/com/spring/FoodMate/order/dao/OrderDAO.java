@@ -15,6 +15,7 @@ import com.spring.FoodMate.order.dto.OrderDTOoutput;
 import com.spring.FoodMate.order.dto.OrderDetailDTO;
 import com.spring.FoodMate.order.dto.OrderDetailDTOoutput;
 import com.spring.FoodMate.order.dto.OrderPaymentDTO;
+import com.spring.FoodMate.product.dto.ProductDTO;
 
 @Repository("orderDAO")
 public class OrderDAO {
@@ -65,5 +66,9 @@ public class OrderDAO {
     
     public OrderAddressDTO getOrderAddressByOrdId(int ord_id) throws DataAccessException {
     	return sqlSession.selectOne("mapper.order.findAddressByOrderId", ord_id);
+    }
+    
+    public List<ProductDTO> getOrderedProductsByBuyerId(String buyerId) {
+        return sqlSession.selectList("mapper.order.getOrderedProductsByBuyerId", buyerId);
     }
 }
