@@ -82,7 +82,8 @@ public class OrderDAO {
         params.put("del_code", del_code);
         params.put("waybill_num", waybill_num);
         sqlSession.update("mapper.order.updateWaybill", params);
-      
+    }
+    
     public List<ProductDTO> getOrderedProductsByBuyerId(String buyerId) {
         return sqlSession.selectList("mapper.order.getOrderedProductsByBuyerId", buyerId);
     }

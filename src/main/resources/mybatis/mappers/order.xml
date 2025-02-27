@@ -35,12 +35,13 @@
 	    WHERE SLR_ID = #{id}
 	</select>
 	
-	
 	<select id="selectOrdId" resultType="java.lang.Integer">
 	    SELECT ORD_ID
 	    FROM FOODMATE_ORDER
 	    WHERE SLR_ID = #{slr_id} AND BYR_ID = #{byr_id} AND ORD_CODE = #{ord_code}
 	</select>
+	<!-- 26~42줄의 경우 WHERE절 조건만 다르기 때문에 동적 SQL을 활용하여, 파라미터타입을 Map으로 하고 들어가는 키&값만 설정해주면 좋다고 한다 -->
+	
 	
 	<!-- AllOrdByOrdIds 쿼리: resultType을 orderDTO로 수정 -->
 	<select id="AllOrdByOrdIds" resultType="orderDetailDTO">
@@ -100,11 +101,11 @@
 	    ]]>
 	</select>
 
-	
-
     <!-- 판매자 기준 주문 목록 조회 -->
     <select id="findOrdersBySeller" parameterType="map" resultType="OrderDTOoutput">
-        SELECT * FROM FOODMATE_ORDER WHERE SLR_ID = #{slr_id} AND ORD_STAT = #{ord_stat}
+        SELECT * FROM
+        FOODMATE_ORDER
+        WHERE SLR_ID = #{slr_id} AND ORD_STAT = #{ord_stat}
     </select>
 
     <!-- 주문 상세 조회 -->
@@ -117,29 +118,14 @@
     
     <!-- 주문번호로 주문 조회 -->
     <select id="findOrderByOrderId" parameterType="int" resultType="OrderDTOoutput">
-    	SELECT * FROM FOODMATE_ORDER WHERE ORD_ID = #{ord_id}
+    	SELECT * FROM
+    	FOODMATE_ORDER
+    	WHERE ORD_ID = #{ord_id}
     </select>
     
     <select id="findAddressByOrderId" parameterType="int" resultMap="orderAddressResultMap">
     	SELECT * FROM FOODMATE_ORDER_ADDRESS
     	WHERE ORD_ID = #{ord_id}
-    </select>
-    
-    	    <!-- 사용자가 주문한 상품 목록을 가져오는 쿼리 -->
-    <select id="getOrderedProductsByBuyerId" parameterType="String" resultType="com.spring.FoodMate.product.dto.ProductDTO">
-        SELECT 
-            p.pdt_id, 
-            p.name AS pdt_name, 
-            p.img_path, 
-            p.price
-        FROM 
-            FOODMATE_PRODUCT p
-        JOIN 
-            FOODMATE_ORDER_DETAIL od ON p.pdt_id = od.pdt_id
-        JOIN 
-            FOODMATE_ORDER o ON od.ord_id = o.ord_id
-        WHERE 
-            o.byr_id = #{buyerId}
     </select>
 	
 	<!-- 운송장번호 입력하며 배송시작으로 변경 -->
