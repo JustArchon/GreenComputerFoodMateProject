@@ -357,15 +357,14 @@ $(document).ready(function(){ //페이지가 준비되면
     if (response.success === false) {
         var userResponse = confirm(response.alertMsg);
         if (userResponse) {
-            // 확인 버튼 클릭 -> 로그인 페이지로 이동
-            window.location.href = contextPath + "/member/loginForm";  // 로그인 페이지 URL로 수정
+            window.location.href = contextPath + "/member/loginForm";
         } else {
-            // 취소 버튼 클릭 -> 사이트 메인으로 이동
-            window.location.href = contextPath + "/main";  // 사이트 메인 URL로 수정
+            window.location.href = contextPath + "/main";
         }
     } else {
         alert("알 수 없는 오류가 발생했습니다.");
     }
+    // 음... 스크립트마다 핸들에러를 만들어야하나?
 }
 </script>
 <%-- 현재 페이지 정보 가져오기 (기본값: 1페이지) --%>
