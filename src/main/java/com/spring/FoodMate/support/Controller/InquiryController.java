@@ -31,7 +31,7 @@ public class InquiryController {
 
     // 상품 문의 작성 페이지로 이동
     @RequestMapping("/support/inquiryProduct")
-    public ModelAndView productInquiryForm(HttpServletRequest request) {
+    public ModelAndView productInquiryForm(HttpServletRequest request) throws Exception {
         HttpSession session = request.getSession(false);
 
         // 로그인 상태 체크

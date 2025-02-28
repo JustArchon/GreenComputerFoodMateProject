@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.spring.FoodMate.cart.dto.CartDTO;
+import com.spring.FoodMate.common.SessionDTO;
+import com.spring.FoodMate.common.exception.UnauthorizedException;
 import com.spring.FoodMate.order.dao.OrderDAO;
 import com.spring.FoodMate.order.dto.OrderAddressDTO;
 import com.spring.FoodMate.order.dto.OrderDTO;
@@ -71,17 +73,41 @@ public class OrderService {
     	return orderDAO.findOrderByOrderId(ord_id);
     }
     
-    public OrderAddressDTO getOrderAddressByOrdId(int ord_id) {
+    public OrderAddressDTO getOrderAddressByOrdId(int ord_id) throws Exception {
     	return orderDAO.getOrderAddressByOrdId(ord_id);
     }
     
     // 판매자의 운송장번호 업데이트에 쓰는거
-    public void updateWaybill(int ord_id, String del_code, String waybill_num) {
+    public void updateWaybill(int ord_id, String del_code, String waybill_num) throws Exception {
         orderDAO.updateWaybill(ord_id, del_code, waybill_num);
     }
     
-        // 사용자가 주문한 상품 목록을 가져오는 메소드
-    public List<ProductDTO> getOrderedProducts(String buyerId) {
+    // 사용자가 주문한 상품 목록을 가져오는 메서드
+    public List<ProductDTO> getOrderedProducts(String buyerId) throws Exception {
         return orderDAO.getOrderedProductsByBuyerId(buyerId);  // OrderDAO에서 가져오는 메소드
+    }
+    
+    // 배송 상태 수정하려할때 그 주문이 요청자와 관계 있는 주문인지 확인하는 메서드
+    public boolean isOwnOrder(String userId, String del_code, String waybill_num) throws Exception {
+    	return orderDAO.isOwnOrder(userId, del_code, waybill_num) > 0;
+    }
+    
+    // 택배사와 운송장번호를 받아서 그거랑 일치하는 행의 상태코드를 ord_stat으로 바꿔주는 메서드
+    public boolean updateOrderStatus(String del_code, String waybill_num, int ord_stat) throws Exception {
+    	return orderDAO.updateOrderStatus(del_code, waybill_num, ord_stat) > 0;
+    }
+    
+    public boolean updateOrdStatProcess(SessionDTO userInfo, OrderDTO deliInfo, int ord_stat) throws Exception {
+        // 해당 주문이 이 사용자의 주문인지 확인하는 로직 추가
+        String userId = userInfo.getUserId();
+        String userRole = userInfo.getUserRole();
+        String delCode = deliInfo.getDel_Code();
+        String waybillNum = deliInfo.getWaybill_Num();
+
+        if ("admin".equals(userRole) || userRole == null || !isOwnOrder(userId, delCode, waybillNum)) {
+            throw new UnauthorizedException(106); // 주문이랑 관련없는 사람이 주문상태 수정하려고 하면 권한106오류
+        }
+
+        return updateOrderStatus(delCode, waybillNum, ord_stat);
     }
 }

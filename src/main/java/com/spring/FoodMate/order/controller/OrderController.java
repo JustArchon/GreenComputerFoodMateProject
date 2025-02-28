@@ -252,29 +252,15 @@ public class OrderController {
 	    return result;
 	}
 	
-	@RequestMapping(value = "/order/updateStatus", method = RequestMethod.POST)
+	@RequestMapping(value = "/order/updateStatusTo3", method = RequestMethod.POST)
     public Map<String, Object> updateOrderStatus(@RequestBody OrderDTO deliInfo, HttpSession session) {
         Map<String, Object> response = new HashMap<>();
         
         try {
         	SessionDTO userInfo = (SessionDTO) session.getAttribute("sessionDTO");
-            String userId = userInfo.getUserId();
-            boolean isOwn = false; // false일땐 통과못하니깐 기본값 false로 안전빵
-            // 해당 주문이 이 사용자의 주문인지 확인하는 로직 추가
-            if (userInfo.getUserRole().equals("admin")) {
-            	throw new UnauthorizedException(106); // 주문이랑 관련없는 사람이 주문상태 수정하려고 하면
-            }
-            
-            isOwn = orderService.isByrOwnOrder(userId, deliInfo.getDel_Code(), deliInfo.getWaybill_Num());
-            
-            if (!isOwn) {
-            	throw new UnauthorizedException(106); // 주문이랑 관련없는 사람이 주문상태 수정하려고 하면
-            }
-
-            // 권한이 확인되면 상태 업데이트 진행
-            boolean updateSuccess = orderService.updateOrderStatus(request.getCarrierId(), request.getTrackingNumber());
-
-            if (updateSuccess) {
+        	boolean result = orderService.updateOrdStatProcess(userInfo, deliInfo, 3); // 3은 배송중
+        	
+            if (result) {
                 response.put("status", "success");
                 response.put("message", "주문 상태가 업데이트되었습니다.");
             } else {
@@ -289,5 +275,4 @@ public class OrderController {
 
         return response;  // 응답으로 Map을 반환
     }
-	
 }

@@ -137,6 +137,17 @@
 	    WHERE ord_id = #{ord_id}
 	</update>
 	
+	<select id="isOwnOrder" resultType="int"> <!-- parameterType Map 생략가능 -->
+	    SELECT COUNT(*)
+	    FROM foodmate_order
+	    WHERE del_Code = #{del_Code}
+	    AND waybill_Num = #{waybill_Num}
+	    AND (byr_id = #{userId} OR slr_id = #{userId})
+	</select>
 	
-	
+	<update id="updateOrderStatus">
+		UPDATE FOODMATE_ORDER
+		SET ORD_STAT = #{ord_stat}
+		WHERE DEL_CODE = #{del_Code} AND WAYBILL_NUM = #{waybill_Num}
+	</update>
 </mapper>

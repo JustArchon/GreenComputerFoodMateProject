@@ -3,10 +3,17 @@ package com.spring.FoodMate.order.controller;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+
+import io.github.cdimascio.dotenv.Dotenv;
+
 import java.util.*;
 
 @RestController
 public class TrackingAPIController {
+	
+	private final Dotenv dotenv = Dotenv.load();
+	private final String TRACKING_CLIENT_ID = dotenv.get("TRACKING_CLIENT_ID");
+	private final String TRACKING_CLIENT_SECRET = dotenv.get("TRACKING_CLIENT_SECRET");
 
     @RequestMapping(value = "/api/tracking", method = RequestMethod.POST)  // "/api/tracking" 경로로 POST 요청을 받음
     public ResponseEntity<Map<String, String>> trackPackage(@RequestBody Map<String, String> requestData) {
@@ -23,7 +30,7 @@ public class TrackingAPIController {
         // HTTP 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);  // 요청의 Content-Type을 JSON으로 설정
-        headers.set("Authorization", "TRACKQL-API-KEY id:secret");  // API Key를 Authorization 헤더에 추가
+        headers.set("Authorization", "TRACKQL-API-KEY " + TRACKING_CLIENT_ID + ":" + TRACKING_CLIENT_SECRET);  // API Key를 Authorization 헤더에 추가
         
         String query = """
                 query Track($carrierId: ID!, $trackingNumber: String!) {
@@ -58,6 +65,7 @@ public class TrackingAPIController {
 
         // 응답에서 상태 코드 추출
         if (response.getBody() != null) {
+        	System.out.println("디버깅 중, response.getBody() = " + response.getBody());
             // 응답 처리 로직 (예: JSON 파싱 후 상태 코드 추출)
             // 예시: 추출한 상태 코드가 "DELIVERED"일 경우
             if (response.getBody().contains("DELIVERED")) {

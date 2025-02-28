@@ -113,7 +113,7 @@ $(document).ready(function() {
 	        // 응답을 받아서 배송 상태를 페이지에 표시하는 로직
 	        var statusCode = trackResponse.statusCode;  // 서버에서 받은 상태 코드
 	        if (statusCode === "DELIVERED") {
-	          updateOrderStatus(del_code, waybill_num);  // 상태가 'DELIVERED'면 주문 상태를 갱신하는 함수 호출
+	          updateOrderStatusTo3(del_code, waybill_num);  // 상태가 'DELIVERED'면 주문 상태를 갱신하는 함수 호출
 	        }
 	        // 문자열 연결 방식으로 텍스트 업데이트
 	        $div.text("배송상태: " + statusCode);
@@ -128,9 +128,9 @@ $(document).ready(function() {
 
 // 위에서 구현된, 이용자로 인해 주문내역 페이지가 로딩되었을때 자동으로 실행되는 배송조회 기능에서
 // 배송상태가 "배송완료" 였을 경우 택배사코드랑 운송장번호만 넘겨서 db의 ord_stat을 배송완료로 바꿔주는 ajax 통신 
-function updateOrderStatus(del_code, waybill_num) {
+function updateOrderStatusTo3(del_code, waybill_num) {
 	  $.ajax({
-	    url: contextPath + "/order/updateStatus",
+	    url: contextPath + "/order/updateStatusTo3",
 	    method: "POST",
 	    contentType: "application/json",
 	    data: JSON.stringify({
