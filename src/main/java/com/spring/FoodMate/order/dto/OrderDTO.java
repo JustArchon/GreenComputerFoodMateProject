@@ -6,13 +6,13 @@ import org.springframework.stereotype.Component;
 
 @Component("orderDTO")
 public class OrderDTO {
-	private String ord_id;
+	private int ord_id;
 	private String ord_code; // 주문번호
     private String byr_id; // 구매자 ID
     private String slr_id; // 판매자 ID
     private int tot_Pdt_Price; // 총 상품 가격
     private int ship_Fee; // 배송비
-    private char ord_Stat; // 주문 상태 0 : 결제 대기 / 1 : 결제 완료, 배송 준비 / 2 : 배송 중 / 3 : 배송 완료 / 4 : 구매 확정 / 5 : 주문 취소 / 6 : 반품
+    private int ord_Stat; // 주문 상태 0 : 결제 대기 / 1 : 결제 완료, 배송 준비 / 2 : 배송 중 / 3 : 배송 완료 / 4 : 구매 확정 / 5 : 주문 취소 / 6 : 반품
     private LocalDateTime create_Date; // 생성 날짜
     private String del_Code; // 배송 코드
     private String waybill_Num; // 운송장 번호
@@ -25,7 +25,7 @@ public class OrderDTO {
     public OrderDTO() {}
 
     // 전체 필드를 포함한 생성자
-    public OrderDTO(String ord_id, String ord_code, String byrId, String slrId, int totPdtPrice, int shipFee, char ordStat, LocalDateTime createDate,
+    public OrderDTO(int ord_id, String ord_code, String byrId, String slrId, int totPdtPrice, int shipFee, char ordStat, LocalDateTime createDate,
                     String delCode, String waybillNum) {
         this.ord_id = ord_id;
     	this.ord_code = ord_code;
@@ -40,11 +40,11 @@ public class OrderDTO {
     }
 
     // Getter 및 Setter
-	public String getOrd_id() {
+	public int getOrd_id() {
 		return ord_id;
 	}
 
-	public void setOrd_id(String ord_id) {
+	public void setOrd_id(int ord_id) {
 		this.ord_id = ord_id;
 	}
     
@@ -88,11 +88,11 @@ public class OrderDTO {
 		this.ship_Fee = ship_Fee;
 	}
 
-	public char getOrd_Stat() {
+	public int getOrd_Stat() {
 		return ord_Stat;
 	}
 
-	public void setOrd_Stat(char ord_Stat) {
+	public void setOrd_Stat(int ord_Stat) {
 		this.ord_Stat = ord_Stat;
 	}
 
@@ -124,6 +124,8 @@ public class OrderDTO {
     @Override
     public String toString() {
         return "OrderDTO{" +
+                "ord_id='" + ord_id + '\'' +
+                "ord_code='" + ord_code + '\'' +
                 "byrId='" + byr_id + '\'' +
                 ", slrId='" + slr_id + '\'' +
                 ", totPdtPrice=" + tot_Pdt_Price +

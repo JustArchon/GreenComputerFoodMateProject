@@ -252,25 +252,21 @@ public class OrderController {
 	    return result;
 	}
 	
-	@RequestMapping(value = "/order/updateStatusTo3", method = RequestMethod.POST)
-    public Map<String, Object> updateOrderStatus(@RequestBody OrderDTO deliInfo, HttpSession session) {
+	@RequestMapping(value = "/order/updateStatus", method = RequestMethod.POST)
+	@ResponseBody
+    public Map<String, Object> updateOrderStatusTo3(@RequestBody OrderDTO deliInfo, HttpSession session) throws Exception {
         Map<String, Object> response = new HashMap<>();
+        System.out.println("오더컨트롤러에서 디버깅중 : " + deliInfo.toString());
         
-        try {
-        	SessionDTO userInfo = (SessionDTO) session.getAttribute("sessionDTO");
-        	boolean result = orderService.updateOrdStatProcess(userInfo, deliInfo, 3); // 3은 배송중
-        	
-            if (result) {
-                response.put("status", "success");
-                response.put("message", "주문 상태가 업데이트되었습니다.");
-            } else {
-                response.put("status", "error");
-                response.put("message", "주문 상태 업데이트 실패.");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    	SessionDTO userInfo = (SessionDTO) session.getAttribute("sessionDTO");
+    	boolean result = orderService.updateOrdStatProcess(userInfo, deliInfo);
+    	
+        if (result) {
+            response.put("status", "success");
+            response.put("message", "주문 상태가 업데이트되었습니다.");
+        } else {
             response.put("status", "error");
-            response.put("message", "서버 오류 발생");
+            response.put("message", "주문 상태 업데이트 실패.");
         }
 
         return response;  // 응답으로 Map을 반환

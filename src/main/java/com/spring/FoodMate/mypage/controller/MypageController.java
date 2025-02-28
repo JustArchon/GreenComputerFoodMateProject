@@ -1,5 +1,7 @@
 package com.spring.FoodMate.mypage.controller;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -167,7 +169,7 @@ public class MypageController {
 		return new ModelAndView();
 	}
 	
-	// 구매자의 주문내역 확인
+	// 구매자의 정상 주문내역 확인
 	@RequestMapping(value="/mypage/ShoppingManage/orderlist", method=RequestMethod.GET)
 	private ModelAndView orderlist(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
 		ModelAndView mav = new ModelAndView();
@@ -178,15 +180,40 @@ public class MypageController {
 		// 아이디 넣어서 오더들 output전용으로 가져오기
 
 		for (OrderDTOoutput order : orders) { // List인 orders에서 하나씩 OrderDTOoutput을 꺼내서 order에 저장, 자동반복
-            List<OrderDetailDTOoutput> orderDetails = orderService.getOrderDetailsByOrderId(order.getOrd_id());
+			
+			List<OrderDetailDTOoutput> orderDetails = orderService.getOrderDetailsByOrderId(order.getOrd_id());
             // 현재 ord_id 갖고와서 orderService의 그 긴거 메서드로 주문상세정보 리스트로 가져옴
             order.setOrderDetails(orderDetails);
             //orderDTOoutput에 그 리스트 저장함
+			
         }
 		mav.addObject("orderList", orders);
 		// orderLilst 속성으로 그 긴거 전달
 		return mav;
 	}
+	
+	// 구매자의 비정상 주문내역 확인
+		@RequestMapping(value="/mypage/ShoppingManage/cancellist", method=RequestMethod.GET)
+		private ModelAndView cancellist(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+			ModelAndView mav = new ModelAndView();
+			SessionDTO sessionDTO = (SessionDTO) session.getAttribute("sessionDTO");
+			// 아이디 꺼내와서
+			
+			List<OrderDTOoutput> orders = orderService.getCancelOrdersByByrId(sessionDTO.getUserId());
+			// 아이디와 필요한 상태코드들넣어서 오더들 output전용으로 가져오기
+
+			for (OrderDTOoutput order : orders) { // List인 orders에서 하나씩 OrderDTOoutput을 꺼내서 order에 저장, 자동반복
+				
+				List<OrderDetailDTOoutput> orderDetails = orderService.getOrderDetailsByOrderId(order.getOrd_id());
+	            // 현재 ord_id 갖고와서 orderService의 그 긴거 메서드로 주문상세정보 리스트로 가져옴
+	            order.setOrderDetails(orderDetails);
+	            //orderDTOoutput에 그 리스트 저장함
+				
+	        }
+			mav.addObject("orderList", orders);
+			// orderLilst 속성으로 그 긴거 전달
+			return mav;
+		}
 	
 	@RequestMapping(value="/mypage/ShoppingManage/wishlistManageForm", method=RequestMethod.GET)
 	private ModelAndView wishlistManageForm(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
