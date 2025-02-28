@@ -261,7 +261,7 @@ public class OrderController {
         System.out.println("오더컨트롤러에서 디버깅중 : " + deliInfo.toString());
         
     	SessionDTO userInfo = (SessionDTO) session.getAttribute("sessionDTO");
-    	boolean result = orderService.updateOrdStatProcess(userInfo, deliInfo);
+    	boolean result = orderService.updateOrdStatProcess(userInfo, deliInfo, 3);
     	
         if (result) {
             response.put("status", "success");
