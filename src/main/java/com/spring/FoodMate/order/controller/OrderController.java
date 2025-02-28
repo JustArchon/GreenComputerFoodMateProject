@@ -205,6 +205,9 @@ public class OrderController {
         Map<String, Object> result = new HashMap<>();
         // 현재 로그인한 이용자 정보 가져오기
         SessionDTO userInfo = (SessionDTO) session.getAttribute("sessionDTO");
+        if (userInfo == null) {
+        	throw new UnauthorizedException(101);
+        }
         String userId = userInfo.getUserId();
         String userRole = userInfo.getUserRole();
         

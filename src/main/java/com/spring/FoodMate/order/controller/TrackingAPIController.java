@@ -70,6 +70,8 @@ public class TrackingAPIController {
             // 예시: 추출한 상태 코드가 "DELIVERED"일 경우
             if (response.getBody().contains("DELIVERED")) {
                 statusCode = "DELIVERED";
+            } else if (response.getBody().contains("NOT_FOUND")) {
+            	statusCode = "NOT_FOUND";
             } else {
                 statusCode = "IN_TRANSIT";  // 그 외 상태
             }

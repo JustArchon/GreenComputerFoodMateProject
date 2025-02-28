@@ -4,7 +4,7 @@ public class UnauthorizedException extends RuntimeException {
     private static final long serialVersionUID = 4L;
     
     private int errorCode;
-    // 101 : 세션에 sessionDTO 자체가 없는 오류
+    // 101 : 세션에 sessionDTO 자체가 없는 오류. 세션 만료로 인한 것도 일단 포함하는중.
     // 102 : sessionDTO의 userRole이 구매자가 아님
     // 103 : sessionDTO의 userRole이 판매자가 아님
     // 104 : sessionDTO의 userRole이 관리자가 아님

@@ -46,7 +46,6 @@ public class GlobalExceptionHandler {
 
  // 로그인 관련 예외 처리
     @ExceptionHandler(UnauthorizedException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ResponseBody
     public Object handleUnauthorizedException(HttpServletRequest request, HttpServletResponse response, UnauthorizedException ex) {
     	HttpSession session = request.getSession();

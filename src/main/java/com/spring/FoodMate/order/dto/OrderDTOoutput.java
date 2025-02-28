@@ -54,6 +54,7 @@ public class OrderDTOoutput {
 			case "kr.cjlogistics" : return "CJ대한통운";
 			case "kr.lotte" : return "롯데택배";
 			case "kr.hanjin" : return "한진택배";
+			case "kr.logen" : return "로젠택배";
 			default: return "불명";
 			}			
 		}

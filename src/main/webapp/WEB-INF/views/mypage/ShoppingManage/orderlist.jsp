@@ -94,10 +94,6 @@
 	                   $("#addrDetail").text(response.data.addrDetail);
 	                   $("#delivMessage").text(response.data.toName);
 	                   $("#addressModal").modal("show"); // 모달 띄우기
-	               } else if (response.status === "error") {
-	                   alert(response.message); // 이렇게 해도 되나? response.message가 있는지부터 확인해야하나?
-	               } else {
-	               	alert("알 수 없는 오류가 발생했습니다.")
 	               }
 	           },
 	           error: function() {
@@ -230,7 +226,8 @@
         }
       },
       error: function() {
-        alert("서버 오류 발생.");
+    	
+        alert(response.alertMsg);
       }
     });
   }
@@ -250,8 +247,11 @@
         var statusCode = trackResponse.statusCode;
         if (statusCode === "DELIVERED") {
           updateOrderStatus(0, delCode, waybillNum, 3);  // 배송 완료 확인시 상태 갱신
+        } else {
+        	$div.text("배송상태: " + statusCode + "<br>택배사: " + delCode + "<br>운송장번호: " + waybillNum);
+        	// 여기에 배송 상세조회 만들어야함
         }
-        $div.text("배송상태: " + statusCode);
+        
       },
       error: function(xhr, status, error) {
         console.error("Request failed:", status, error);
@@ -298,12 +298,19 @@
 
   // 오류 처리
   function handleError(response) {
-    if (response.status === "error") {
-      alert(response.message);
+    if (response.success === false) {
+        var userResponse = confirm(response.alertMsg);
+        if (userResponse) {
+            // 확인 버튼 클릭 -> 로그인 페이지로 이동
+            window.location.href = contextPath + "/member/loginForm";  // 로그인 페이지 URL로 수정
+        } else {
+            // 취소 버튼 클릭 -> 사이트 메인으로 이동
+            window.location.href = contextPath + "/main";  // 사이트 메인 URL로 수정
+        }
     } else {
-      alert("알 수 없는 오류가 발생했습니다.");
+        alert("알 수 없는 오류가 발생했습니다.");
     }
-  }
+}
 </script>
 <%-- 현재 페이지 정보 가져오기 (기본값: 1페이지) --%>
 <c:set var="currentPage" value="${param.page != null ? param.page : 1}" />
