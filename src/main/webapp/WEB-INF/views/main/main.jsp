@@ -66,10 +66,19 @@
 			        <div class="item-title d-flex flex-column justify-content-center align-items-center">
 			            <h5><strong>${recipe.title}</strong></h5>
 			            <div class="item_etc">
-		                	<p><span>${recipe.create_date}</span>  리뷰 <span>0</span>개  조회수: <span>0</span></p>
+		                	<p><span>${recipe.create_date}</span>  리뷰 <span>${recipe.review_count}</span>개  조회수: <span>0</span></p>
 		                </div>
 		               	<div class="item_review_star">
-		                	<p><span>⭐⭐⭐⭐⭐</span></p>
+		                	<p><span>
+		                	<c:choose>
+				                <c:when test="${recipe.rating == 5}">⭐⭐⭐⭐⭐</c:when>
+				                <c:when test="${recipe.rating == 4}">⭐⭐⭐⭐</c:when>
+				                <c:when test="${recipe.rating == 3}">⭐⭐⭐</c:when>
+				                <c:when test="${recipe.rating == 2}">⭐⭐</c:when>
+				                <c:when test="${recipe.rating == 1}">⭐</c:when>
+				                <c:otherwise></c:otherwise>
+				            </c:choose>
+				            </span></p>
 		                </div>
 		                <div class="item-footer">
 		              		<p><span>작성자: ${recipe.nickname}</span></p>
@@ -89,10 +98,19 @@
 			        <div class="item-title d-flex flex-column justify-content-center align-items-center">
 			            <h5><strong>${recipe.title}</strong></h5>
 			            <div class="item_etc">
-		                	<p><span>${recipe.create_date}</span>  리뷰 <span>0</span>개  조회수: <span>0</span></p>
+		                	<p><span>${recipe.create_date}</span>  리뷰 <span>${recipe.review_count}</span>개  조회수: <span>0</span></p>
 		                </div>
 		                <div class="item_review_star">
-		                	<p><span>⭐⭐⭐⭐⭐</span></p>
+		                	<p><span>
+		                	<c:choose>
+				                <c:when test="${recipe.rating == 5}">⭐⭐⭐⭐⭐</c:when>
+				                <c:when test="${recipe.rating == 4}">⭐⭐⭐⭐</c:when>
+				                <c:when test="${recipe.rating == 3}">⭐⭐⭐</c:when>
+				                <c:when test="${recipe.rating == 2}">⭐⭐</c:when>
+				                <c:when test="${recipe.rating == 1}">⭐</c:when>
+				                <c:otherwise></c:otherwise>
+				            </c:choose>
+				            </span></p>
 		                </div>
 		                <div class="item-footer">
 		              		<p><span>작성자: ${recipe.nickname}</span></p>

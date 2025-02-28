@@ -71,6 +71,7 @@ public class MypageController {
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("myrecipeList", recipeService.selectRecipeListByrID(byr_id)); //서비스에 selectRecipeList메소드있어야함
 		mav.addObject("orderList", orderService.getOrderDetailsByByrId(byr_id));
+		mav.addObject("wishList", wishlistService.getwishList(byr_id));
 		mav.addObject("profile", profileDTO);
 		return mav;
 	}
@@ -90,6 +91,24 @@ public class MypageController {
 		
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("myrecipeList", recipeService.selectRecipeListByrID(byr_id)); //서비스에 selectRecipeList메소드있어야함
+		return mav;
+	}
+	
+	@RequestMapping(value="/mypage/mateManage/myrecipereviewForm", method=RequestMethod.GET)
+	private ModelAndView mateManagemyrecipereviewform(@RequestParam(value="result", required=false) String result, @RequestParam(value="action",required=false) String action, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		HttpSession session = request.getSession();
+		session.setAttribute("action", action);
+		
+		BuyerDTO buyerInfo = (BuyerDTO) session.getAttribute("buyerInfo"); // 세션에서 buyerInfo 가져오기
+		String byr_id = null;
+
+		if (buyerInfo != null) {
+		    byr_id = buyerInfo.getByr_id(); // byr_id 값 추출
+		}
+		
+		
+		ModelAndView mav = new ModelAndView();
+		mav.addObject("myrecipeReviewList", recipeService.selectRecipeReviewByrIDList(byr_id)); //서비스에 selectRecipeList메소드있어야함
 		return mav;
 	}
 	

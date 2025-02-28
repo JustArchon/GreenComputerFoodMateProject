@@ -20,6 +20,9 @@
             padding: 10px;
             flex-shrink: 0; /* 푸터 크기가 줄어들지 않음 */
         }
+        .content {
+            padding: 5px;
+        }
 </style>
 <header>
 	<div class="row">

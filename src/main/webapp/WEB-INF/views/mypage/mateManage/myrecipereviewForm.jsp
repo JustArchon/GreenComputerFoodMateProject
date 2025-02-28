@@ -45,32 +45,28 @@
 			</tr>
 		</thead>
       	<tbody>
-      	<tr>
-          <td class="review-cell">
-          	<img src="${contextPath}/resources/images/Food/bazilpasta.jpg" alt="바질 파스타" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
-          	<span class="text-truncate-multiline">
-          		이 레시피는 재료도 간단하고 따라 하기 쉬워서 초보자에게도 딱이에요. 바질 소스가 깊은 풍미를 주는데, 신선한 채소와 치즈를 올리니 정말 레스토랑 같은 맛이 나더라고요. 가족 모두가 만족한 저녁 식사였습니다! 이 레시피는 제 파스타 요리 중 최애 메뉴로 자리 잡았어요. 강력 추천합니다!
-          	</span>
-          </td>
-          <td>⭐⭐⭐⭐⭐</td>
-          <td>2024-12-24 16:16:13</td>
-          <td>
-            <button class="btn btn-outline-secondary btn-sm" disabled>바로가기</button>
-          </td>
-        </tr>
-        <tr>
-          <td class="review-cell">
-          	<img src="${contextPath}/resources/images/Food/dumpling.jpg" alt="만두" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
-          	<span class="text-truncate-multiline">
-          		만두피부터 속재료까지 이 레시피는 집에서 간편하게 만들 수 있도록 잘 설명되어 있어요. 특히, 만두 속의 재료 비율이 아주 적절해서 맛이 정말 균형 잡혀 있었어요. 직접 만든 만두라 그런지 쫄깃한 만두피와 풍성한 속재료의 조화가 레스토랑에서 먹는 것보다 더 만족스러웠습니다!
-          	</span>
-          </td>
-          <td>⭐⭐⭐⭐</td>
-          <td>2024-12-24 16:16:13</td>
-          <td>
-            <button class="btn btn-outline-secondary btn-sm" disabled>바로가기</button>
-          </td>
-        </tr>
+      	<c:forEach var="review" items="${myrecipeReviewList}">
+	      	<tr>
+	          <td class="review-cell">
+	          	<img src="${contextPath}/resources/images/${review.mainimg_path}" alt="${review.mainimg_path}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+	          	<span class="text-truncate-multiline">
+	          		${review.comments}
+	          	</span>
+	          </td>
+	          <td><c:choose>
+	          <c:when test="${review.rating == 5}">⭐⭐⭐⭐⭐</c:when>
+	          <c:when test="${review.rating == 4}">⭐⭐⭐⭐</c:when>
+	          <c:when test="${review.rating == 3}">⭐⭐⭐</c:when>
+	          <c:when test="${review.rating == 2}">⭐⭐</c:when>
+	          <c:when test="${review.rating == 1}">⭐</c:when>
+	          <c:otherwise></c:otherwise>
+	          </c:choose></td>
+	          <td>${review.create_date}</td>
+	          <td>
+	            <button class="btn btn-outline-secondary btn-sm" onclick="location.href='${contextPath}/recipe/recipe_Detail?rcp_id=${review.rcp_id}';">바로가기</button>
+	          </td>
+	        </tr>
+	    </c:forEach>
 		</tbody>
 	</table>
 	<nav aria-label="Page navigation">

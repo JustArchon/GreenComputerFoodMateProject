@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 <!DOCTYPE html>
 <html>
@@ -58,12 +60,132 @@
 }
 </style>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
   var contextPath = "${contextPath}";
 
   // 페이지 준비 시 실행
   $(document).ready(function() {
+	  
+	let orderList = [
+	    <c:forEach var="order" items="${orderList}" varStatus="loop">
+	        {
+	            ord_id: "${order.ord_id}",
+	            create_Date: "${order.create_Date}",
+	            tot_Pdt_Price: parseFloat("${order.tot_Pdt_Price}"),
+	            ship_Fee: parseFloat("${order.ship_Fee}"),
+	            total: parseFloat("${order.tot_Pdt_Price}") + parseFloat("${order.ship_Fee}"),
+	            ord_stat_msg: "${order.ord_stat_msg}"
+	        }<c:if test="${!loop.last}">,</c:if>
+	    </c:forEach>
+	];
+	   $(".view-address-button").click(function(){ //.view-address-btn 클래스가 클릭되면
+	       let ordId = $(this).data("ord-id"); // 버튼에서 ord_id 가져오기
+		
+	       $.ajax({
+	           type: "POST",
+	           url: contextPath + "/order/getAddress",
+	           data: { ord_id: ordId },
+	           success: function(response) {
+	               if (response.status === "success") {
+	                   $("#toName").text(response.data.toName);
+	                   $("#toPhoneNum").text(response.data.toPhoneNum);
+	                   $("#addr").text(response.data.addr);
+	                   $("#addrDetail").text(response.data.addrDetail);
+	                   $("#delivMessage").text(response.data.toName);
+	                   $("#addressModal").modal("show"); // 모달 띄우기
+	               } else if (response.status === "error") {
+	                   alert(response.message); // 이렇게 해도 되나? response.message가 있는지부터 확인해야하나?
+	               } else {
+	               	alert("알 수 없는 오류가 발생했습니다.")
+	               }
+	           },
+	           error: function() {
+	               alert("서버 오류 발생.");
+	           }
+	       });
+	   });
+	   
+	   const endDateInput = document.getElementById('end-date');
+	  const startDateInput = document.getElementById('start-date');
+	  const buttons = document.querySelectorAll('.btn-group button');
+	
+	  // 오늘 날짜를 "yyyy-MM-dd" 형식으로 리턴하는 함수
+	  function getTodayFormatted() {
+	    return new Date().toISOString().substring(0, 10);
+	  }
+	
+	  // 페이지 로드 시 end-date에 오늘 날짜 설정
+	  endDateInput.value = getTodayFormatted();
+	
+	  // 버튼에 설정된 일수만큼 이전 날짜를 계산하여 start-date에 반영
+	  function updateStartDate(days) {
+	    const endDate = new Date(endDateInput.value);
+	    endDate.setDate(endDate.getDate() - days);
+	    startDateInput.value = endDate.toISOString().substring(0, 10);
+	  }
+	
+	  // 기본으로 "오늘" 버튼 (data-days="0")에 따라 start-date 설정
+	  updateStartDate(0);
+	
+	  // 각 버튼 클릭 이벤트 처리
+	  buttons.forEach(button => {
+	    button.addEventListener('click', function() {
+	      // 모든 버튼에서 active 클래스 제거 후, 클릭한 버튼에 active 추가
+	      buttons.forEach(btn => btn.classList.remove('active'));
+	      this.classList.add('active');
+	
+	      const days = parseInt(this.getAttribute('data-days'), 10);
+	      updateStartDate(days);
+	    });
+	  });
+	  
+	  function renderTable(data) { 
+		    let tbody = $("#order-list-body");
+		    tbody.empty(); // 기존 데이터 삭제
+	
+		    data.forEach(item => {
+		        tbody.append(`
+		            <tr>
+		                <td>${item.ord_id}</td>
+		                <td>${item.create_Date}</td>
+		                <td>${item.tot_Pdt_Price}</td>
+		                <td>${item.ship_Fee}</td>
+		                <td>${item.total}</td>
+		                <td>${item.ord_stat_msg}</td>
+		                <td><button class="btn btn-outline-secondary btn-sm view-address-button" data-ord-id="${item.ord_id}">
+		                배송지 확인</button></td>
+		                <td><button class="btn btn-outline-secondary btn-sm view-shipping-button" data-ord-id="${item.ord_id}">
+		                배송상태조회</button></td>
+		            </tr>
+		        `);
+		    });
+		}
+	
+	  function filterByDate() {
+		    let startDate = $("#start-date").val();
+		    let endDate = $("#end-date").val();
+	
+		    if (!startDate || !endDate) {
+		        alert("시작 날짜와 종료 날짜를 선택하세요.");
+		        return;
+		    }
+	
+		    let filteredData = orderList.filter(item => {
+		        let orderDate = new Date(item.create_Date);
+		        
+		        return orderDate >= new Date(startDate) && orderDate <= new Date(endDate);
+		    });
+	
+		    renderTable(filteredData);
+		}
+	
+	    $(document).ready(function () {
+	
+	        // 조회 버튼 클릭 이벤트
+	        $("#search-date").on("click", );
+	    });
+
     // 주소 보기 버튼 클릭 시
     $(".view-address-button").click(function() {
       var ordId = $(this).data("ord-id"); // 버튼에서 ord_id 가져오기
@@ -183,7 +305,16 @@
     }
   }
 </script>
+<%-- 현재 페이지 정보 가져오기 (기본값: 1페이지) --%>
+<c:set var="currentPage" value="${param.page != null ? param.page : 1}" />
+<c:set var="itemsPerPage" value="3" />
+<c:set var="startIndex" value="${(currentPage - 1) * itemsPerPage}" />
+<c:set var="endIndex" value="${currentPage * itemsPerPage}" />
 
+<%-- 전체 데이터 개수 구하기 --%>
+<c:set var="totalItems" value="${fn:length(orderList)}" />
+<fmt:parseNumber var="parsedTotalPages" value="${(totalItems + itemsPerPage - 1) / itemsPerPage}" integerOnly="true" />
+<c:set var="totalPages" value="${parsedTotalPages}" />
 </head>
 <body>
 <main>
@@ -211,12 +342,13 @@
         		<input type="date" id="end-date" class="form-control w-auto" value="2025-01-13" />
     		
     			<!-- Search Button -->
-      			<button type="button" class="btn btn-success">조회</button>
+      			<button type="button" id="search-date" class="btn btn-success">조회</button>
     		</div>
     	</div>
 	</div>
 	
-	<c:forEach var="order" items="${orderList}">
+	<c:forEach var="order" items="${orderList}" varStatus="status">
+	<c:if test="${status.index >= startIndex && status.index < endIndex}">
     	<table class="table table-hover table-custom">
         <thead class="table-header table-secondary">
         <tr>
@@ -230,13 +362,13 @@
         <th></th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="order-list-body">
         	<tr>
         		<td>${order.ord_id}</td>
         		<td>${order.create_Date}</td>
-        		<td>${order.tot_Pdt_Price}</td>
-        		<td>${order.ship_Fee}</td>
-        		<td>${order.tot_Pdt_Price + order.ship_Fee}</td>
+        		<td><fmt:formatNumber value="${order.tot_Pdt_Price}" type="number" groupingUsed="true" />원</td>
+        		<td><fmt:formatNumber value="${order.ship_Fee}" type="number" groupingUsed="true" />원</td>
+        		<td><fmt:formatNumber value="${order.tot_Pdt_Price + order.ship_Fee}" type="number" groupingUsed="true" />원</td>
         		<td>${order.ord_stat_msg}</td>
         		<td><button class="btn btn-outline-secondary btn-sm view-address-button" data-ord-id="${order.ord_id}">
         		배송지 확인</button></td>
@@ -274,7 +406,7 @@
             <c:forEach var="detail" items="${order.orderDetails}">
                 <tr>
                     <td><img class="productImg" src=${contextPath}/resources/images/${detail.img_path}>${detail.pdt_name}</td>
-                    <td>${detail.pdt_price}</td>
+                    <td><fmt:formatNumber value="${detail.pdt_price}" type="number" groupingUsed="true" />원</td>
                     <td>${detail.qty}</td>
                 </tr>
             </c:forEach>
@@ -282,6 +414,7 @@
         </table>
         <div style="border:3px solid black; width:100%; margin-bottom: 10px;"></div>
         <!-- 임시 구분선 -->
+        </c:if>
     </c:forEach>
 	
 	
@@ -307,31 +440,27 @@
     </div>
 </div>
 	
-	<nav aria-label="Page navigation">
-	  <ul class="pagination justify-content-center">
-	    <li class="page-item">
-	      <a class="page-link" href="#" aria-label="Previous">
-	        <span aria-hidden="true">Prev</span>
-	      </a>
-	    </li>
-	    <li class="page-item active" aria-current="page">
-	      <a class="page-link" href="#">1</a>
-	    </li>
-	    <li class="page-item"><a class="page-link" href="#">2</a></li>
-	    <li class="page-item"><a class="page-link" href="#">3</a></li>
-	    <li class="page-item"><a class="page-link" href="#">4</a></li>
-	    <li class="page-item"><a class="page-link" href="#">5</a></li>
-	    <li class="page-item"><a class="page-link" href="#">6</a></li>
-	    <li class="page-item"><a class="page-link" href="#">7</a></li>
-	    <li class="page-item"><a class="page-link" href="#">8</a></li>
-	    <li class="page-item"><a class="page-link" href="#">9</a></li>
-	    <li class="page-item"><a class="page-link" href="#">10</a></li>
-	    <li class="page-item">
-	      <a class="page-link" href="#" aria-label="Next">
-	        <span aria-hidden="true">Next</span>
-	      </a>
-	    </li>
-	  </ul>
+	<%-- 페이지네이션 --%>
+	<nav>
+	    <ul class="pagination justify-content-center">
+	        <c:if test="${currentPage > 1}">
+	            <li class="page-item">
+	                <a class="page-link" href="?page=${currentPage - 1}">Prev</a>
+	            </li>
+	        </c:if>
+	
+	        <c:forEach var="i" begin="1" end="${totalPages}">
+	            <li class="page-item ${i == currentPage ? 'active' : ''}">
+	                <a class="page-link" href="?page=${i}">${i}</a>
+	            </li>
+	        </c:forEach>
+	
+	        <c:if test="${currentPage < totalPages}">
+	            <li class="page-item">
+	                <a class="page-link" href="?page=${currentPage + 1}">Next</a>
+	            </li>
+	        </c:if>
+	    </ul>
 	</nav>
 </div>
 </main>

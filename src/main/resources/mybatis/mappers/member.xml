@@ -169,7 +169,7 @@
 			update foodmate_buyer
 			       set status= 'DELETING'
 		 	       where byr_id=#{byr_id}
-			        and pw=#{pw}
+			        and pw=#{password}
     	]]>
 	</update>
 	

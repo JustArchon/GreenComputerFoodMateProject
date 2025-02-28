@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 <!DOCTYPE html>
 <html>
@@ -49,12 +50,76 @@
 	    }
 </style>
 <script>
+var contextPath = '${contextPath}';
         $(document).ready(function() {
+            $("#checkAll").click(function() {
+                let allChecked = $(".wish-checkbox").length === $(".wish-checkbox:checked").length;
+                $(".wish-checkbox").prop("checked", !allChecked).trigger("change");
+            });
+            
             $('.myrecipy').slick({
                 slidesToShow: 3,
                 slidesToScroll: 1,
                 autoplay: true,
                 autoplaySpeed: 3500
+            });
+            
+            $(".btn-delete-wish").click(function() {
+                if (!confirm("정말로 찜 상품을 삭제하시겠습니까?")) return;
+
+                let row = $(this).closest("tr");
+                let wishlistId = row.attr("data-wishid");
+
+                $.ajax({
+                    url: contextPath + "/wishlist/remove", // 위시리스트에서 삭제 요청을 보낼 서블릿
+                    type: "POST",
+                    data: { wishlistId: wishlistId },
+                    success: function(response) {
+                        alert("성공적으로 찜 상품을 삭제했습니다.");
+                        row.remove(); // 삭제 후 해당 행 제거
+                        location.reload(true);
+                    },
+                    error: function() {
+                        alert("찜 상품을 삭제 실패했습니다.");
+                    }
+                });
+            });
+            
+            $(".btn-add-cart").click(function() {
+            	let row = $(this).closest("tr");
+            	var wishlistId = row.attr("data-wishid");
+                var productId = row.attr("data-id");
+                var quantity = row.attr("data-qty");
+
+                $.ajax({
+                    url: contextPath + "/cart/addtocart",  // Spring 컨트롤러의 URL에 맞게 변경
+                    type: "POST",
+                    data: {
+                        "productId": productId,
+                        "quantity": quantity
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                         // 장바구니 추가 시 찜 목록에서도 제거
+                            $.ajax({
+                                url: contextPath + "/wishlist/remove",
+                                type: "POST",
+                                data: { "wishlistId": wishlistId },
+                                success: function(removeResponse) {
+                                		alert("장바구니 추가에 성공했습니다!");
+                                        row.remove(); // UI에서도 삭제
+                                        location.reload(true);
+                                }
+                            });
+                            
+                        } else {
+                            alert("장바구니 추가에 실패했습니다. 다시 시도해주세요.");
+                        }
+                    },
+                    error: function() {
+                        alert("장바구니 추가 중 오류가 발생했습니다.");
+                    }
+                });
             });
         });
 </script>
@@ -88,14 +153,22 @@
 						        <div class="item-title d-flex flex-column justify-content-center align-items-center">
 						            <h5><strong>${recipe.title}</strong></h5>
 						            <div class="item_etc">
-					                	<p><span>${recipe.create_date}</span>  리뷰 <span>0</span>개  조회수: <span>0</span></p>
+					                	<p><span>${recipe.create_date}</span>  리뷰 <span>${recipe.review_count}</span>개  조회수: <span>0</span></p>
 					                </div>
 					               	<div class="item_review_star">
-					                	<p><span>⭐⭐⭐⭐⭐</span></p>
+					                	<p><span>
+					                	<c:choose>
+							                <c:when test="${recipe.rating == 5}">⭐⭐⭐⭐⭐</c:when>
+							                <c:when test="${recipe.rating == 4}">⭐⭐⭐⭐</c:when>
+							                <c:when test="${recipe.rating == 3}">⭐⭐⭐</c:when>
+							                <c:when test="${recipe.rating == 2}">⭐⭐</c:when>
+							                <c:when test="${recipe.rating == 1}">⭐</c:when>
+							                <c:otherwise></c:otherwise>
+							            </c:choose>
+							            </span></p>
 					                </div>
 					                <div class="item-footer">
 					              		<p><span>작성자: ${recipe.nickname}</span></p>
-					              		<p>♥ <span>0</span></p>
 					            	</div>
 						        </div>
 						    </div>
@@ -106,7 +179,7 @@
 		</div>
 	  <div class="d-flex justify-content-between align-items-center mt-2 mb-2">
 	  		<h5 class="mb-0 fw-bold">최근 주문 내역</h5>
-	  		<p class="mb-0">더보기
+	  		<p class="mb-0"><a href="${contextPath}/mypage/ShoppingManage/orderlist">더보기</a></p>
       </div>
       <table class="table table-hover table-custom">
 		<thead class="table-header table-secondary">
@@ -120,7 +193,9 @@
 			</tr>
 		</thead>
       	<tbody>
+      	<c:set var="count1" value="0" />
 			<c:forEach var="order" items="${orderList}">
+			<c:if test="${count1 < 3}">
 	            <tr>
 	                <!-- 주문 날짜 및 주문번호 -->
 	                <td>(${order.ord_id})</td>
@@ -133,7 +208,7 @@
 	                </td>
 	
 	                <!-- 상품 금액 및 수량 -->
-	                <td>${order.pdt_price}원 (${order.qty}개)</td>
+	                <td><fmt:formatNumber value="${order.pdt_price}" type="number" groupingUsed="true" />원 (${order.qty}개)</td>
 	
 	                <!-- 주문 상태 -->
 	                <td>${order.ord_stat_msg}</td>
@@ -158,66 +233,51 @@
 						</div>
 	                </td>
 	            </tr>
+	            <c:set var="count1" value="${count1 + 1}" />
+    		</c:if>
 	        </c:forEach>
 		</tbody>
 	</table>
 	<div class="d-flex justify-content-between align-items-center mb-2">
       		<h5 class="mb-0 fw-bold">찜 목록</h5>
-      		<p class="mb-0">더보기
+      		<p class="mb-0"><a href="${contextPath}/mypage/ShoppingManage/wishlistManageForm">더보기</a></p>
       </div>
       <table class="table table-hover table-custom">
 		<thead class="table-header table-primary">
 			<tr>
 				<td><input type="checkbox" id="checkAll"></td>
-				<td>상품명/옵션</td>
+				<td>상품명</td>
 				<td>상품금액/수량</td>
 				<td>혜택</td>
 				<td>주문</td>
 			</tr>
 		</thead>
       	<tbody>
-      	<tr>
-          <td><input type="checkbox" id="check1"></td>
-          <td>
-          <img src="${contextPath}/resources/images/Shopping/pig.jpg" alt="돼지고기" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
-          돼지고기 뒷다리살 400g
-          </td>
-          <td>
-            <div class="d-flex flex-column gap-1 align-items-center">
-		    	<span>10,900 / 1개</span>
-		    	<button class="btn btn-outline-secondary btn-sm " style="width:120px;" disabled>옵션/수량변경</button>
-		  	</div>
-          </td>
-          <td>적립<br>
-          상품 + 199원</td>
-          <td>
-          <div class="d-flex flex-column gap-1 align-items-center">
-            <button class="btn btn-outline-success btn-sm" disabled>장바구니</button>
-            <button class="btn btn-outline-secondary btn-sm" disabled>삭제하기</button>
-           </div>
-          </td>
-        </tr>
-        <tr>
-          <td><input type="checkbox" id="check2"></td>
-          <td>
-          <img src="${contextPath}/resources/images/Shopping/cow.jpg" alt="소고기" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
-          소고기 국거리 400g
-          </td>
-          <td>
-            <div class="d-flex flex-column gap-1 align-items-center">
-		    	<span>13,900 / 1개</span>
-		    	<button class="btn btn-outline-secondary btn-sm " style="width:120px;" disabled>옵션/수량변경</button>
-		  	</div>
-          </td>
-          <td>적립<br>
-          상품 + 199원</td>
-          <td>
-            <div class="d-flex flex-column gap-1 align-items-center">
-            	<button class="btn btn-outline-success btn-sm" disabled>장바구니</button>
-            	<button class="btn btn-outline-secondary btn-sm" disabled>삭제하기</button>
-           </div>
-          </td>
-        </tr>
+      	<c:set var="count2" value="0" />
+	      	<c:forEach var="wish" items="${wishList}" varStatus="status">
+	      		<c:if test="${count2 < 3}">
+			        <tr data-wishid="${wish.wishlist_id}" data-id="${wish.pdt_id}" data-name="${wish.name}" data-price="${wish.price}" data-qty="${wish.qty}">
+			          <td><input type="checkbox" id="wish-check" class="wish-checkbox"></td>
+			          <td>
+			          <img src="${contextPath}/resources/images/${wish.img_path}" alt="${wish.name}" class="img-fluid rounded" style="width: 50px; height: 50px; object-fit: cover;">
+			          ${wish.name}
+			          </td>
+			          <td>
+			            <div class="d-flex flex-column gap-1 align-items-center">
+					    	<span><fmt:formatNumber value="${wish.qty * wish.price}" type="number" groupingUsed="true" />원 / ${wish.qty}개</span>
+					  	</div>
+			          </td>
+			          <td>적립<br>
+			          <td>
+			            <div class="d-flex flex-column gap-1 align-items-center">
+			            	<button class="btn btn-outline-success btn-sm btn-add-cart">장바구니</button>
+			            	<button class="btn btn-outline-danger btn-sm btn-delete-wish">삭제하기</button>
+			           </div>
+			          </td>
+			        </tr>
+			        <c:set var="count2" value="${count2 + 1}" />
+	      		</c:if>
+		    </c:forEach>
 		</tbody>
 	</table>
 		<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">

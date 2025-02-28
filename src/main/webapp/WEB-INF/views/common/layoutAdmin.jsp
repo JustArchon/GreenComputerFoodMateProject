@@ -13,24 +13,71 @@
 <title>${title}</title>
 <style>
 		html, body {
-		        height: 100%;
-		        margin: 0;
-		    }
+		    height: 100%;
+		    margin: 0;
+		    display: flex;
+		    flex-direction: column;
+		}
+		
+		/* 전체 컨테이너 */
+        .container-fluid {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+		
         .sidebar {
             background-color: #f8f9fa;
-            height: 100vh; /* 화면 높이 */
+            width: 250px;
+            height: 100vh; /* 화면 전체 높이 */
             padding: 20px;
+            position: fixed;
+            top: 60px; /* 헤더 밑에 배치 */
+            left: 0;
+            z-index: 100;
+            overflow-y: auto; /* 사이드바 내부에 스크롤 추가 */
+		    scrollbar-width: none; /* Firefox에서 스크롤바 숨기기 */
+		    -ms-overflow-style: none; /* IE 및 Edge에서 스크롤바 숨기기 */
         }
+        
+        /* 크롬, 사파리에서 스크롤바 숨기기 */
+		.sidebar::-webkit-scrollbar {
+			 display: none;
+		}
+
         .content {
-        	flex: 1; /* 남은 공간을 채움 */
-            padding: 20px;
-        }
+		    flex: 1; /* 남은 공간을 차지 */
+		    display: flex;
+		    flex-direction: column; /* 요소들을 세로로 정렬 */
+		    align-items: center; /* 가로 중앙 정렬 */
+		    justify-content: center; /* 세로 중앙 정렬 (필요할 경우) */
+		    text-align: center; /* 텍스트 중앙 정렬 */
+		    padding: 20px;
+		}
+
+        
+        .container-fluid {
+		    flex: 1;
+		}
+		
         .header, .footer {
+        	width: 100%;
             background-color: #ffffff;
             color: white;
             text-align: center;
             padding: 10px;
             flex-shrink: 0; /* 푸터 크기가 줄어들지 않음 */
+            width: calc(100% - 250px); /* 사이드바만큼 너비 빼기 */
+        }
+        
+        .header {
+            top: 0;
+            left: 250px; /* 사이드바 만큼 왼쪽으로 밀기 */
+        }
+
+        .footer {
+            bottom: 0;
+            left: 250px; /* 사이드바 만큼 왼쪽으로 밀기 */
         }
     </style>
 </head>
@@ -67,7 +114,7 @@
             <!-- Main Content -->
             <c:choose>
             	<c:when test="${showSidebar}">
-            		<div class="col-md-9 content">
+            		<div class="col-md-12 content">
             	</c:when>
             	<c:otherwise>
             		<div class="col-md-12 content">

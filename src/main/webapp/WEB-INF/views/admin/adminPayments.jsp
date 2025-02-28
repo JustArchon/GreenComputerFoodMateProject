@@ -193,7 +193,7 @@
                         <td>사용자 1</td>
                         <td>₩100,000</td>
                         <td><button class="btn">구매 확정</button></td>
-                        <td><a href="${contextPath}/admin/adminOrderDetail.do">상세 보기</a></td>                        
+                        <td><a href="${contextPath}/admin/adminPaymentDetail">상세 보기</a></td>                        
                     </tr>
                     <tr>
                         <td>2025-01-02</td>

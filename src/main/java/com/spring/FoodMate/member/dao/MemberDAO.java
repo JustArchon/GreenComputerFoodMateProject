@@ -53,8 +53,8 @@ public class MemberDAO {
 		return result;
 	}
 	
-	public void updateResetBuyerPW(BuyerDTO buyerVO) throws DataAccessException{
-		sqlSession.update("mapper.member.updateResetBuyerPW",buyerVO);
+	public void updateResetBuyerPW(BuyerDTO buyerDTO) throws DataAccessException{
+		sqlSession.update("mapper.member.updateResetBuyerPW",buyerDTO);
 	}
 	
 	public void updateResetSellerPW(SellerDTO sellerVO) throws DataAccessException{
@@ -70,5 +70,9 @@ public class MemberDAO {
 	}
 	public void updateBuyer(BuyerDTO buyerDTO) throws DataAccessException{
 		sqlSession.insert("mapper.member.updateBuyer",buyerDTO);
+	}
+	
+	public int deleteMember(BuyerDTO buyerDTO) throws DataAccessException{
+		return sqlSession.update("mapper.member.updateMemberdeleting",buyerDTO);
 	}
 }
