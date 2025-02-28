@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <c:set var="contextPath" value="${pageContext.request.contextPath }"/>
 <!DOCTYPE html>
 <html>
@@ -28,8 +30,23 @@
 	      vertical-align: middle;
 	      text-align: center;
 	    }
+	    
+	    .review { min-width: 600px; max-width: 600px; }
+		.rating { min-width: 80px; max-width: 80px; }
+		.date { min-width: 80px; max-width: 80px; }
+		.link { min-width: 80px; max-width: 80px; }
 </style>
 </head>
+<%-- 현재 페이지 정보 가져오기 (기본값: 1페이지) --%>
+<c:set var="currentPage" value="${param.page != null ? param.page : 1}" />
+<c:set var="itemsPerPage" value="8" />
+<c:set var="startIndex" value="${(currentPage - 1) * itemsPerPage}" />
+<c:set var="endIndex" value="${currentPage * itemsPerPage}" />
+
+<%-- 전체 데이터 개수 구하기 --%>
+<c:set var="totalItems" value="${fn:length(myrecipeReviewList)}" />
+<fmt:parseNumber var="parsedTotalPages" value="${(totalItems + itemsPerPage - 1) / itemsPerPage}" integerOnly="true" />
+<c:set var="totalPages" value="${parsedTotalPages}" />
 <body>
 <div class="container mt-1">
 	<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
@@ -38,10 +55,10 @@
 	<table class="table table-hover table-custom">
 		<thead class="table-header table-secondary">
 			<tr>
-				<td>리뷰</td>
-				<td>별점</td>
-				<td>작성날짜</td>
-				<td>바로가기</td>
+				<td class="review">리뷰</td>
+		        <td class="rating">별점</td>
+		        <td class="date">작성날짜</td>
+		        <td class="link">바로가기</td>
 			</tr>
 		</thead>
       	<tbody>
@@ -69,31 +86,27 @@
 	    </c:forEach>
 		</tbody>
 	</table>
-	<nav aria-label="Page navigation">
-	  <ul class="pagination justify-content-center">
-	    <li class="page-item">
-	      <a class="page-link" href="#" aria-label="Previous">
-	        <span aria-hidden="true">Prev</span>
-	      </a>
-	    </li>
-	    <li class="page-item active" aria-current="page">
-	      <a class="page-link" href="#">1</a>
-	    </li>
-	    <li class="page-item"><a class="page-link" href="#">2</a></li>
-	    <li class="page-item"><a class="page-link" href="#">3</a></li>
-	    <li class="page-item"><a class="page-link" href="#">4</a></li>
-	    <li class="page-item"><a class="page-link" href="#">5</a></li>
-	    <li class="page-item"><a class="page-link" href="#">6</a></li>
-	    <li class="page-item"><a class="page-link" href="#">7</a></li>
-	    <li class="page-item"><a class="page-link" href="#">8</a></li>
-	    <li class="page-item"><a class="page-link" href="#">9</a></li>
-	    <li class="page-item"><a class="page-link" href="#">10</a></li>
-	    <li class="page-item">
-	      <a class="page-link" href="#" aria-label="Next">
-	        <span aria-hidden="true">Next</span>
-	      </a>
-	    </li>
-	  </ul>
+	<%-- 페이지네이션 --%>
+	<nav>
+	    <ul class="pagination justify-content-center">
+	        <c:if test="${currentPage > 1}">
+	            <li class="page-item">
+	                <a class="page-link" href="?page=${currentPage - 1}">Prev</a>
+	            </li>
+	        </c:if>
+	
+	        <c:forEach var="i" begin="1" end="${totalPages}">
+	            <li class="page-item ${i == currentPage ? 'active' : ''}">
+	                <a class="page-link" href="?page=${i}">${i}</a>
+	            </li>
+	        </c:forEach>
+	
+	        <c:if test="${currentPage < totalPages}">
+	            <li class="page-item">
+	                <a class="page-link" href="?page=${currentPage + 1}">Next</a>
+	            </li>
+	        </c:if>
+	    </ul>
 	</nav>
 </div>
 </body>

@@ -1,10 +1,14 @@
-어드민 페이지, 결제 포인트 사용 반영 -> 쇼핑관리 or + -> 최근본 상품, 바로구매
+어드민 페이지, 결제 포인트 사용 반영 -> 쇼핑리뷰 -> 최근본 상품, 바로구매
 -> 메인페이지 선택시 active변경, 레시피,식재료 평균레이팅 표시
 -> 쿠폰 날짜선택 로그확인, 레시피칸에서는 레시피검색 활성화, 식재료는 재료검색활성화, 조회기간 구현[난이도너무높음]
 
 마이페이지 픽스내용
-포인트 테스트
-포인트 구매확정
+
+취소/반품/교환 내역
+ORDER 테이블에 6,7 옵션을 넣어서 반품신청 확인, 취소확인
+
+환불/입금 내역
+Payment를 join해서 확인하고 3이면 환불완료, 1이면 처리중이라고 표시
 
 바로구매
 
@@ -210,3 +214,11 @@ START WITH 1
 INCREMENT BY 1
 NOCACHE
 NOCYCLE;
+
+      				<tr>
+			      	  <td>${pointlog.created_at}</td>
+			          <td>${pointlog.point_type}</td>
+			          <td>${pointlog.description}</td>
+			          <td>${pointlog.valid_until} 까지</td>
+			          <td>${pointlog.amount}원</td>
+			        </tr>

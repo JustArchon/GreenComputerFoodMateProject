@@ -44,7 +44,7 @@
             <option value="">상품을 선택해주세요</option>
             <!-- 주문한 상품 목록을 출력 -->
             <c:forEach var="product" items="${orderedProducts}">
-              <option value="${product.pdtId}">${product.pdtName}</option>
+              <option value="${product.pdt_id}">${product.name}</option>
             </c:forEach>
           </select>
         </div>

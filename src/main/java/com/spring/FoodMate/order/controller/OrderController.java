@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -270,5 +272,29 @@ public class OrderController {
         }
 
         return response;  // 응답으로 Map을 반환
+    }
+	
+	@RequestMapping(value = "/order/updateStatus", method = RequestMethod.POST)
+    public ResponseEntity<Map<String, Object>> updateOrderStatusCustom(@RequestBody Map<String, Object> requestData, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+        	boolean result = orderService.updateOrderStatusByOrdCode((String) requestData.get("slr_id"), (String) requestData.get("ord_code"), (int) requestData.get("status")); // 3은 배송중
+
+            if (result) {
+                response.put("status", "success");
+                response.put("message", "주문 상태가 업데이트되었습니다.");
+                return ResponseEntity.ok(response); // ✅ HTTP 200 응답 보장
+            } else {
+                response.put("status", "error");
+                response.put("message", "주문 상태 업데이트 실패.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response); // ✅ HTTP 400 응답
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("status", "error");
+            response.put("message", "서버 오류 발생");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // ✅ HTTP 500 응답
+        }
     }
 }

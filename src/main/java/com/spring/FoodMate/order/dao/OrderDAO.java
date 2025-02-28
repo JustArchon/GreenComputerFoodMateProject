@@ -109,4 +109,12 @@ public class OrderDAO {
         params.put("ord_stat", ord_stat);
     	return sqlSession.update("mapper.order.updateOrderStatus", params);
     }
+    
+    public int updateOrderStatusByOrdCode(String slr_id, String ord_code, int ord_stat) throws DataAccessException {
+    	Map<String, Object> params = new HashMap<>();
+        params.put("slr_id", slr_id);
+        params.put("ord_code", ord_code);
+        params.put("ord_stat", ord_stat);
+    	return sqlSession.update("mapper.order.updateOrderStatusByOrdCode", params);
+    }
 }
