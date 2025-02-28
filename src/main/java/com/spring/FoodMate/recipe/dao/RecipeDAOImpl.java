@@ -141,5 +141,9 @@ public class RecipeDAOImpl implements RecipeDAO {
 	    sqlSession.update("mapper.recipe.updateRecipeRating", ratingDTO);
 	}
 	
+	@Override
+	public List<RecipeRatingDTO> selectRecipeReviewByrIDList(String byr_id) throws Exception {
+        return sqlSession.selectList("mapper.recipe.selectRecipeReviewByrIDList", byr_id);  // 레시피 목록 조회
+    }
 	
 }

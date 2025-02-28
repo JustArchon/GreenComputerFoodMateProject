@@ -15,6 +15,7 @@ public class RecipeDTO {
     private String description;
     private LocalDateTime create_date;
     private String status;
+    private int review_count;
     
     // DB 컬럼에 맞춘 필드 
     
@@ -48,4 +49,12 @@ public class RecipeDTO {
 	public void setNickname(String nickname) {		this.nickname = nickname;	}
     public double getRating() {      return rating;     }
 	public void setRating(double rating) { this.rating = rating;  }
+	public int getReview_count() {
+		return review_count;
+	}
+	public void setReview_count(int review_count) {
+		this.review_count = review_count;
+	}
+	
+	
 }

@@ -70,11 +70,14 @@ public class MemberController {
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
 		buyerDTO=memberService.login(loginMap);
 		if(buyerDTO!= null && buyerDTO.getByr_id()!=null){
-//			if(memberVO.getDel_yn().equals("Y")) {
-//				String message="회원 탈퇴가 진행중인 아이디입니다.\\n관리자에게 문의해 주세요.\\nEmail : hong@gil.dong";
-//				mav.addObject("message", message);
-//				mav.setViewName("/member/loginForm");
-//			} else {
+			if(buyerDTO.getStatus().equals("DELETING")) {
+				message  = "<script>";
+			    message +=" alert('회원 탈퇴가 진행중인 아이디입니다. 관리자에게 문의해 주세요. Email : admin@foodmate.com');";
+			    message += " location.href='"+request.getContextPath()+"/member/loginForm';";
+			    message += " </script>";
+				resEntity = new ResponseEntity(message, responseHeaders, HttpStatus.OK);
+				return resEntity;
+			} else {
 				HttpSession session=request.getSession();
 				session.invalidate(); //한번 싹 지우고가자 
 				session = request.getSession();
@@ -89,7 +92,7 @@ public class MemberController {
 				message  = "<script>";
 			    message += " location.href='"+request.getContextPath()+"/main';";
 			    message += " </script>";
-//			}
+			}
 			
 		}else{
 		    message  = "<script>";
@@ -120,11 +123,14 @@ public class MemberController {
         
 		buyerDTO=memberService.login(loginMap);
 		if(buyerDTO!= null && buyerDTO.getByr_id()!=null){
-//			if(memberVO.getDel_yn().equals("Y")) {
-//				String message="회원 탈퇴가 진행중인 아이디입니다.\\n관리자에게 문의해 주세요.\\nEmail : hong@gil.dong";
-//				mav.addObject("message", message);
-//				mav.setViewName("/member/loginForm");
-//			} else {
+			if(buyerDTO.getStatus().equals("DELETING")) {
+				message  = "<script>";
+			    message +=" alert('회원 탈퇴가 진행중인 아이디입니다. 관리자에게 문의해 주세요. Email : admin@foodmate.com');";
+			    message += " location.href='"+request.getContextPath()+"/member/loginForm';";
+			    message += " </script>";
+				resEntity = new ResponseEntity(message, responseHeaders, HttpStatus.OK);
+				return resEntity;
+			} else {
 				HttpSession session=request.getSession();
 				session=request.getSession();
 				session.setAttribute("isBuyerLogOn", true);
@@ -133,7 +139,7 @@ public class MemberController {
 				message  = "<script>";
 			    message += " location.href='"+request.getContextPath()+"/main';";
 			    message += " </script>";
-//			}
+			}
 			
 		}else{
 			HttpSession session = request.getSession();
@@ -295,6 +301,43 @@ public class MemberController {
 		return resEntity;
 	}
 	
+	@RequestMapping(value="/member/deletebuyer", method = RequestMethod.POST)
+	public ResponseEntity deleteBuyer(@RequestParam("password") String password,
+			                HttpServletRequest request, HttpServletResponse response) throws Exception {
+		response.setContentType("text/html; charset=UTF-8");
+		request.setCharacterEncoding("utf-8");
+		HttpSession session = request.getSession();
+		BuyerDTO buyerInfo = (BuyerDTO) session.getAttribute("buyerInfo"); // 세션에서 buyerInfo 가져오기
+		
+		String message = null;
+		ResponseEntity resEntity = null;
+		HttpHeaders responseHeaders = new HttpHeaders();
+		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
+		try {
+			boolean isDeleted = memberService.deleteMember(buyerInfo.getByr_id(), password);
+			if(isDeleted) {
+				session.invalidate();
+				message  = "<script>";
+			    message += "alert('회원탈퇴 신청이 완료되었습니다.');";
+			    message += " location.href='"+request.getContextPath()+"/main';";
+			    message += " </script>";
+			}else {
+				message  = "<script>";
+			    message += "alert('비밀번호가 일치하지 않습니다.');";
+			    message += " location.href='"+request.getContextPath()+"/mypage/customerManage/cancleAccountForm';";
+			    message += " </script>";
+			}
+		}catch(Exception e) {
+			message  = "<script>";
+		    message += "alert('작업 중 오류가 발생했습니다. 다시 시도해 주세요.');";
+		    message += " location.href='"+request.getContextPath()+"/mypage/customerManage/cancleAccountForm';";
+		    message += " </script>";
+			e.printStackTrace();
+		}
+		resEntity = new ResponseEntity(message, responseHeaders, HttpStatus.OK);
+		return resEntity;
+	}
+	
 	@RequestMapping(value="/member/loginslr" ,method = RequestMethod.POST)
 	public ResponseEntity loginslr(@RequestParam Map<String, String> loginMap,
 			                  HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -305,13 +348,15 @@ public class MemberController {
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
 		sellerDTO=memberService.loginslr(loginMap);
-		if(sellerDTO!= null && sellerDTO.getSlr_id()!=null){
-			
-//			if(memberVO.getDel_yn().equals("Y")) {
-//				String message="회원 탈퇴가 진행중인 아이디입니다.\\n관리자에게 문의해 주세요.\\nEmail : hong@gil.dong";
-//				mav.addObject("message", message);
-//				mav.setViewName("/member/loginForm");
-//			} else {
+		if(sellerDTO!= null && sellerDTO.getSlr_id()!=null){			
+			if(sellerDTO.getStatus().equals("DELETING")) {
+				message  = "<script>";
+			    message +=" alert('회원 탈퇴가 진행중인 아이디입니다. 관리자에게 문의해 주세요. Email : admin@foodmate.com');";
+			    message += " location.href='"+request.getContextPath()+"/member/loginForm';";
+			    message += " </script>";
+				resEntity = new ResponseEntity(message, responseHeaders, HttpStatus.OK);
+				return resEntity;
+			} else {
 				HttpSession session=request.getSession();
 				session.invalidate(); //한번 싹 지우고가자
 				session = request.getSession();
@@ -327,7 +372,7 @@ public class MemberController {
 				message  = "<script>";
 			    message += " location.href='"+request.getContextPath()+"/main';";
 			    message += " </script>";
-//			}
+			}
 			
 		}else{
 		    message  = "<script>";
@@ -349,22 +394,6 @@ public class MemberController {
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.add("Content-Type", "text/html; charset=utf-8");
 		try {
-//			MultipartFile file = _memberVO.getProfileImage();
-//			if (file != null && !file.isEmpty()) {
-//	            String baseDir = "C:/FoodMate/users/";
-//	            
-//	            String userId = _memberVO.getMember_id();
-//	            String uploadDir = baseDir + userId;
-//	            
-//	            File uploadPath = new File(uploadDir);
-//	            if (!uploadPath.exists()) {
-//	                uploadPath.mkdirs();
-//	            }
-//	            // 파일 저장
-//	            file.transferTo(new File(uploadDir + file.getOriginalFilename()));
-//	            _memberVO.setProfileImagePath(uploadDir + file.getOriginalFilename());
-//	            System.out.println("프로필 이미지 업로드 완료: " + file.getOriginalFilename());
-//	        }
 		    memberService.addSeller(_sellerDTO);
 		    
 		    message  = "<script>";

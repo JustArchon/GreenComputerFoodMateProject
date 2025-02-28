@@ -58,4 +58,6 @@ public interface RecipeService {
     public List<RecipeRatingDTO> getRatingsByRecipeId(int rcp_id) throws Exception;
     
     public void updateRecipeRating(RecipeRatingDTO ratingDTO);
+    
+    public List<RecipeRatingDTO> selectRecipeReviewByrIDList(String byr_id) throws Exception;
 }

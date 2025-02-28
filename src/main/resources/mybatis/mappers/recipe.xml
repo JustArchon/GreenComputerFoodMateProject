@@ -60,7 +60,8 @@
 	        R.DESCRIPTION, 
 	        R.STATUS, 
 	        R.CREATE_DATE,
-	       ROUND(COALESCE(AVG(RR.RATING), 0), 1) AS RATING <!-- 평점이 없으면 0을 대신하고, 평균 평점 계산 (소수 첫째 자리에서 둘째자리를 기준 반올림)-->
+	        COUNT(rr.rcp_id) AS REVIEW_COUNT,
+	        ROUND(COALESCE(AVG(RR.RATING), 0), 0) AS RATING <!-- 평점이 없으면 0을 대신하고, 평균 평점 계산 (소수 첫째 자리에서 둘째자리를 기준 반올림)-->
 	    FROM FOODMATE_RECIPE R
 	    LEFT JOIN FOODMATE_BUYER_PROFILE BP ON R.BYR_ID = BP.BYR_ID  -- 닉네임 조인
 	    LEFT JOIN FOODMATE_RECIPE_RATING RR ON R.RCP_ID = RR.RCP_ID  -- 평점 조인
@@ -86,10 +87,33 @@
 	        R.REQ_TIME, 
 	        R.DESCRIPTION, 
 	        R.STATUS, 
-	        R.CREATE_DATE
+	        R.CREATE_DATE,
+	        COUNT(rr.rcp_id) AS REVIEW_COUNT,
+	        ROUND(COALESCE(AVG(RR.RATING), 0), 0) AS RATING <!-- 평점이 없으면 0을 대신하고, 평균 평점 계산 (소수 첫째 자리에서 둘째자리를 기준 반올림)-->
 	    FROM FOODMATE_RECIPE R
 	    LEFT JOIN FOODMATE_BUYER_PROFILE BP ON R.BYR_ID = BP.BYR_ID
+	    LEFT JOIN FOODMATE_RECIPE_RATING RR ON R.RCP_ID = RR.RCP_ID  -- 평점 조인
 	    WHERE R.BYR_ID = #{byr_id}
+	    GROUP BY 
+	        R.RCP_ID, R.BYR_ID, BP.NICKNAME, R.CATEGORY_ID, R.TITLE, 
+	        R.MAINIMG_PATH, R.FOOD_NAME, R.REQ_TIME, R.DESCRIPTION, 
+	        R.STATUS, R.CREATE_DATE
+	    ORDER BY R.CREATE_DATE DESC -- 최신순 정렬
+	</select>
+	
+	<select id="selectRecipeReviewByrIDList" resultType="RecipeRatingDTO" parameterType="String">
+        SELECT 
+		    rr.CMT_RCP_RATING_ID,  -- 댓글 ID
+		    rr.RCP_ID,             -- 레시피 ID
+		    rr.BYR_ID,             -- 작성자 ID
+		    rr.RATING,             -- 평점
+		    rr.COMMENTS,           -- 댓글 내용
+		    rr.CREATE_DATE,        -- 작성일
+		    rr.UPDATE_DATE,        -- 수정일
+		    r.MAINIMG_PATH        -- 레시피 이미지 경로 (조인)
+		FROM FOODMATE_RECIPE_RATING rr
+		LEFT JOIN FOODMATE_RECIPE r ON rr.RCP_ID = r.RCP_ID
+        WHERE rr.BYR_ID = #{byr_id}
 	</select>
     
 	<!-- 레시피, 재료, 조리법 상세 조회  + 닉네임 구매자 프로필 테이블에서 가져옴-->

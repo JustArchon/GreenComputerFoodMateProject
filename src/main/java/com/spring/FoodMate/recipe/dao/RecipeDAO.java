@@ -54,4 +54,6 @@ public interface RecipeDAO {
 	
 	//레시피 후기 수정
 	public void updateRecipeRating(RecipeRatingDTO ratingDTO);
+
+	public List<RecipeRatingDTO> selectRecipeReviewByrIDList(String byr_id) throws Exception;
 }
