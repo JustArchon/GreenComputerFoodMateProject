@@ -1,5 +1,6 @@
 package com.spring.FoodMate.mypage.dto;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
@@ -12,8 +13,8 @@ public class PointDTO {
 	private String point_type; // 포인트 적립유형
 	private String description; // 설명
 	private int amount; // 적립,소모 금액
-	private LocalDateTime valid_until; // 유효기간
-	private LocalDateTime created_at; // 적립일자
+	private Date valid_until; // 유효기간
+	private Date created_at; // 적립일자
 	
 	// 생성자 (byr_id를 전달받는 생성자)
     public PointDTO() {
@@ -64,19 +65,19 @@ public class PointDTO {
 		this.amount = amount;
 	}
 
-	public LocalDateTime getValid_until() {
+	public Date getValid_until() {
 		return valid_until;
 	}
 
-	public void setValid_until(LocalDateTime valid_until) {
+	public void setValid_until(Date valid_until) {
 		this.valid_until = valid_until;
 	}
 
-	public LocalDateTime getCreated_at() {
+	public Date getCreated_at() {
 		return created_at;
 	}
 
-	public void setCreated_at(LocalDateTime created_at) {
+	public void setCreated_at(Date created_at) {
 		this.created_at = created_at;
 	}
     

@@ -1,6 +1,8 @@
 package com.spring.FoodMate.mypage.controller;
 
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -13,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +36,7 @@ public class PointController {
 	private PointService pointService;
 	
 	@RequestMapping(value="/mypage/pointAdd" ,method = RequestMethod.POST)
-	public ResponseEntity pointAdd(@ModelAttribute("OrderDetailDTO") OrderDetailDTO orderDetailDTO, @RequestParam("point_type") String pointtype,
+	public ResponseEntity pointAdd(@RequestBody Map<String, Object> pointData,
 			                HttpServletRequest request, HttpServletResponse response) throws Exception {
 		response.setContentType("text/html; charset=UTF-8");
 		request.setCharacterEncoding("utf-8");
@@ -50,10 +53,12 @@ public class PointController {
 		}
 		
 		try {
+			int point = (int) Math.round((int) pointData.get("amount") * 0.05);
 			PointDTO pointDTO = new PointDTO();
 			pointDTO.setByr_id(byr_id);
-			pointDTO.setAmount((int) Math.round(orderDetailDTO.getPdt_price() * 0.05));
-			pointDTO.setDescription(orderDetailDTO.getPdt_name() + orderDetailDTO.getQty()+"개");
+			pointDTO.setAmount(point);
+			pointDTO.setDescription((int) pointData.get("amount") + "원 구매");
+			pointDTO.setPoint_type((String) pointData.get("point_type"));
 			
 			pointService.addPoint(pointDTO);
 			

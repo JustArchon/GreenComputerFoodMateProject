@@ -97,6 +97,11 @@ public class OrderService {
     	return orderDAO.updateOrderStatus(del_code, waybill_num, ord_stat) > 0;
     }
     
+    // 판매자와 주문번호를 받아서 그거랑 일치하는 행의 상태코드를 ord_stat으로 바꿔주는 메서드
+    public boolean updateOrderStatusByOrdCode(String slr_id, String ord_code, int ord_stat) throws Exception {
+    	return orderDAO.updateOrderStatusByOrdCode(slr_id, ord_code, ord_stat) > 0;
+    }
+    
     public boolean updateOrdStatProcess(SessionDTO userInfo, OrderDTO deliInfo, int ord_stat) throws Exception {
         // 해당 주문이 이 사용자의 주문인지 확인하는 로직 추가
         String userId = userInfo.getUserId();

@@ -19,7 +19,8 @@ public class OrderDTO {
     
     // 차후 쿠폰, 포인트 시스템때 사용
 //    private int coupon_price;
-//    private int point_price;
+    private int point_price;
+    private int ord_StateChange;
 
     // 기본 생성자
     public OrderDTO() {}
@@ -120,8 +121,23 @@ public class OrderDTO {
 		this.waybill_Num = waybill_Num;
 	}
 
+    public int getOrd_StateChange() {
+		return ord_StateChange;
+	}
 
-    @Override
+	public void setOrd_StateChange(int ord_StateChange) {
+		this.ord_StateChange = ord_StateChange;
+	}
+
+	public int getPoint_price() {
+		return point_price;
+	}
+
+	public void setPoint_price(int point_price) {
+		this.point_price = point_price;
+	}
+
+	@Override
     public String toString() {
         return "OrderDTO{" +
                 "byrId='" + byr_id + '\'' +

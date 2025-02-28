@@ -150,4 +150,27 @@
 		SET ORD_STAT = #{ord_stat}
 		WHERE DEL_CODE = #{del_Code} AND WAYBILL_NUM = #{waybill_Num}
 	</update>
+	
+	<update id="updateOrderStatusByOrdCode" parameterType="map">
+		UPDATE FOODMATE_ORDER
+		SET ORD_STAT = #{ord_stat}
+		WHERE SLR_ID = #{slr_id} AND ORD_CODE = #{ord_code}
+	</update>
+	
+		    <!-- 사용자가 주문한 상품 목록을 가져오는 쿼리 -->
+    <select id="getOrderedProductsByBuyerId" parameterType="String" resultType="com.spring.FoodMate.product.dto.ProductDTO">
+        SELECT 
+            p.pdt_id, 
+            p.name, 
+            p.img_path, 
+            p.price
+        FROM 
+            FOODMATE_PRODUCT p
+        JOIN 
+            FOODMATE_ORDER_DETAIL od ON p.pdt_id = od.pdt_id
+        JOIN 
+            FOODMATE_ORDER o ON od.ord_id = o.ord_id
+        WHERE 
+            o.byr_id = #{buyerId}
+    </select>
 </mapper>

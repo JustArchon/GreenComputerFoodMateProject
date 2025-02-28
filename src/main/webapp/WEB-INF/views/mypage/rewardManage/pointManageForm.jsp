@@ -115,7 +115,6 @@
 
 	    $(document).ready(function () {
 	        // 초기 데이터 렌더링
-	        renderTable(pointLogList);
 
 	        // 조회 버튼 클릭 이벤트
 	        $("#search-date").on("click", );
