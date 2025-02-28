@@ -55,6 +55,10 @@ public class OrderService {
         return orderDAO.findOrdersByBuyer(byr_id);
     }
     
+    public List<OrderDTOoutput> getCancelOrdersByByrId(String byr_id) throws Exception {
+        return orderDAO.findCancelOrdersByBuyer(byr_id);
+    }
+    
     public List<OrderDetailDTOoutput> getOrderDetailsByByrId(String byr_id) throws Exception {
     	return orderDAO.findOrderDetailsByBuyer(byr_id);
     }
@@ -88,13 +92,15 @@ public class OrderService {
     }
     
     // 배송 상태 수정하려할때 그 주문이 요청자와 관계 있는 주문인지 확인하는 메서드
-    public boolean isOwnOrder(String userId, String del_code, String waybill_num) throws Exception {
-    	return orderDAO.isOwnOrder(userId, del_code, waybill_num) > 0;
+    public boolean isOwnOrder(String userId, int ord_id, String del_code, String waybill_num) throws Exception {
+    	int result = orderDAO.isOwnOrder(userId, ord_id, del_code, waybill_num);
+    	System.out.println("OrderService의 isOwnOrder에서 디버깅중 : 요청자와 관련있으면 0쵸과임 =" + result);
+    	return result > 0;
     }
     
     // 택배사와 운송장번호를 받아서 그거랑 일치하는 행의 상태코드를 ord_stat으로 바꿔주는 메서드
-    public boolean updateOrderStatus(String del_code, String waybill_num, int ord_stat) throws Exception {
-    	return orderDAO.updateOrderStatus(del_code, waybill_num, ord_stat) > 0;
+    public boolean updateOrderStatus(int ord_id, String del_code, String waybill_num, int ord_stat) throws Exception {
+    	return orderDAO.updateOrderStatus(ord_id, del_code, waybill_num, ord_stat) > 0;
     }
     
     // 판매자와 주문번호를 받아서 그거랑 일치하는 행의 상태코드를 ord_stat으로 바꿔주는 메서드
@@ -106,13 +112,16 @@ public class OrderService {
         // 해당 주문이 이 사용자의 주문인지 확인하는 로직 추가
         String userId = userInfo.getUserId();
         String userRole = userInfo.getUserRole();
+        
+        int ordId = deliInfo.getOrd_id();
         String delCode = deliInfo.getDel_Code();
         String waybillNum = deliInfo.getWaybill_Num();
+        int ordStat = deliInfo.getOrd_Stat();
 
-        if ("admin".equals(userRole) || userRole == null || !isOwnOrder(userId, delCode, waybillNum)) {
+        if ("admin".equals(userRole) || userRole == null || !isOwnOrder(userId, ordId, delCode, waybillNum)) {
             throw new UnauthorizedException(106); // 주문이랑 관련없는 사람이 주문상태 수정하려고 하면 권한106오류
         }
-
-        return updateOrderStatus(delCode, waybillNum, ord_stat);
+        
+        return updateOrderStatus(ordId, delCode, waybillNum, ordStat);
     }
 }

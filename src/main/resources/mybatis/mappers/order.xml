@@ -81,8 +81,18 @@
 	</insert>
 	
 	<!-- 마이페이지에서 쓰는, 출력 전용 -->
+	
+	<!-- 구매자 마이페이지, 정상 주문만 출력 -->
 	<select id="findOrdersByBuyer" parameterType="string" resultType="OrderDTOoutput">
-        SELECT * FROM FOODMATE_ORDER WHERE BYR_ID = #{byr_id}
+        SELECT *
+        FROM FOODMATE_ORDER
+        WHERE BYR_ID = #{byr_id} AND ORD_STAT IN (1, 2, 3, 4) 
+    </select>
+    
+    <select id="findCancelOrdersByBuyer" parameterType="string" resultType="OrderDTOoutput">
+        SELECT *
+        FROM FOODMATE_ORDER
+        WHERE BYR_ID = #{byr_id} AND ORD_STAT IN (5, 6) 
     </select>
     
     <!-- 구매자 마이페이지 메인에서 쓰는 출력 전용, 10개까지만 출력 -->
@@ -137,18 +147,39 @@
 	    WHERE ord_id = #{ord_id}
 	</update>
 	
-	<select id="isOwnOrder" resultType="int"> <!-- parameterType Map 생략가능 -->
+	<select id="isOwnOrder" resultType="int">
 	    SELECT COUNT(*)
 	    FROM foodmate_order
-	    WHERE del_Code = #{del_Code}
-	    AND waybill_Num = #{waybill_Num}
-	    AND (byr_id = #{userId} OR slr_id = #{userId})
+	    WHERE 
+	    	<trim prefixOverrides="AND">
+	        <if test="del_Code != null">
+	            del_Code = #{del_Code}
+	        </if>
+	        <if test="waybill_Num != null">
+	            AND waybill_Num = #{waybill_Num}
+	        </if>
+	        <if test="ord_id != null and ord_id != 0">
+	            AND ord_id = #{ord_id}
+	        </if>
+	        </trim>
+	        AND (byr_id = #{userId} OR slr_id = #{userId})
 	</select>
 	
 	<update id="updateOrderStatus">
-		UPDATE FOODMATE_ORDER
-		SET ORD_STAT = #{ord_stat}
-		WHERE DEL_CODE = #{del_Code} AND WAYBILL_NUM = #{waybill_Num}
+	    UPDATE FOODMATE_ORDER
+	    SET ORD_STAT = #{ord_stat}
+	    WHERE 
+	    <trim prefixOverrides="AND">
+        <if test="del_Code != null">
+            del_Code = #{del_Code}
+        </if>
+        <if test="waybill_Num != null">
+            AND waybill_Num = #{waybill_Num}
+        </if>
+        <if test="ord_id != null and ord_id != 0">
+            AND ord_id = #{ord_id}
+        </if>
+        </trim>
 	</update>
 	
 	<update id="updateOrderStatusByOrdCode" parameterType="map">
