@@ -1,7 +1,5 @@
 package com.spring.FoodMate.order.dto;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class OrderDTOoutput {
@@ -11,7 +9,7 @@ public class OrderDTOoutput {
     private String slr_id; // 판매자 ID
     private int tot_Pdt_Price; // 총 상품 가격
     private int ship_Fee; // 배송비
-	private char ord_stat; // 주문 상태 0 : 결제 대기 / 1 : 결제 완료, 배송 준비 / 2 : 배송 중 / 3 : 배송 완료 / 4 : 구매 확정 / 5 : 주문 취소 / 6 : 반품
+	private int ord_stat; // 주문 상태 0 : 결제 대기 / 1 : 결제 완료, 배송 준비 / 2 : 배송 중 / 3 : 배송 완료 / 4 : 구매 확정 / 5 : 주문 취소 / 6 : 반품
     private String create_Date; // 생성 날짜
     private String del_Code; // 배송 코드
     private String waybill_Num; // 운송장 번호
@@ -34,8 +32,8 @@ public class OrderDTOoutput {
     public void setTot_Pdt_Price(int tot_Pdt_Price) { this.tot_Pdt_Price = tot_Pdt_Price; } 
     public int getShip_Fee() { return ship_Fee; } 
     public void setShip_Fee(int ship_Fee) { this.ship_Fee = ship_Fee; } 
-    public char getOrd_stat() { return ord_stat; } 
-    public void setOrd_stat(char ord_stat) { this.ord_stat = ord_stat; } 
+    public int getOrd_stat() { return ord_stat; } 
+    public void setOrd_stat(int ord_stat) { this.ord_stat = ord_stat; } 
     public String getCreate_Date() { return create_Date; } 
     public void setCreate_Date(String create_Date) { this.create_Date = create_Date; } 
     public String getDel_Code() { return del_Code; } 
@@ -63,13 +61,13 @@ public class OrderDTOoutput {
 
 	public String getOrd_stat_msg() {
 		switch(getOrd_stat()) {
-		case '0' : return "결제 대기";
-		case '1' : return "배송 대기중";
-		case '2' : return "배송중";
-		case '3' : return "배송 완료";
-		case '4' : return "구매 확정";
-		case '5' : return "주문 취소됨";
-		case '6' : return "반품 및 교환";
+		case 0 : return "결제 대기";
+		case 1 : return "배송 대기중";
+		case 2 : return "배송중";
+		case 3 : return "배송 완료";
+		case 4 : return "구매 확정";
+		case 5 : return "주문 취소됨";
+		case 6 : return "반품 및 교환";
 		default: return "상태 불명";
 		}
 	}

@@ -76,15 +76,31 @@ public class OrderDAO {
     	return sqlSession.selectOne("mapper.order.findAddressByOrderId", ord_id);
     }
     
-    public void updateWaybill(int ord_id, String del_code, String waybill_num) {
+    public void updateWaybill(int ord_id, String del_code, String waybill_num) throws DataAccessException {
         Map<String, Object> params = new HashMap<>();
         params.put("ord_id", ord_id);
         params.put("del_code", del_code);
         params.put("waybill_num", waybill_num);
         sqlSession.update("mapper.order.updateWaybill", params);
     }
-      
-    public List<ProductDTO> getOrderedProductsByBuyerId(String buyerId) {
+    
+    public List<ProductDTO> getOrderedProductsByBuyerId(String buyerId) throws DataAccessException {
         return sqlSession.selectList("mapper.order.getOrderedProductsByBuyerId", buyerId);
+    }
+    
+    public int isOwnOrder(String userId, String del_code, String waybill_num) throws DataAccessException {
+    	Map<String, Object> params = new HashMap<>();
+        params.put("userId", userId);
+        params.put("del_Code", del_code);
+        params.put("waybill_Num", waybill_num);
+    	return sqlSession.selectOne("mapper.order.isOwnOrder", params);
+    }
+    
+    public int updateOrderStatus(String del_code, String waybill_num, int ord_stat) throws DataAccessException {
+    	Map<String, Object> params = new HashMap<>();
+        params.put("del_Code", del_code);
+        params.put("waybill_Num", waybill_num);
+        params.put("ord_stat", ord_stat);
+    	return sqlSession.update("mapper.order.updateOrderStatus", params);
     }
 }

@@ -185,6 +185,60 @@ $(document).ready(function(){ //페이지가 준비되면
 	    });
 });
 
+$(document).ready(function() {
+	  // 페이지 로딩 시, 배송 상태를 자동으로 조회
+	  $('.shipping-status').each(function() {
+	    var del_code = $(this).data('delcode');  // data-delcode에서 배송사 코드 가져오기
+	    var waybill_num = $(this).data('waybillnum');  // data-waybillnum에서 운송장 번호 가져오기
+
+	    var $div = $(this);
+	    // 내 서버로 배송 조회 요청 보내기
+	    $.ajax({
+	      url: contextPath + "/api/tracking",  // 내 서버의 TrackingController 엔드포인트로 요청
+	      method: "POST",
+	      contentType: "application/json",
+	      data: JSON.stringify({
+	        "carrierId": del_code,  // del_code를 carrierId로 사용
+	        "trackingNumber": waybill_num  // waybill_num을 trackingNumber로 사용
+	      }),
+	      success: function(trackResponse) {
+	        console.log(trackResponse);
+	        // 응답을 받아서 배송 상태를 페이지에 표시하는 로직
+	        var statusCode = trackResponse.statusCode;  // 서버에서 받은 상태 코드
+	        if (statusCode === "DELIVERED") {
+	          updateOrderStatusTo3(del_code, waybill_num);  // 상태가 'DELIVERED'면 주문 상태를 갱신하는 함수 호출
+	        }
+	        // 문자열 연결 방식으로 텍스트 업데이트
+	        $div.text("배송상태: " + statusCode);
+	      },
+	      error: function(xhr, status, error) {
+	        console.error("Request failed:", status, error);
+	        $div.text("배송 조회에 실패했습니다.");
+	      }
+	    });
+	  });
+	});
+
+// 위에서 구현된, 이용자로 인해 주문내역 페이지가 로딩되었을때 자동으로 실행되는 배송조회 기능에서
+// 배송상태가 "배송완료" 였을 경우 택배사코드랑 운송장번호만 넘겨서 db의 ord_stat을 배송완료로 바꿔주는 ajax 통신 
+function updateOrderStatusTo3(del_code, waybill_num) {
+	  $.ajax({
+	    url: contextPath + "/order/updateStatusTo3",
+	    method: "POST",
+	    contentType: "application/json",
+	    data: JSON.stringify({
+	    	"del_Code": del_code,
+	        "waybill_Num": waybill_num
+	    }),
+	    success: function(response) {
+	      console.log("주문 상태가 업데이트되었습니다.", response);
+	    },
+	    error: function(xhr, status, error) {
+	      console.error("주문 상태 업데이트 실패:", status, error);
+	    }
+	  });
+	}
+
 </script>
 <%-- 현재 페이지 정보 가져오기 (기본값: 1페이지) --%>
 <c:set var="currentPage" value="${param.page != null ? param.page : 1}" />
@@ -240,7 +294,7 @@ $(document).ready(function(){ //페이지가 준비되면
         <th>최종 금액</th>
         <th>주문 상태</th>
         <th>배송지 조회</th>
-        <th>배송조회</th>
+        <th></th>
         </tr>
         </thead>
         <tbody id="order-list-body">
@@ -253,10 +307,24 @@ $(document).ready(function(){ //페이지가 준비되면
         		<td>${order.ord_stat_msg}</td>
         		<td><button class="btn btn-outline-secondary btn-sm view-address-button" data-ord-id="${order.ord_id}">
         		배송지 확인</button></td>
-        		<td><button class="btn btn-outline-secondary btn-sm view-shipping-button" data-ord-id="${order.ord_id}">
-        		배송상태조회</button>
-        		<button class="btn btn-outline-success btn-sm confirm-order-button" data-ord-id="${order.ord_id}">
-        		구매확정</button></td>
+        		<td>
+        		<div class="d-flex flex-column gap-1">
+				    <c:choose>
+				        <c:when test="${order.ord_stat == 1}">
+				            <button class="btn btn-outline-danger btn-sm">주문취소</button>
+				        </c:when>
+				        <c:when test="${order.ord_stat == 2}">
+				            <div class="shipping-status" data-delcode="${order.del_Code}" data-waybillnum="${order.waybill_Num}">조회 중...</div>
+				        </c:when>
+				        <c:when test="${order.ord_stat == 3}">
+				            <button class="btn btn-outline-primary btn-sm">구매확정</button>
+				        </c:when>
+				        <c:when test="${order.ord_stat == 4}">
+				            <button class="btn btn-outline-success btn-sm">리뷰하기</button>
+				        </c:when>
+				    </c:choose>
+				</div>
+				</td>
         	</tr>
         </tbody>
 		</table>

@@ -12,6 +12,7 @@ public class UnauthorizedException extends RuntimeException {
     
     // 106 : 권한이 없는 일을 하려고 함(1.내 주문이 아닌 주문에 관해 뭔가 하려고함)
     // OrderController의 getOrderAddress 메서드에서 사용중
+    // OrderController의 updateOrderStatus 메서드에서 사용중
 
     public int getErrorCode() {
         return errorCode;

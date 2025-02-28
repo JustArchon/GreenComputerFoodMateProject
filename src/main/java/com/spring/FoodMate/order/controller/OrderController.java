@@ -12,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,7 +41,6 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 @Controller
 public class OrderController {
-	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
 	@Autowired
 	OrderService orderService; 
 	@Autowired
@@ -255,4 +252,27 @@ public class OrderController {
 	    return result;
 	}
 	
+	@RequestMapping(value = "/order/updateStatusTo3", method = RequestMethod.POST)
+    public Map<String, Object> updateOrderStatus(@RequestBody OrderDTO deliInfo, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+        	SessionDTO userInfo = (SessionDTO) session.getAttribute("sessionDTO");
+        	boolean result = orderService.updateOrdStatProcess(userInfo, deliInfo, 3); // 3은 배송중
+        	
+            if (result) {
+                response.put("status", "success");
+                response.put("message", "주문 상태가 업데이트되었습니다.");
+            } else {
+                response.put("status", "error");
+                response.put("message", "주문 상태 업데이트 실패.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.put("status", "error");
+            response.put("message", "서버 오류 발생");
+        }
+
+        return response;  // 응답으로 Map을 반환
+    }
 }
