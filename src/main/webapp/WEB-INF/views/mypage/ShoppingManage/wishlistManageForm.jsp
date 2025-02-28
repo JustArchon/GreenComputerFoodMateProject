@@ -35,7 +35,7 @@
 </head>
 <%-- 현재 페이지 정보 가져오기 (기본값: 1페이지) --%>
 <c:set var="currentPage" value="${param.page != null ? param.page : 1}" />
-<c:set var="itemsPerPage" value="10" />
+<c:set var="itemsPerPage" value="6" />
 <c:set var="startIndex" value="${(currentPage - 1) * itemsPerPage}" />
 <c:set var="endIndex" value="${currentPage * itemsPerPage}" />
 

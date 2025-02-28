@@ -62,11 +62,67 @@
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script>
-  var contextPath = "${contextPath}";
+var contextPath = "${contextPath}";
 
-  // 페이지 준비 시 실행
-  $(document).ready(function() {
-	  
+// 구매확정 시스템
+$(document).ready(function(){
+    $("#buyconfirmbtn").click(function(){
+        // 버튼에 저장된 데이터 추출
+        let slrId = $(this).data("slr-id");
+        let ordCode = $(this).data("ord-code");
+        let pdtPrice = $(this).data("pdt-price");
+        let qty = $(this).data("qty");
+        
+        // 1️ 주문 상태 업데이트에 필요한 데이터
+        let orderStatusData = {
+            slr_id: slrId,       // 판매자 ID (예제)
+            ord_code: ordCode, // 주문 코드 (예제)
+            status: 4           // 주문 상태: 구매확정(4)
+        };
+
+        // 2️ 포인트 적립에 필요한 데이터
+        let pointData = {
+            slr_id: slrId,       // 판매자 ID (예제)
+            ord_code: ordCode, // 주문 코드 (예제)
+            amount: pdtPrice, // 상품 가격 기준으로 5% 포인트 적립
+            point_type: "상품 구매"  // 포인트 적립 유형
+        };
+
+        // 1️ 주문 상태 변경 요청
+        $.ajax({
+            type: "POST",
+            url: contextPath + "/order/updateStatus",
+            data: JSON.stringify(orderStatusData),
+            contentType: "application/json",
+            success: function(response) {
+                console.log("주문 상태 업데이트 성공");
+
+                // 2️ 주문 상태 변경 후 포인트 적립 요청
+                $.ajax({
+                    type: "POST",
+                    url: contextPath + "/mypage/pointAdd",
+                    data: JSON.stringify(pointData),
+                    contentType: "application/json",
+                    success: function(response) {
+                        alert("구매확정 완료 및 포인트 적립 성공!");
+                        $("#buyconfirmbtn").prop("disabled", true).text("구매확정 완료");
+                    },
+                    error: function(error) {
+                        alert("포인트 적립 실패!");
+                        console.error(error);
+                    }
+                });
+            },
+            error: function(error) {
+                alert("주문 상태 업데이트 실패!");
+                console.error(error);
+            }
+        });
+    });
+});
+
+// 날짜 조회 시스템 [조회후 재렌더링은 미구현, 난이도가 너무높아서 순위낮춤]
+$(document).ready(function(){ //페이지가 준비되면
 	let orderList = [
 	    <c:forEach var="order" items="${orderList}" varStatus="loop">
 	        {
@@ -389,7 +445,11 @@
 				            <div class="shipping-status-${order.ord_stat}" data-delcode="${order.del_Code}" data-waybillnum="${order.waybill_Num}">조회 중...</div>
 				        </c:when>
 				        <c:when test="${order.ord_stat == 3}">
-				            <button class="btn btn-outline-primary btn-sm shipping-status-${order.ord_stat}" data-ord-id="${order.ord_id}">구매확정</button>
+				            <button class="btn btn-outline-primary btn-sm" id="buyconfirmbtn"
+				            data-slr-id="${order.slr_id}"
+			                data-ord-code="${order.ord_code}"
+			                data-pdt-price="${order.tot_Pdt_Price}"
+				            >구매확정</button>
 				        </c:when>
 				        <c:when test="${order.ord_stat == 4}">
 				            <button class="btn btn-outline-success btn-sm">리뷰하기</button>

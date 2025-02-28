@@ -52,6 +52,38 @@
 <script>
 var contextPath = '${contextPath}';
         $(document).ready(function() {
+        	// 페이지 로딩 시, 배송 상태를 자동으로 조회
+	      	  $('.shipping-status').each(function() {
+	      	    var del_code = $(this).data('delcode');  // data-delcode에서 배송사 코드 가져오기
+	      	    var waybill_num = $(this).data('waybillnum');  // data-waybillnum에서 운송장 번호 가져오기
+	
+	      	    var $div = $(this);
+	      	    // 내 서버로 배송 조회 요청 보내기
+	      	    $.ajax({
+	      	      url: contextPath + "/api/tracking",  // 내 서버의 TrackingController 엔드포인트로 요청
+	      	      method: "POST",
+	      	      contentType: "application/json",
+	      	      data: JSON.stringify({
+	      	        "carrierId": del_code,  // del_code를 carrierId로 사용
+	      	        "trackingNumber": waybill_num  // waybill_num을 trackingNumber로 사용
+	      	      }),
+	      	      success: function(trackResponse) {
+	      	        console.log(trackResponse);
+	      	        // 응답을 받아서 배송 상태를 페이지에 표시하는 로직
+	      	        var statusCode = trackResponse.statusCode;  // 서버에서 받은 상태 코드
+	      	        if (statusCode === "DELIVERED") {
+	      	          updateOrderStatusTo3(del_code, waybill_num);  // 상태가 'DELIVERED'면 주문 상태를 갱신하는 함수 호출
+	      	        }
+	      	        // 문자열 연결 방식으로 텍스트 업데이트
+	      	        $div.text("배송상태: " + statusCode);
+	      	      },
+	      	      error: function(xhr, status, error) {
+	      	        console.error("Request failed:", status, error);
+	      	        $div.text("배송 조회에 실패했습니다.");
+	      	      }
+	      	    });
+	      	  });
+        	
             $("#checkAll").click(function() {
                 let allChecked = $(".wish-checkbox").length === $(".wish-checkbox:checked").length;
                 $(".wish-checkbox").prop("checked", !allChecked).trigger("change");
@@ -221,7 +253,7 @@ var contextPath = '${contextPath}';
 						            <button class="btn btn-outline-danger btn-sm">주문취소</button>
 						        </c:when>
 						        <c:when test="${order.ord_stat == 2}">
-						            <button class="btn btn-outline-secondary btn-sm">배송조회</button>
+						            <div class="shipping-status" data-delcode="${order.del_Code}" data-waybillnum="${order.waybill_Num}">조회 중...</div>
 						        </c:when>
 						        <c:when test="${order.ord_stat == 3}">
 						            <button class="btn btn-outline-primary btn-sm">구매확정</button>

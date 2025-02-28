@@ -178,7 +178,7 @@ public class MypageController {
 		session.setAttribute("action", action);
 		ModelAndView mav = new ModelAndView();
 		mav.addObject("pointLogList", pointService.getpointLogList(byr_id));
-		return new ModelAndView();
+		return mav;
 	}
 	
 	@RequestMapping(value="/mypage/ShoppingManage/*Form", method=RequestMethod.GET)
