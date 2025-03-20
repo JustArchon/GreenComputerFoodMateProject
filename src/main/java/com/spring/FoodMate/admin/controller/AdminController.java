@@ -185,7 +185,7 @@ public class AdminController {
 		HttpSession session = request.getSession();
 		session.setAttribute("action", action);
 		List<OrderPaymentDTO> PaymentHistoryList = adminService.getAdminPaymentInfo("All", keyword, searchtype);
-		List<OrderPaymentDTO> PaymentMonthStateList = adminService.getAdminMonthPaymentInfo("Month", keyword, searchtype);
+		List<OrderPaymentDTO> PaymentMonthStateList = adminService.getAdminMonthPaymentInfo(keyword, searchtype);
 		List<OrderPaymentDTO> PaymentRefundList = adminService.getAdminPaymentInfo("Refund", keyword, searchtype);
 		
 		

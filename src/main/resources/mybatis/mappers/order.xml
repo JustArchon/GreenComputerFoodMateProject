@@ -242,7 +242,7 @@
 	</update>
 	
 	<!-- Admin 옵션 -->
-		<!-- 구매자 마이페이지, 정상 주문만 출력 -->
+	<!-- 구매자 마이페이지, 정상 주문만 출력 -->
 	<select id="selectAdminPaymentInfo" parameterType="map" resultType="OrderPaymentDTO">
         SELECT O.ord_id,
         	   O.tot_pdt_price,
@@ -263,5 +263,20 @@
             </when>
         </choose>
         ORDER BY O.CREATE_DATE DESC
+    </select>
+    
+    <!-- 구매자 마이페이지, 정상 주문만 출력 -->
+	<select id="selectAdminMonthPaymentInfo" parameterType="map" resultType="OrderPaymentDTO">
+		SELECT 
+		    TO_CHAR(TRUNC(p.pay_date, 'MM'), 'YYYY-MM') AS order_month, -- 월 기준 그룹화
+		    TO_CHAR(TRUNC(p.pay_date, 'MM'), 'YYYY-MM-DD') || ' ~ ' || 
+		    TO_CHAR(LAST_DAY(TRUNC(p.pay_date, 'MM')), 'YYYY-MM-DD') AS period, -- 해당 월의 1일 ~ 마지막일
+		    COUNT(p.pay_date) AS total_payments, -- 결제 횟수
+		    SUM(NVL(o.tot_pdt_price, 0) + NVL(o.ship_fee, 0)) AS total_amount -- 총 결제 금액
+		FROM FOODMATE_PAYMENT p
+		JOIN FOODMATE_ORDER o
+		    ON p.ORD_ID = o.ORD_ID
+		GROUP BY TRUNC(p.pay_date, 'MM') -- 월 단위로 그룹화
+		ORDER BY TRUNC(p.pay_date, 'MM') -- 정렬 기준을 월 기준으로
     </select>
 </mapper>

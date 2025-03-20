@@ -43,8 +43,8 @@ public class AdminService {
         return adminDAO.getAdminPaymentInfo(type, keyword, searchType);
     }
     
-    public List<OrderPaymentDTO> getAdminMonthPaymentInfo(String status, String keyword, String searchType) throws Exception {
-        return adminDAO.getAdminMonthPaymentInfo(status, keyword, searchType);
+    public List<OrderPaymentDTO> getAdminMonthPaymentInfo(String keyword, String searchType) throws Exception {
+        return adminDAO.getAdminMonthPaymentInfo(keyword, searchType);
     }
     
     public void deleteAdminBuyer(String byr_id) throws Exception{

@@ -20,6 +20,11 @@ public class OrderPaymentDTO {
     private int ship_Fee; // 배송비
     private String name;
     
+    private String orderMonth;    // "2024-11"
+    private String period;        // "2024-11-01 ~ 2024-11-30"
+    private int total_payments;    // 3
+    private int total_amount; // 500
+    
     // 기본 생성자
     public OrderPaymentDTO() {}
 
@@ -58,8 +63,8 @@ public class OrderPaymentDTO {
 		this.pay_Method = pay_Method;
 	}
 
-	public char getPay_Status() {
-		return pay_Status;
+	public int getPay_Status() {
+		return Character.getNumericValue(pay_Status);
 	}
 
 	public void setPay_Status(char pay_Status) {
@@ -121,6 +126,40 @@ public class OrderPaymentDTO {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+
+	public String getOrderMonth() {
+		return orderMonth;
+	}
+
+	public void setOrderMonth(String orderMonth) {
+		this.orderMonth = orderMonth;
+	}
+
+	public String getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(String period) {
+		this.period = period;
+	}
+	
+
+	public int getTotal_payments() {
+		return total_payments;
+	}
+
+	public void setTotal_payments(int total_payments) {
+		this.total_payments = total_payments;
+	}
+
+	public int getTotal_amount() {
+		return total_amount;
+	}
+
+	public void setTotal_amount(int total_amount) {
+		this.total_amount = total_amount;
 	}
 
 	@Override

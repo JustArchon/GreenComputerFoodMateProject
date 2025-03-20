@@ -60,12 +60,11 @@ public class AdminDAO {
         return sqlSession.selectList("mapper.order.selectAdminPaymentInfo", paramMap);
     }
     
-    public List<OrderPaymentDTO> getAdminMonthPaymentInfo(String status, String keyword, String searchType) throws DataAccessException {
+    public List<OrderPaymentDTO> getAdminMonthPaymentInfo(String keyword, String searchType) throws DataAccessException {
     	Map<String, Object> paramMap = new HashMap<>();
-        paramMap.put("status", status);
         paramMap.put("keyword", keyword);
         paramMap.put("searchtype", searchType);
-        return sqlSession.selectList("mapper.order.selectAdminPaymentInfo", paramMap);
+        return sqlSession.selectList("mapper.order.selectAdminMonthPaymentInfo", paramMap);
     }
     
     public void deleteAdminBuyer(String byr_id) throws DataAccessException {

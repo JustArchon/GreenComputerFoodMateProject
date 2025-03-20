@@ -249,7 +249,17 @@
 				    </c:if>
 				</div>
         </div>
-
+		
+		<%-- 현재 페이지 정보 가져오기 (기본값: 1페이지) --%>
+		<c:set var="PMcurrentPage" value="${param.page != null ? param.page : 1}" />
+		<c:set var="PMitemsPerPage" value="6" />
+		<c:set var="PMstartIndex" value="${(PMcurrentPage - 1) * PMitemsPerPage}" />
+		<c:set var="PMendIndex" value="${PMcurrentPage * PMitemsPerPage}" />
+			
+		<%-- 전체 데이터 개수 구하기 --%>
+		<c:set var="PMtotalItems" value="${fn:length(PaymentMonthStateList)}" />
+		<fmt:parseNumber var="RFparsedTotalPages" value="${(PMtotalItems + PMitemsPerPage - 1) / PMitemsPerPage}" integerOnly="true" />
+		<c:set var="PMtotalPages" value="${PMparsedTotalPages}" />
         <!-- 결제 금액 관리 -->
         <div id="paymentStats" class="tab-pane">
             <h2>결제 금액 관리</h2>
@@ -263,26 +273,35 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>2024-11-01 ~ 2025-11-30</td>
-                        <td>₩500,000</td>
-                        <td>4건</td>
-                        <td><button class="btn">상세 보기</button></td>
-                    </tr>
-                    <tr>
-                        <td>2024-12-01 ~ 2024-12-31</td>
-                        <td>₩300,000</td>
-                        <td>3건</td>
-                        <td><button class="btn">상세 보기</button></td>
-                    </tr>
-                    <tr>
-                        <td>2025-01-01 ~ 2025-01-31</td>
-                        <td>₩400,000</td>
-                        <td>5건</td>
-                        <td><button class="btn">상세 보기</button></td>
-                    </tr>
+                <c:forEach var="paymentPM" items="${PaymentMonthStateList}" varStatus="status">
+			      	<c:if test="${status.index >= PMstartIndex && status.index < PMendIndex}">
+	                    <tr>
+	                        <td>${paymentPM.period}</td>
+	                        <td>₩<fmt:formatNumber value="${paymentPM.total_amount}" pattern="#,###"/></td>
+	                        <td>${paymentPM.total_payments}건</td>
+	                        <td><button class="btn">상세 보기</button></td>
+	                    </tr>
+	                 </c:if>
+	            </c:forEach>
                 </tbody>
             </table>
+            <!-- 페이지네이션 -->
+				<div class="pagination">
+				    <%-- 이전 페이지 버튼 --%>
+				    <c:if test="${PMcurrentPage > 1}">
+				        <a href="?tab=paymentStats&page=${PMcurrentPage - 1}">이전</a>
+				    </c:if>
+				
+				    <%-- 페이지 번호 표시 --%>
+				    <c:forEach var="i" begin="1" end="${PMtotalPages}">
+				        <a href="?tab=paymentStats&page=${i}" class="${i == PMcurrentPage ? 'active' : ''}">${i}</a>
+				    </c:forEach>
+				
+				    <%-- 다음 페이지 버튼 --%>
+				    <c:if test="${PMcurrentPage < PMtotalPages}">
+				        <a href="?tab=paymentStats&page=${PMcurrentPage + 1}">다음</a>
+				    </c:if>
+				</div>
         </div>
 
        	<%-- 현재 페이지 정보 가져오기 (기본값: 1페이지) --%>
@@ -317,21 +336,21 @@
 	                        <td>₩<fmt:formatNumber value="${paymentRF.tot_Pdt_Price + paymentRF.ship_Fee}" pattern="#,###"/></td>
 	                        <td>
 	                        <c:choose>
-	                        	<c:when test="${paymentHS.pay_Status == '0'}">
-							    <button class="btn status-payment">대기 중</button>
+	                        	<c:when test="${paymentRF.pay_Status == 0}">
+							    <button class="btn status-payment">처리 중</button>
 								</c:when>
-								<c:when test="${paymentHS.pay_Status == '1'}">
-								    <button class="btn status-shipping">성공</button>
+								<c:when test="${paymentRF.pay_Status == 1}">
+								    <button class="btn status-shipping">처리 중</button>
 								</c:when>
-								<c:when test="${paymentHS.pay_Status == '2'}">
-								    <button class="btn status-delivered">취소</button>
+								<c:when test="${paymentRF.pay_Status == 2}">
+								    <button class="btn status-delivered">결제취소</button>
 								</c:when>
-								<c:when test="${paymentHS.pay_Status == '3'}">
-								    <button class="btn status-confirmed">환불</button>
+								<c:when test="${paymentRF.pay_Status == 3}">
+								    <button class="btn status-confirmed">환불완료</button>
 								</c:when>
 							</c:choose>
 							</td>
-	                        <td>${paymentHS.pay_Status}<button class="btn">상세 보기</button></td>
+	                        <td><button class="btn">상세 보기</button></td>
 	                    </tr>
                 	</c:if>
                 </c:forEach>
